@@ -1,11 +1,16 @@
 var Bill = require("../models/billModel");
+var Customer = require("../models/customerModel");
+var Company = require("../models/companyCustomer");
 var token = require("../utility/token");
 
-exports.index = function (req,res) {
+exports.index = async function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
         Bill.get(function (err,bills) {
+            bills.forEach(element => {
+                element.customer = !element.is_company ? await Customer.findOne({_id:element.customer_id}) : await Company.findOne({_id:element.customer_id});
+            });
             if(err)
             {
                 res.json({
@@ -37,6 +42,7 @@ exports.edit = function (req,res) {
                 billtoedit.customer_id = req.body.customer_id || billtoedit.customer_id ;
                 billtoedit.products = JSON.parse(req.body.products) || billtoedit.products;
                 billtoedit.pay_type = req.body.pay_type || billtoedit.pay_type;
+                billtoedit.is_company = req.body.iscompany || billtoedit.iscompany;
 
                 billtoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
             })
@@ -74,6 +80,8 @@ exports.new = async function (req,res) {
         newbill.products = JSON.parse(req.body.products);
         newbill.created_date = Date.now();
         newbill.pay_type = req.body.pay_type;
+        newbill.is_company = req.body.is_company;
+
 
         newbill.save((err) => {
             if(err)

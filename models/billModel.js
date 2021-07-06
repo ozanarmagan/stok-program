@@ -17,6 +17,9 @@ var billSchema = mongoose.Schema({
     pay_type: {
         type:String
     },
+    is_company: {
+        type:Boolean,
+    }
 });
 
 var Bill = module.exports = mongoose.model('bill',billSchema);

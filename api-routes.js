@@ -59,5 +59,33 @@ router.route('/cards/:card_id')
     .put(cardController.edit)
     .delete(cardController.delete);
 
+/* CATEGORY ROUTES */
+var categoryController = require("./controllers/categoryController");
+
+router.route('/categories')
+    .get(categoryController.index)
+    .post(categoryController.new)
+
+router.route('/categories/:category_id')
+    .get(categoryController.view)
+    .post(categoryController.edit)
+    .patch(categoryController.edit)
+    .put(categoryController.edit)
+    .delete(categoryController.delete);
+
+/* COMPANY ROUTES */
+var companyCustomerController = require("./controllers/companyCustomerController");
+
+router.route('/categories')
+    .get(companyCustomerController.index)
+    .post(companyCustomerController.new)
+
+router.route('/categories/:category_id')
+    .get(companyCustomerController.view)
+    .post(companyCustomerController.edit)
+    .patch(companyCustomerController.edit)
+    .put(companyCustomerController.edit)
+    .delete(companyCustomerController.delete);
+
 
 module.exports = router;
