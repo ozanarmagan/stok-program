@@ -34,6 +34,3 @@ if(!db)
     console.log('DB Baglanti hatasi');
 else
     console.log('DB Baglantisi basarili');
-
-
-

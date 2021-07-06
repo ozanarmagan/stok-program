@@ -19,10 +19,12 @@ var indentureSchema = mongoose.Schema({
     }
 });
 
+
 var indenture = module.exports = mongoose.model('indenture',indentureSchema);
 module.exports.get = function (callback,limit) {
     indenture.find(callback).limit(limit);
 };
+
 
 
 

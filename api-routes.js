@@ -1,5 +1,5 @@
 let router = require('express').Router();
-
+let userController = require('./controllers/userController');
 router.get('/', (req,res) => {
     res.json({
         status:'OK',
@@ -7,6 +7,12 @@ router.get('/', (req,res) => {
     });
 });
 
+router.route('/login')
+    .get(userController.login)
+    .post(userController.login);
+
+router.route('/users')
+    .get(userController.index)
 
 
 

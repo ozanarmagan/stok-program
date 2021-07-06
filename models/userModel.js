@@ -20,7 +20,7 @@ var userSchema = mongoose.Schema({
     created_date: {
         type:Date
     },
-    userType:{
+    user_type:{
         type:Number, /* 0 -> normal 1 -> admin 2 -> superadmin */
         required:true
     }
