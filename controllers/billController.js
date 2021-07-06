@@ -8,8 +8,8 @@ exports.index = async function (req,res) {
     {
         var user = token.verifyToken(req.body.token,'access');
         Bill.get(function (err,bills) {
-            bills.forEach(element => {
-                element.customer = !element.is_company ? await Customer.findOne({_id:element.customer_id}) : await Company.findOne({_id:element.customer_id});
+            bills.forEach(async function (element) {
+                element.customer = await !element.is_company ? Customer.findOne({_id:element.customer_id}) : Company.findOne({_id:element.customer_id});
             });
             if(err)
             {

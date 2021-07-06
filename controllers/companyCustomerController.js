@@ -1,4 +1,4 @@
-var Company = require("../models/companyCustomerModel");
+var Company = require("../models/companyCustomer");
 var token = require("../utility/token");
 
 exports.index = function (req,res) {
