@@ -12,8 +12,14 @@ router.route('/login')
     .post(userController.login);
 
 router.route('/users')
-    .get(userController.index)
+    .get(userController.index);
 
+router.route('/register')
+    .get(userController.register)
+    .post(userController.register);
+
+router.route('/whoami')
+    .get(userController.whoami);
 
 
 module.exports = router;

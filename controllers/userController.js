@@ -4,11 +4,17 @@ var pw = require('../utility/password');
 
 
 
-exports.login = function (req,res) {
-    User.find({email:req.body.email},function (err,user) {
+exports.login =  function  (req,res) {
+    if(req.body.email == null || req.body.password == null)
+    {
+        res.json({status:400,message:"No credientals"});
+        return;
+    }
+    User.findOne({email:req.body.email}, async function (err,user) {
         if(err)
             res.json({status:400,message:err});
-        if(pw.isValid(req.body.password,user.password))
+        var isvalid = await pw.isValid(req.body.password,user.password); /* kontrol edene kadar bekle */
+        if(isvalid)
             res.json({
                 status:200,
                 access_token:token.generateToken({user:user._id},'access'),
@@ -22,15 +28,16 @@ exports.login = function (req,res) {
     });
 }
 
-exports.register = function (req,res) {
+
+exports.register = async function (req,res) {
     try 
     {
-        var user = token.verifyToken(req.body.token,'access');
-        if(user.user_type == 0)
+        var user = await User.findOne({_id:token.verifyToken(req.body.token,'access').user});
+        if(user.user_type == 0 || (user.user_type == 1 && req.body.user_type == 2)) /* çalışan kullanıcı oluşturamaz ve admin superadmin oluşturamaz */
             res.json({status:401,message:'This user cannot create new users'});
         var newuser = new User();
         newuser.email = req.body.email;
-        newuser.password = req.body.password;
+        newuser.password = pw.hash(req.body.password);
         newuser.name = req.body.name;
         newuser.surname = req.body.surname;
         newuser.created_date = Date.now();
@@ -44,30 +51,50 @@ exports.register = function (req,res) {
     }
     catch(err)
     {
-        res.json({status:400,message:err});
+        res.json({status:400,message:"Invalid token"});
     }
 };
 
 
-exports.index = function(req,res) {
-    User.get(function (err,users) {
-        if(err)
-        {
-            res.json({
-                status:400,
-                message:err
-            });
-            console.log(err);
-        }
-        else
-            res.json({
-                status:200,
-                data:users
-            });
-    });
+exports.index = async function(req,res) {
+    try
+    {
+        var user = await User.findOne({_id:token.verifyToken(req.body.token,'access').user});
+        if(user.user_type == 0)
+            res.json({status:400,message:"You have no permission for this request"});
+        User.get(function (err,users) {
+            if(err)
+            {
+                res.json({
+                    status:400,
+                    message:err
+                });
+                console.log(err);
+            }
+            else
+                res.json({
+                    status:200,
+                    data:users
+                });
+        });
+    }
+    catch
+    {
+        res.json({status:400,message:"Invalid token"});
+    }
 }
 
 
+exports.whoami = async function(req,res) {
+    try {
+        var user = await User.findOne({_id:token.verifyToken(req.body.token,'access').user});
+        res.json(user);
+    }
+    catch(e)
+    {
+        res.json({status:400,message:"Invalid token"});
+    }
+}
 
 
 

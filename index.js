@@ -30,6 +30,8 @@ mongoose.connect(constants.MONGO_URL,{useNewUrlParser:true,useUnifiedTopology:tr
 
 var db = mongoose.connection;
 
+
+
 if(!db)
     console.log('DB Baglanti hatasi');
 else
