@@ -102,6 +102,7 @@ exports.view = async function (req,res) {
         try
         {
             var bill = Bill.findById(req.params.bill_id);
+            bill.customer = await Customer.findById(bill.customer_id);
             res.json({status:200,data:bill});
         }
         catch
