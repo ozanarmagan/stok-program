@@ -115,7 +115,7 @@ exports.edit = async function(req,res) {
                 usertoedit.surname = req.body.surname || usertoedit.surname;
                 usertoedit.password = pw.hash(req.body.name) || usertoedit.name;
                 usertoedit.user_type = req.body.user_type || usertoedit.user_type;
-                usertoedit.enail = req.body.email || usertoedit.email;
+                usertoedit.email = req.body.email || usertoedit.email;
 
                 usertoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"User has edited"})});
             })
