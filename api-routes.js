@@ -21,5 +21,10 @@ router.route('/register')
 router.route('/whoami')
     .get(userController.whoami);
 
+router.route('/users/:user_id')
+    .get(userController.view)
+    .patch(userController.edit)
+    .put(userController.edit)
+    .delete(userController.delete)
 
 module.exports = router;
