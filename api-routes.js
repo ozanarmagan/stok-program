@@ -1,4 +1,4 @@
-let router = require('express').router();
+let router = require('express').Router();
 
 router.get('/', (req,res) => {
     res.json({

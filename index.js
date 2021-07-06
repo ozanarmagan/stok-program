@@ -11,7 +11,7 @@ app.use(express.urlencoded({
     extended:false
 }));
 
-var port = constats.port || 8080;
+var port = constants.port || 8080;
 
 app.get('/',(req,res) => { res.send('API')});
 
@@ -19,7 +19,7 @@ app.listen(port, function () {
     console.log("Calisilan port : " + port);
 });
 
-let apiRoutes = require('api-routes');
+let apiRoutes = require('./api-routes');
 
 app.use('/api',apiRoutes);
 

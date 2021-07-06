@@ -1,0 +1,1 @@
+module.exports.MONGO_URL = "mongodb://vade:82eb6b8c99d1c3f9bb47d9e0ca1b9d2025561827822821a85167ee4f8a28b271@46.31.79.30:27067/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false";

@@ -1,7 +1,11 @@
 var mongoose = require('mongoose');
 
-var companySchema = mongoose.Schema({
+var companyCustomerSchema = mongoose.Schema({
     name: {
+        type:String,
+        required:true
+    },
+    owner: {
         type:String,
         required:true
     },
@@ -9,16 +13,14 @@ var companySchema = mongoose.Schema({
         type:String,
         required:true
     },
-    phone: {
+    phone_gsm: {
         type:Number,
-        required:true
+    },
+    phone: {
+        type:Number
     },
     fax: {
         type:Number,
-        required:true
-    },
-    logo: {
-        type:Buffer,
         required:true
     },
     tax_no: {
@@ -29,10 +31,16 @@ var companySchema = mongoose.Schema({
         type:String,
         required:true
     },
+    total_debt: {
+        type:Number,
+    },
+    total_paid: {
+        type:Number
+    }
 });
 
-var Company = module.exports = mongoose.model('company',companySchema);
+var CompanyCustomer = module.exports = mongoose.model('companyCustomer',companyCustomerSchema);
 module.exports.get = function (callback,limit) {
-    Company.find(callback).limit(limit);
+    CompanyCustomer.find(callback).limit(limit);
 };
 
