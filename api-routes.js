@@ -45,6 +45,19 @@ router.route('/bills/:bill_id')
     .put(billController.edit)
     .delete(userController.delete);
 
+/* CARD ROUTES */
+var cardController = require("./controllers/cardController");
+
+router.route('/cards')
+    .get(cardController.index)
+    .post(cardController.new)
+
+router.route('/cards/:card_id')
+    .get(cardController.view)
+    .post(cardController.edit)
+    .patch(cardController.edit)
+    .put(cardController.edit)
+    .delete(cardController.delete);
 
 
 module.exports = router;

@@ -1,11 +1,11 @@
-var Bill = require("../models/billModel");
+var Card = require("../models/cardModel");
 var token = require("../utility/token");
 
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Bill.get(function (err,bills) {
+        Card.get(function (err,cards) {
             if(err)
             {
                 res.json({
@@ -17,7 +17,7 @@ exports.index = function (req,res) {
             else
                 res.json({
                     status:200,
-                    data:bills
+                    data:cards
                 });
         });
     }
@@ -30,20 +30,20 @@ exports.index = function (req,res) {
 exports.edit = function (req,res) {
     try
     {
-        var bill = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.body.token,'access');
         try
         {
-            Bill.findById(req.params.bill_id,function (err,billtoedit) {
-                billtoedit.customer_id = req.body.customer_id || billtoedit.customer_id ;
-                billtoedit.products = JSON.parse(req.body.products) || billtoedit.products;
-                billtoedit.pay_type = req.body.pay_type || billtoedit.pay_type;
+            Card.findById(req.params.card_id,function (err,cardtoedit) {
+                cardtoedit.name = req.body.name || cardtoedit.name ;
+                cardtoedit.installment = req.body.installment || cardtoedit.installment;
+                cardtoedit.interest = req.body.interest || cardtoedit.interest;
 
-                billtoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
+                cardtoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
             })
         }
         catch
         {
-            res.json({status:400,message:"Bill could not found"});
+            res.json({status:400,message:"Card could not found"});
         }
     }
     catch
@@ -57,7 +57,7 @@ exports.delete = async function(req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Bill.deleteOne({_id:req.params.bill_id},(err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"bill has been deleted"})});
+        Card.deleteOne({_id:req.params.card_id},(err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Card has been deleted"})});
     }
     catch
     {
@@ -69,16 +69,15 @@ exports.new = async function (req,res) {
     try 
     {
         var user = token.verifyToken(req.body.token,'access');
-        var newbill = new Bill();
-        newbill.customer_id = req.body.customer_id;
-        newbill.products = JSON.parse(req.body.products);
-        newbill.created_date = Date.now();
-        newbill.pay_type = req.body.pay_type;
+        var newcard = new Card();
+        newcard.name = req.body.name;
+        newcard.installment = req.body.installment;
+        newcard.interest = req.body.interest;
 
-        newbill.save((err) => {
+        newcard.save((err) => {
             if(err)
                 res.json({status:400,message:err});
-            res.json({status:200,message:"Bill created"});
+            res.json({status:200,message:"Card created"});
         })
     }
     catch(err)
@@ -93,12 +92,12 @@ exports.view = async function (req,res) {
         var user = token.verifyToken(req.body.token,'access');
         try
         {
-            var bill = Bill.findById(req.params.bill_id);
-            res.json({status:200,data:bill});
+            var card = Card.findById(req.params.card_id);
+            res.json({status:200,data:card});
         }
         catch
         {
-            res.json({status:400,message:"Bill could not found"});
+            res.json({status:400,message:"Card could not found"});
         }
     }
     catch
