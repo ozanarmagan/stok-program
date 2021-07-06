@@ -33,7 +33,7 @@ exports.edit = function (req,res) {
         var user = token.verifyToken(req.body.token,'access');
         try
         {
-            Company.findById(req.params.company_id,function (err,companytoedit) {
+            Company.findById(req.params.company_id,function (error,companytoedit) {
                 companytoedit.name = req.body.name || companytoedit.name ;
                 companytoedit.owner = req.body.owner || companytoedit.owner;
                 companytoedit.address = req.body.address || companytoedit.address;

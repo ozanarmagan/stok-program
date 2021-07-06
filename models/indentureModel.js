@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-
+// Senet
 var indentureSchema = mongoose.Schema({
     customer_id:{
         type:String
