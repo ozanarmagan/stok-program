@@ -4,7 +4,7 @@ var token = require('../utility/token');
 var pw = require('../utility/password');
 var Category = require('../models/categoryModel');
 
-
+// Produc Controller
 exports.index = function (req,res) {
     try
     {
