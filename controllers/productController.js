@@ -9,7 +9,7 @@ exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Product.get(function (err,products) {
+        Product.find(req.query,function (err,products) {
             if(err)
             {
                 res.json({

@@ -62,7 +62,7 @@ exports.index = async function(req,res) {
         var user = await User.findOne({_id:token.verifyToken(req.body.token,'access').user});
         if(user.user_type == 0)
             res.json({status:400,message:"You have no permission for this request"});
-        User.get(function (err,users) {
+        User.find(req.query,function (err,users) {
             if(err)
             {
                 res.json({

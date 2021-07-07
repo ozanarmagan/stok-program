@@ -5,7 +5,7 @@ exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Card.get(function (err,cards) {
+        Card.find(req.query,function (err,cards) {
             if(err)
             {
                 res.json({

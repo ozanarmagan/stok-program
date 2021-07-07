@@ -7,7 +7,7 @@ exports.index = async function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Bill.get(function (err,bills) {
+        Bill.find(req.query,function (err,bills) {
             bills.forEach(async function (element) {
                 element.customer = await !element.is_company ? Customer.findOne({_id:element.customer_id}) : Company.findOne({_id:element.customer_id});
             });

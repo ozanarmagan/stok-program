@@ -5,7 +5,7 @@ exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Category.get(function (err,categorys) {
+        Category.find(req.query,function (err,categorys) {
             if(err)
             {
                 res.json({

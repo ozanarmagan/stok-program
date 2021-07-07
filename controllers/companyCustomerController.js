@@ -5,7 +5,7 @@ exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Company.get(function (err,companys) {
+        Company.find(req.query,function (err,companys) {
             if(err)
             {
                 res.json({
