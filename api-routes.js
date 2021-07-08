@@ -73,19 +73,102 @@ router.route('/categories/:category_id')
     .put(categoryController.edit)
     .delete(categoryController.delete);
 
-/* COMPANY ROUTES */
+/* COMPANY CUSTOMER ROUTES */
 var companyCustomerController = require("./controllers/companyCustomerController");
 
-router.route('/categories')
+router.route('/company')
     .get(companyCustomerController.index)
     .post(companyCustomerController.new)
 
-router.route('/categories/:category_id')
+router.route('/company/:company_id')
     .get(companyCustomerController.view)
     .post(companyCustomerController.edit)
     .patch(companyCustomerController.edit)
     .put(companyCustomerController.edit)
     .delete(companyCustomerController.delete);
 
+/* COMPANY ROUTES */
+var companyController = require("./controllers/companyController");
+
+router.route('/us')
+    .get(companyController.index)
+    .post(companyController.new)
+
+router.route('/us/:company_id')
+    .get(companyController.view)
+    .post(companyController.edit)
+    .patch(companyController.edit)
+    .put(companyController.edit)
+    .delete(companyController.delete);
+
+/* CUSTOMER ROUTES */
+var customerController = require("./controllers/customerController");
+
+router.route('/customer')
+    .get(customerController.index)
+    .post(customerController.new)
+
+router.route('/customer/:customer_id')
+    .get(customerController.view)
+    .post(customerController.edit)
+    .patch(customerController.edit)
+    .put(customerController.edit)
+    .delete(customerController.delete);
+
+/* INDENTURE ROUTES */
+var indentureController = require("./controllers/indentureController");
+
+router.route('/indentures')
+    .get(indentureController.index)
+    .post(indentureController.new)
+
+router.route('/indentures/:indenture_id')
+    .get(indentureController.view)
+    .post(indentureController.edit)
+    .patch(indentureController.edit)
+    .put(indentureController.edit)
+    .delete(indentureController.delete);
+
+/* ORDER ROUTES */
+var orderController = require("./controllers/orderController");
+
+router.route('/orders')
+    .get(orderController.index)
+    .post(orderController.new)
+
+router.route('/orders/:order_id')
+    .get(orderController.view)
+    .post(orderController.edit)
+    .patch(orderController.edit)
+    .put(orderController.edit)
+    .delete(orderController.delete);
+
+/* PAYMENT ROUTES */
+var paymentController = require("./controllers/paymentController");
+
+router.route('/payments')
+    .get(paymentController.index)
+    .post(paymentController.new)
+
+router.route('/payments/:payment_id')
+    .get(paymentController.view)
+    .post(paymentController.edit)
+    .patch(paymentController.edit)
+    .put(paymentController.edit)
+    .delete(paymentController.delete);
+
+/* PRODUCT ROUTES */
+var productController = require("./controllers/productController");
+
+router.route('/products')
+    .get(productController.index)
+    .post(productController.new)
+
+router.route('/products/:product_id')
+    .get(productController.view)
+    .post(productController.edit)
+    .patch(productController.edit)
+    .put(productController.edit)
+    .delete(productController.delete);
 
 module.exports = router;

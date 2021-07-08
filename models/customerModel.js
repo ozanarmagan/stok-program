@@ -18,15 +18,12 @@ var customerSchema = mongoose.Schema({
     },
     debt_limit: {
         type:Number,
-        required:true
     },
     tax_no: {
         type:String,
-        required:true
     },
     tax_place: {
         type:String,
-        required:true
     },
 });
 

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var paySchema = mongoose.Schema({
+var paymentSchema = mongoose.Schema({
     type:{
         type:String,
         required:true
@@ -15,16 +15,16 @@ var paySchema = mongoose.Schema({
     date:{
         type:Date
     },
-    pay_type:{ /* 0 -> bireysel 1 -> şirket */
+    payment_type:{ /* 0 -> bireysel 1 -> şirket */
         type:Number
     },
-    payId:{
+    customer_id:{
         type:String
     }
 });
 
-var pay = module.exports = mongoose.model('pay',paySchema);
+var payment = module.exports = mongoose.model('payment',paymentSchema);
 module.exports.get = function (callback,limit) {
-    pay.find(callback).limit(limit);
+    payment.find(callback).limit(limit);
 };
 
