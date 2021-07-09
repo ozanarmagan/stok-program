@@ -13,17 +13,28 @@ exports.login =  function  (req,res) {
     User.findOne({email:req.body.email}, async function (err,user) {
         if(err)
             res.json({status:400,message:err});
+        if(user == null)
+        {
+            res.json({status:400,message:"Invalid login"});
+            return;
+        }
         var isvalid = await pw.isValid(req.body.password,user.password); /* kontrol edene kadar bekle */
         if(isvalid)
+        {
+            var user_found = await User.findById(user._id);
             res.json({
                 status:200,
                 access_token:token.generateToken({user:user._id},'access'),
                 refresh_token:token.generateToken({user:user._id},'refresh'),
+                name:user_found.name,
+                surname:user_found.surname,
+                email:user_found.email
             });
+        }
         else
             res.json({
-                status:401,
-                message:'Password is not true'
+                status:400,
+                message:'Invalid login'
             })
     });
 }
