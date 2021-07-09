@@ -4,6 +4,7 @@ import { useState} from "react";
 import axios from 'axios';
 import { useSelector,useDispatch } from 'react-redux';
 import { log_in } from '../redux/reducers/user';
+import { NotificationManager } from 'react-notifications';
 
 
 export default function Login(props) {
@@ -27,8 +28,13 @@ export default function Login(props) {
             .then(res => {
                 if(res.data.status === 200)
                 {
+					NotificationManager.success("Hoşgeldiniz " + res.data.name,"Başarılı");
                     dispatch(log_in({access_token:res.data.access_token,refresh_token:res.data.refresh_token,name:res.data.name,surname:res.data.surname,email:res.data.email}));
                 }
+				else
+				{
+					NotificationManager.error("Bilgiler Hatalı","Hata");
+				}
             });
     }
 
