@@ -1,5 +1,5 @@
 import '../css/sidebar.css'
-import {IoIosHome,IoIosArrowForward,IoIosArrowUp} from 'react-icons/io';
+import {IoIosHome,IoIosArrowForward,IoIosArrowUp,IoMdCart} from 'react-icons/io';
 import {Collapse} from 'reactstrap';
 import {RiBillFill} from 'react-icons/ri';
 import {MdPersonPin} from 'react-icons/md';
@@ -27,6 +27,8 @@ export default function Sidebar(props) {
 <div class="sidenav">
     <div className="sidebar-logo">Logo</div>
     <Link to='/'><IoIosHome style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> <span style={{marginLeft:"5px"}}>Ana Sayfa</span></Link>
+
+
     <div className="sidebar-heading">İŞLEMLER</div>
     <Link to='/' onClick={handleClickBills}>
         <RiBillFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
@@ -64,6 +66,7 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Hızlı Ürün Ekle</Link>
         <Link className="submenu-item" to="/">Kritik Stoktakiler</Link>
         <Link className="submenu-item" to="/">Stok Sayım</Link>
+        <Link className="submenu-item" to="/">Kategoriler</Link>
         <Link className="submenu-item" to="/">Tüm Ürünler</Link>
     </div>
     </Collapse>
