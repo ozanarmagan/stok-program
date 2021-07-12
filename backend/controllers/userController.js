@@ -28,7 +28,8 @@ exports.login =  function  (req,res) {
                 refresh_token:token.generateToken({user:user._id},'refresh'),
                 name:user_found.name,
                 surname:user_found.surname,
-                email:user_found.email
+                email:user_found.email,
+                user_type:user_found.user_type
             });
         }
         else

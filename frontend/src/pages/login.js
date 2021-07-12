@@ -2,7 +2,7 @@ import '../css//login_page.css';
 import { API_URL } from "../constants";
 import { useState} from "react";
 import axios from 'axios';
-import { useSelector,useDispatch } from 'react-redux';
+import {useDispatch } from 'react-redux';
 import { log_in } from '../redux/reducers/user';
 import { NotificationManager } from 'react-notifications';
 
@@ -11,7 +11,6 @@ export default function Login(props) {
     const [email,setEmail] = useState("");
     const [pw,setpw] = useState("");
 
-    const user = useSelector(state => state.userReducer);
     const dispatch = useDispatch();
 
     const onChangeEmail = (event) => {
@@ -29,7 +28,7 @@ export default function Login(props) {
                 if(res.data.status === 200)
                 {
 					NotificationManager.success("Hoşgeldiniz " + res.data.name,"Başarılı");
-                    dispatch(log_in({access_token:res.data.access_token,refresh_token:res.data.refresh_token,name:res.data.name,surname:res.data.surname,email:res.data.email}));
+                    dispatch(log_in({access_token:res.data.access_token,refresh_token:res.data.refresh_token,name:res.data.name,surname:res.data.surname,email:res.data.email,user_type:res.data.user_type}));
                 }
 				else
 				{
