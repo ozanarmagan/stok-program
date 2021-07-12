@@ -1,0 +1,140 @@
+/* The sidebar menu */
+.sidenav {
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 200px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #4e73df; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
+    -webkit-transition: all 300ms ease-out;
+    -moz-transition: all 300ms ease-out;
+    -o-transition: all 300ms ease-out;
+    transition: all 300ms ease-out;
+  }
+  
+  /* The navigation menu links */
+  .sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: .95rem;
+    color: #ffffff;
+    display: block;
+  }
+  
+.collapsebtn {
+  float: right;
+  margin-right: 10px;
+  margin-top: 6px;
+  color:rgba(255,255,255,.6);
+}
+
+  /* When you mouse over the navigation links, change their color */
+  .sidenav a:hover {
+    color: #c2c2c2;
+  }
+  
+  /* Style page content */
+  .main {
+    margin-left: 160px; /* Same as the width of the sidebar */
+    padding: 0px 10px;
+  }
+
+  .sidebar-heading {
+    text-align: left;
+    padding: 0 1rem;
+    padding-top: 0.5rem;
+    font-weight: 800;
+    font-size: 0.7rem;
+    color
+    :rgba(255,255,255,.4);
+  }
+
+
+
+  .sidebar-logo {
+    text-align: center;
+    padding: 0 1rem;
+    padding-bottom: 2.5rem;
+    font-weight: 800;
+    font-size: 2rem;
+    color
+    :rgba(255,255,255,.4);
+  }
+  
+
+
+.sidebar-divider {
+    margin: 0 1rem 1rem;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    color:rgb(204, 204, 204);
+    border-top: 2px solid rgba(255,255,255,.15);
+}
+
+
+.submenu {
+  padding: 0.5rem 0;
+  margin: 0 1rem;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  min-width: 5rem;
+  font-size: .85rem;
+  height: auto;
+  margin: 0 1rem 1rem 1rem;
+  background-color: white;
+  border-radius: .35rem;
+}
+
+
+
+
+.submenu-heading {
+  margin: 0;
+  white-space: nowrap;
+  padding: .5rem 1.5rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: .65rem;
+  color: #b7b9cc;
+}
+
+
+.submenu-item {
+  padding: .5rem 1rem !important;
+  margin: 0 .5rem !important;
+  display: block !important;
+  color: #3a3b45 !important;
+  font-size: 12px !important;
+  font-weight: 600;
+  text-decoration: none !important;
+  border-radius: .35rem !important;
+  white-space: nowrap !important;
+}
+
+.submenu-item:hover {
+  background-color: #dddfeb !important;
+}
+
+  /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+
+
+  @media screen and (max-width:768px) {
+    .sidenav {
+      transform: translate3d(-200px,0,0);
+    }
+
+    .active .sidenav {
+      transform: translateZ(200px);
+    }
+
+    .active .contentt {
+      transform: translate3d(200px,0,0);
+    }
+  }

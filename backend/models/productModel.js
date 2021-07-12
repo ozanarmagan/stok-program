@@ -44,6 +44,9 @@ var productSchema = mongoose.Schema({
     last_change_date: {
         type:Date,
     },
+    created_date: {
+        type:Date,
+    },
     image: {
         type:Buffer
     }

@@ -81,7 +81,8 @@ exports.new = function (req,res) {
         new_product.publish = req.body.publish;
         new_product.product_unit = req.body.product_unit;
         new_product.origin = req.body.origin;
-        new_product.last_change_date = req.body.last_change_date;
+        new_product.last_change_date = Date.now();
+        new_product.created_date = Date.now();
         new_product.image = req.body.image;
 
         new_product.save((err) => {
@@ -114,7 +115,8 @@ exports.edit = function (req,res) {
                 product.publish = req.body.publish ;
                 product.product_unit = req.body.product_unit ;
                 product.origin = req.body.origin ;
-                product.last_change_date = req.body.last_change_date ;
+                product.created_date = product.created_date;
+                product.last_change_date = Date.now();
                 product.image = req.body.image ;
 
                 product.save((err)=> { 

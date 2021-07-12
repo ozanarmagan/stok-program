@@ -5,6 +5,7 @@ import {Provider} from 'react-redux';
 import 'react-notifications/lib/notifications.css';
 import reportWebVitals from './reportWebVitals';
 import store from './redux/store';
+import './css/main.css';
 
 ReactDOM.render(
   <Provider store={store}>

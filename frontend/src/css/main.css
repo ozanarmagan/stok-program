@@ -1,0 +1,16 @@
+body {
+    font-family: 'Poppins';
+}
+
+.contentt {
+    -webkit-transition: all 300ms ease-out;
+    -moz-transition: all 300ms ease-out;
+    -o-transition: all 300ms ease-out;
+    transition: all 300ms ease-out;
+}
+
+@media screen and (min-width:769px) {
+    .contentt {
+        margin-left: 200px;
+    }
+}
