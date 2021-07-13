@@ -10,7 +10,7 @@ exports.login =  function  (req,res) {
         res.json({status:400,message:"No credientals"});
         return;
     }
-    User.findOne({email:req.body.email}, async function (err,user) {
+    User.findOne({email:req.body.email.toLowerCase()}, async function (err,user) {
         if(err)
             res.json({status:400,message:err});
         if(user == null)
@@ -90,7 +90,7 @@ exports.index = async function(req,res) {
                 });
         });
     }
-    catch
+    catch 
     {
         res.json({status:400,message:"Invalid token"});
     }

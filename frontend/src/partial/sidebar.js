@@ -1,14 +1,14 @@
 import '../css/sidebar.css'
 import {IoIosHome,IoIosArrowForward,IoIosArrowUp,IoMdCart,IoMdFiling,IoMdPerson} from 'react-icons/io';
 import {Collapse} from 'reactstrap';
-import {RiBillFill,RiBarChart2Fill,RiSettings3Fill,RiAdminFill} from 'react-icons/ri';
+import {RiBillFill,RiBarChart2Fill,RiSettings3Fill,RiAdminFill,RiMoneyCnyBoxFill,RiProfileFill} from 'react-icons/ri';
 import {MdPersonPin} from 'react-icons/md';
 import {FaBoxes} from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {useState } from 'react';
 export default function Sidebar(props) {
-    const [state,setState] = useState({bills:false,customers:false,products:false,stocks:false,orders:false,reports:false,admin_users:false,admin_company:false,superadmin_admins:false});
+    const [state,setState] = useState({bills:false,indentures:false,customers:false,products:false,profile:false,stocks:false,orders:false,reports:false,admin_users:false,admin_company:false,superadmin_admins:false});
 
     const user = useSelector(state => state.userReducer.user);
 
@@ -49,6 +49,14 @@ export default function Sidebar(props) {
         setState({superadmin_admins:!state.superadmin_admins});
     }
 
+    const handleClickIndenture = (e) => {
+        setState({indentures:!state.indentures});
+    }
+
+    const handleClickProfile = (e) => {
+        setState({profile:!state.profile});
+    }
+
     return (
 <div class="sidenav">
     <div className="sidebar-logo">Logo</div>
@@ -67,6 +75,19 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Fatura Sorgulama</Link>
         <Link className="submenu-item" to="/">Fatura Düzenleme</Link>
         <Link className="submenu-item" to="/">Yeni Fatura</Link>
+    </div>
+    </Collapse>
+    <Link to='/' onClick={handleClickIndenture}>
+        <RiMoneyCnyBoxFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
+        <span style={{marginLeft:"5px"}}>Senetler</span> 
+        {state.bills ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+    </Link>
+    <Collapse isOpen={state.indentures}>
+    <div className="submenu">
+        <div className="submenu-heading">SENET İŞLEMLERİ</div>
+        <Link className="submenu-item" to="/">Yeni Senet</Link>
+        <Link className="submenu-item" to="/">Senet Ödeme</Link>
+        <Link className="submenu-item" to="/">Tüm Senetler</Link>
     </div>
     </Collapse>
     <Link to='/' onClick={handleClickCustomers}>
@@ -131,6 +152,20 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Satış Geçmişi</Link>
         <Link className="submenu-item" to="/">Stok Geçmişi</Link>
         <Link className="submenu-item" to="/">Fatura Geçmişi</Link>
+    </div>
+    </Collapse>
+    
+    <div className="sidebar-heading">PROFIL</div>
+    <Link to='/' onClick={handleClickProfile}>
+        <RiProfileFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
+        <span style={{marginLeft:"5px"}}>Profil</span>
+        {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+    </Link>
+    <Collapse isOpen={state.profile}>
+    <div className="submenu">
+        <div className="submenu-heading">PROFIL İŞLEMLERİ</div>
+        <Link className="submenu-item" to="/">Profilimi Görüntüle</Link>
+        <Link className="submenu-item" to="/">Profil Ayarları</Link>
     </div>
     </Collapse>
 
