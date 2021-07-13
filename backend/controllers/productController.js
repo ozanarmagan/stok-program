@@ -3,13 +3,21 @@ var Product = require('../models/productModel');
 var token = require('../utility/token');
 var pw = require('../utility/password');
 var Category = require('../models/categoryModel');
+var aqp = require('api-query-params');
 
 // Produc Controller
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Product.find(req.query,function (err,products) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Product.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,products) {
             if(err)
             {
                 res.json({

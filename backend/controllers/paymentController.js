@@ -1,11 +1,19 @@
 var Payment = require("../models/paymentModel");
 var token = require("../utility/token");
+var aqp = require('api-query-params');
 
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Payment.find(req.query,function (err,payments) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Payment.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,payments) {
             if(err)
             {
                 res.json({
