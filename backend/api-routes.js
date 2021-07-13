@@ -171,4 +171,18 @@ router.route('/products/:product_id')
     .put(productController.edit)
     .delete(productController.delete);
 
+/* DEBT ROUTES */
+var debtController = require("./controllers/debtController");
+
+router.route('/debts')
+    .get(debtController.index)
+    .post(debtController.new)
+
+router.route('/debts/:debt_id')
+    .get(debtController.view)
+    .post(debtController.edit)
+    .patch(debtController.edit)
+    .put(debtController.edit)
+    .delete(debtController.delete);
+
 module.exports = router;
