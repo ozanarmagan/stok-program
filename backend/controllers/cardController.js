@@ -1,11 +1,19 @@
 var Card = require("../models/cardModel");
 var token = require("../utility/token");
+var aqp = require('api-query-params');
 
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Card.find(req.query,function (err,cards) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Card.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,cards) {
             if(err)
             {
                 res.json({

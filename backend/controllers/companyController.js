@@ -1,11 +1,19 @@
 var Company = require("../models/companyModel");
 var token = require("../utility/token");
+var aqp = require('api-query-params');
 
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Company.find(req.query,function (err,companys) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Company.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,companys) {
             if(err)
             {
                 res.json({

@@ -2,12 +2,20 @@ var Bill = require("../models/billModel");
 var Customer = require("../models/customerModel");
 var Company = require("../models/companyCustomer");
 var token = require("../utility/token");
+var aqp = require('api-query-params');
 
 exports.index = async function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Bill.find(req.query,function (err,bills) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Bill.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,bills) {
             bills.forEach(async function (element) {
                 element.customer = await !element.is_company ? Customer.findOne({_id:element.customer_id}) : Company.findOne({_id:element.customer_id});
             });

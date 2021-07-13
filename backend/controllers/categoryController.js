@@ -1,11 +1,19 @@
 var Category = require("../models/categoryModel");
 var token = require("../utility/token");
+var aqp = require('api-query-params');
 
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Category.find(req.query,function (err,categorys) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Category.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,categorys) {
             if(err)
             {
                 res.json({

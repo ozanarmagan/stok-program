@@ -1,11 +1,19 @@
 var Indenture = require("../models/indentureModel");
 var token = require("../utility/token");
+var aqp = require('api-query-params');
 
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Indenture.find(req.query,function (err,indentures) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Indenture.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,indentures) {
             if(err)
             {
                 res.json({

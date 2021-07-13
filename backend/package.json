@@ -10,6 +10,7 @@
   "author": "ozan armagan",
   "license": "ISC",
   "dependencies": {
+    "api-query-params": "^5.0.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
