@@ -1,10 +1,10 @@
 import { Route,Switch } from "react-router-dom";
-import Home from "../pages/home";
+import HomePage from "../components/homePage";
 
 export default function PageRouter(props) {
     return (
         <Switch>
-            <Route path="/" component={Home} />
+            <Route path="/" component={HomePage} />
         </Switch>
     )
 }
