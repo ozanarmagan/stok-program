@@ -80,7 +80,7 @@ export default function Sidebar(props) {
     <Link to='/' onClick={handleClickIndenture}>
         <RiMoneyCnyBoxFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Senetler</span> 
-        {state.bills ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+        {state.indentures ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
     </Link>
     <Collapse isOpen={state.indentures}>
     <div className="submenu">
@@ -119,7 +119,7 @@ export default function Sidebar(props) {
     <Link to='/' onClick={handleClickStocks}>
         <FaBoxes style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Stok</span>
-        {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+        {state.stocks ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
     </Link>
     <Collapse isOpen={state.stocks}>
     <div className="submenu">
@@ -132,7 +132,7 @@ export default function Sidebar(props) {
     <Link to='/' onClick={handleClickOrders}>
         <IoMdCart style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke",fontSize:"17px"}}/> 
         <span style={{marginLeft:"5px"}}>Siparişler</span>
-        {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+        {state.orders ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
     </Link>
     <Collapse isOpen={state.orders}>
     <div className="submenu">
@@ -144,7 +144,7 @@ export default function Sidebar(props) {
     <Link to='/' onClick={handleClickReports}>
         <RiBarChart2Fill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Raporlar</span>
-        {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+        {state.reports ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
     </Link>
     <Collapse isOpen={state.reports}>
     <div className="submenu">
@@ -159,7 +159,7 @@ export default function Sidebar(props) {
     <Link to='/' onClick={handleClickProfile}>
         <RiProfileFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Profil</span>
-        {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+        {state.profile ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
     </Link>
     <Collapse isOpen={state.profile}>
     <div className="submenu">
@@ -176,7 +176,7 @@ export default function Sidebar(props) {
     <Link to='/' onClick={handleClickCompany}>
         <RiSettings3Fill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Şirket</span>
-        {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+        {state.admin_company? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
     </Link>
     <Collapse isOpen={state.admin_company}>
     <div className="submenu">
@@ -187,7 +187,7 @@ export default function Sidebar(props) {
     <Link to='/' onClick={handleClickUsers}>
         <IoMdPerson style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Üyelik</span>
-        {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+        {state.admin_users ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
     </Link>
     <Collapse isOpen={state.admin_users}>
     <div className="submenu">
@@ -206,7 +206,7 @@ export default function Sidebar(props) {
     <Link to='/' onClick={handleClickSuperAdmin}>
         <RiAdminFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Admin</span>
-        {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
+        {state.superadmin_admins ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
     </Link>
     <Collapse isOpen={state.superadmin_admins}>
     <div className="submenu">
