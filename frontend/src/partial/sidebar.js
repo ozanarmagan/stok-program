@@ -12,7 +12,6 @@ export default function Sidebar(props) {
 
     const user = useSelector(state => state.userReducer.user);
 
-    console.log(user);
     const handleClickBills = (e) => {
         setState({bills:!state.bills});
     }
