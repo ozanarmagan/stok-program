@@ -7,14 +7,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: multiple command
-        uses: appleboy/ssh-action@master
-        with:
-          host: 46.31.79.30
-          username: "root"
-          key: "./lorect_ssh"
-          password: ".Sh0p2@nk@."
-          port: "22"
-          script: |
-            cd ~/bilal
-            bash deploy.sh
+    - uses: actions/checkout@v2
+    - name: run ssh sh script :D
+      run: bash ssh-connection.sh
