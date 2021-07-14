@@ -47,7 +47,7 @@ export default function Login(props) {
 						Giriş
 					</span>
 
-					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+					<div class="wrap-input100 validate-input" data-validate = "Email gerekli: ex@abc.xyz">
 						<input class="input100" value={email} onChange={onChangeEmail}  type="text" name="email" placeholder="Email"/>
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
