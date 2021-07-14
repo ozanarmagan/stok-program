@@ -23,6 +23,10 @@ var userSchema = mongoose.Schema({
     user_type:{
         type:Number, /* 0 -> normal 1 -> admin 2 -> superadmin */
         required:true
+    },
+    performer_id:{
+        type:String,
+        required:true
     }
 });
 

@@ -3,13 +3,21 @@ var Product = require('../models/productModel');
 var token = require('../utility/token');
 var pw = require('../utility/password');
 var Category = require('../models/categoryModel');
+var aqp = require('api-query-params');
 
 // Produc Controller
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Product.find(req.query,function (err,products) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Product.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,products) {
             if(err)
             {
                 res.json({
@@ -22,7 +30,9 @@ exports.index = function (req,res) {
                 const products_ = [];
                 products.forEach(product => {
                     var product_category = Category.findById(product.category_id);
-                    products_.push({...product,category:product_category});
+                    var performer = await User.findOne({_id:user.user});
+                    performer.password = null;
+                    products_.push({...product,category:product_category,performer:performer});
                 });
 
                 res.json({
@@ -84,6 +94,7 @@ exports.new = function (req,res) {
         new_product.last_change_date = Date.now();
         new_product.created_date = Date.now();
         new_product.image = req.body.image;
+        new_product.performer_id = user.user;
 
         new_product.save((err) => {
             if(err) res.json({status:200,message:err});

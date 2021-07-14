@@ -1,7 +1,7 @@
 var User = require('../models/userModel');
 var token = require('../utility/token');
 var pw = require('../utility/password');
-
+var aqp = require('api-query-params');
 
 
 exports.login =  function  (req,res) {
@@ -46,7 +46,10 @@ exports.register = async function (req,res) {
     {
         var user = await User.findOne({_id:token.verifyToken(req.body.token,'access').user});
         if(user.user_type == 0 || (user.user_type == 1 && req.body.user_type == 2)) /* çalışan kullanıcı oluşturamaz ve admin superadmin oluşturamaz */
+        {
             res.json({status:401,message:'You have no permission for this request'});
+            return;
+        }
         var newuser = new User();
         newuser.email = req.body.email;
         newuser.password = pw.hash(req.body.password);
@@ -54,10 +57,12 @@ exports.register = async function (req,res) {
         newuser.surname = req.body.surname;
         newuser.created_date = Date.now();
         newuser.user_type = req.body.user_type;
-
         newuser.save((err) => {
             if(err)
+            {
                 res.json({status:400,message:err});
+                return;
+            }
             res.json({status:200,message:"User created"});
         })
     }
@@ -69,12 +74,21 @@ exports.register = async function (req,res) {
 
 
 exports.index = async function(req,res) {
+
+    const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+    console.log(filter);
     try
     {
         var user = await User.findOne({_id:token.verifyToken(req.body.token,'access').user});
         if(user.user_type == 0)
             res.json({status:400,message:"You have no permission for this request"});
-        User.find(req.query,function (err,users) {
+        User.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,users) {
             if(err)
             {
                 res.json({

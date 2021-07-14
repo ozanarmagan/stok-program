@@ -1,11 +1,23 @@
 var Card = require("../models/cardModel");
 var token = require("../utility/token");
-
+var aqp = require('api-query-params');
+var User = require("../models/userModel");
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Card.find(req.query,function (err,cards) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Card.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,cards) {
+            cards.forEach(element => {
+                element.performer = await User.findOne({_id:user.user});
+                element.performer.password = null;
+            });
             if(err)
             {
                 res.json({
@@ -73,7 +85,7 @@ exports.new = async function (req,res) {
         newcard.name = req.body.name;
         newcard.installment = req.body.installment;
         newcard.interest = req.body.interest;
-
+        newcard.performer_id = user.user;
         newcard.save((err) => {
             if(err)
                 res.json({status:400,message:err});

@@ -3,6 +3,25 @@ import {ImArrowUp2,ImArrowDown2} from 'react-icons/im';
 import {FaMinus} from 'react-icons/fa';
 import {Tooltip} from 'reactstrap';
 import Select from 'react-select';
+import {Line} from 'react-chartjs-2';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+
+
+
+function createData(customer,amount,time,type) {
+    return { customer,amount,time,type };
+  }
+  
+  const rows = [
+    createData('Ubeyd Talha Alkan', 1000, 5, 'Senet'),
+  ];
+
 export default function HomePage(props) {
 
     const options = [
@@ -118,6 +137,143 @@ export default function HomePage(props) {
                                 {option.label}a Göre Karşılaştırma
                             </Tooltip>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div className="row">
+            <div class="col-xl-4 col-lg-6">
+                <div className="card shadow mb-4">
+                    <div className="card-header">
+                        <h6 className="text-success"  style={{fontWeight:"600",fontSize:"20px"}}>Gelir</h6>
+                    </div>
+                    <div className="card-body">
+                        <Line data={ {
+                                labels: ["OcaK", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran"],
+                                datasets: [{
+                                label: "Net Kazanç",
+                                lineTension: 0.3,
+                                backgroundColor: "rgba(78, 115, 223, 0.05)",
+                                borderColor: "rgba(28,230,138, 1)",
+                                pointRadius: 3,
+                                pointBackgroundColor: "rgba(28,230,138, 1)",
+                                pointBorderColor: "rgba(28,230,138, 1)",
+                                pointHoverRadius: 3,
+                                pointHoverBackgroundColor: "rgba(28,230,138, 1)",
+                                pointHoverBorderColor: "rgba(28,230,138, 1)",
+                                pointHitRadius: 10,
+                                pointBorderWidth: 2,
+                                data: [0, 10000, 5000, 15000, 10000, 20000],
+                                }],
+                            }}
+                            legend="false"
+                            options={{plugins:{legend:false},animation:{duration:0}}}/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-6">
+                <div className="card shadow mb-4">
+                    <div className="card-header">
+                        <h6 className="text-danger" style={{fontWeight:"600",fontSize:"20px"}}>Gider</h6>
+                    </div>
+                    <div className="card-body">
+                        <Line data={ {
+                                labels: ["OcaK", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran"],
+                                datasets: [{
+                                label: "Gider",
+                                lineTension: 0.3,
+                                backgroundColor: "rgba(78, 115, 223, 0.05)",
+                                borderColor: "rgba(220,53,69, 1)",
+                                pointRadius: 3,
+                                pointBackgroundColor: "rgba(220,53,69, 1)",
+                                pointBorderColor: "rgba(220,53,69, 1)",
+                                pointHoverRadius: 3,
+                                pointHoverBackgroundColor: "rgba(220,53,69, 1)",
+                                pointHoverBorderColor: "rgba(220,53,69, 1)",
+                                pointHitRadius: 10,
+                                pointBorderWidth: 2,
+                                data: [0, 10000, 5000, 15000, 10000, 20000],
+                                }],
+                            }}
+                            legend="false"
+                            options={{plugins:{legend:false},animation:{duration:0}}}/>
+                    </div>
+                </div>
+            </div>
+
+            <div className="col-xl-4 col-lg-6">
+                <div className="card shadow mb-4">
+                    <div className="card-header">
+                        <h6 className="text-primary" style={{fontWeight:"600",fontSize:"20px"}}>Net</h6>
+                    </div>
+                    <div className="card-body">
+                        <Line data={ {
+                                labels: ["OcaK", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran"],
+                                datasets: [{
+                                label: "Gider",
+                                lineTension: 0.3,
+                                backgroundColor: "rgba(78, 115, 223, 0.05)",
+                                borderColor: "rgba(13,110,253, 1)",
+                                pointRadius: 3,
+                                pointBackgroundColor: "rgba(13,110,253, 1)",
+                                pointBorderColor: "rgba(13,110,253, 1)",
+                                pointHoverRadius: 3,
+                                pointHoverBackgroundColor: "rgba(13,110,253, 1)",
+                                pointHoverBorderColor: "rgba(13,110,253, 1)",
+                                pointHitRadius: 10,
+                                pointBorderWidth: 2,
+                                data: [0, 10000, 5000, 15000, 10000, 20000],
+                                }],
+                            }}
+                            legend="false"
+                            options={{plugins:{legend:false},animation:{duration:0}}}/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div className="row">
+            <div className="col-xl-6 col-lg-6">
+                <div className="card shadow mb-4">
+                    <div className="card-header">
+                        <h5 style={{fontWeight:"500"}}>Vadesi Yaklaşan Alacaklar</h5>
+                    </div>
+                    <div className="card-body">
+                    <TableContainer component={Paper}>
+                        <Table  aria-label="simple table">
+                            <TableHead>
+                            <TableRow>
+                                <TableCell>Müşteri</TableCell>
+                                <TableCell align="right">Miktar</TableCell>
+                                <TableCell align="right">Kalan Gün</TableCell>
+                                <TableCell align="right">Ödeme Türü</TableCell>
+                            </TableRow>
+                            </TableHead>
+                            <TableBody>
+                            {rows.map((row) => (
+                                <TableRow key={row.customer}>
+                                <TableCell component="th" scope="row">
+                                    {row.customer}
+                                </TableCell>
+                                <TableCell align="right">{row.amount}</TableCell>
+                                <TableCell align="right">{row.time}</TableCell>
+                                <TableCell align="right">{row.type}</TableCell>
+                                </TableRow>
+                            ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    </div>
+                </div>
+            </div>
+            <div className="col-xl-6 col-lg-6">
+                <div className="card shadow mb-4">
+                    <div className="card-header">
+                        <h5 style={{fontWeight:"500"}}>Vadesi Yaklaşan Ödemeler</h5>
+                    </div>
+                    <div className="card-body">
+                        Boş
                     </div>
                 </div>
             </div>

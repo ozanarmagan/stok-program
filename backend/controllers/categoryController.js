@@ -1,11 +1,23 @@
 var Category = require("../models/categoryModel");
 var token = require("../utility/token");
-
+var aqp = require('api-query-params');
+var User = require("../models/userModel")
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Category.find(req.query,function (err,categorys) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Category.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,categorys) {
+            categorys.forEach(element => {
+                element.performer = await User.findOne({_id:user.user});
+                element.performer.password = null;
+            });
             if(err)
             {
                 res.json({
@@ -36,18 +48,7 @@ exports.edit = function (req,res) {
             Category.findById(req.params.category_id,function (err,categorytoedit) {
                 categorytoedit.name = req.body.name || categorytoedit.name ;
                 categorytoedit.tax_Rate = req.body.tax_Rate || categorytoedit.tax_Rate;
-                categorytoedit.interest_2 = req.body.interest_2 || categorytoedit.interest_2;
-                categorytoedit.interest_4 = req.body.interest_4 || categorytoedit.interest_4;
-                categorytoedit.interest_6 = req.body.interest_6 || categorytoedit.interest_6;
-                categorytoedit.interest_8 = req.body.interest_8 || categorytoedit.interest_8;
-                categorytoedit.interest_10 = req.body.interest_10 || categorytoedit.interest_10;
-                categorytoedit.interest_12 = req.body.interest_12 || categorytoedit.interest_12;
-                categorytoedit.interest_14 = req.body.interest_14 || categorytoedit.interest_14;
-                categorytoedit.interest_16 = req.body.interest_16 || categorytoedit.interest_16;
-                categorytoedit.interest_18 = req.body.interest_18 || categorytoedit.interest_18;
-                categorytoedit.interest_20 = req.body.interest_20 || categorytoedit.interest_20;
-                categorytoedit.interest_22 = req.body.interest_22 || categorytoedit.interest_22;
-                categorytoedit.interest_24 = req.body.interest_24 || categorytoedit.interest_24;
+                categorytoedit.interests = req.body.interests || categorytoedit.interests;
 
                 categorytoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
             })
@@ -83,19 +84,8 @@ exports.new = async function (req,res) {
         var newcategory = new Category();
         newcategory.name = req.body.name;
         newcategory.tax_Rate = req.body.tax_Rate;
-        newcategory.interest_2 = req.body.interest_2;
-        newcategory.interest_4 = req.body.interest_4;
-        newcategory.interest_6 = req.body.interest_6;
-        newcategory.interest_8 = req.body.interest_8;
-        newcategory.interest_10 = req.body.interest_10;
-        newcategory.interest_12 = req.body.interest_12;
-        newcategory.interest_14 = req.body.interest_14;
-        newcategory.interest_16 = req.body.interest_16;
-        newcategory.interest_18 = req.body.interest_18;
-        newcategory.interest_20 = req.body.interest_20;
-        newcategory.interest_22 = req.body.interest_22;
-        newcategory.interest_24 = req.body.interest_24;
-
+        newcategory.interests = req.body.interests;
+        newcategory.performer_id = user.user;
 
         newcategory.save((err) => {
             if(err)

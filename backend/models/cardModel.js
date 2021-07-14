@@ -13,6 +13,10 @@ var cardSchema = mongoose.Schema({
         type:Number,
         required:true
     },
+    performer_id:{
+        type:String,
+        required:true
+    }
 });
 
 var Card = module.exports = mongoose.model('card',cardSchema);

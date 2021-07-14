@@ -20,6 +20,10 @@ var paymentSchema = mongoose.Schema({
     },
     customer_id:{
         type:String
+    },
+    performer_id:{
+        type:String,
+        required:true
     }
 });
 

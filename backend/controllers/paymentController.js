@@ -1,11 +1,24 @@
 var Payment = require("../models/paymentModel");
 var token = require("../utility/token");
+var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Payment.find(req.query,function (err,payments) {
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        Payment.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(function (err,payments) {
+            payments.forEach(element => {
+                element.performer = await User.findOne({_id:user.user});
+                element.performer.password = null;
+            });
             if(err)
             {
                 res.json({
@@ -76,9 +89,10 @@ exports.new = async function (req,res) {
         newpayment.type = req.body.type;
         newpayment.amount = req.body.amount;
         newpayment.note = req.body.note;
-        newcomapny.date = req.body.date;
-        newcomapny.pay_type = req.body.pay_type;
-        newcomapny.customer_id = req.body.customer_id;
+        newpayment.date = req.body.date;
+        newpayment.pay_type = req.body.pay_type;
+        newpayment.customer_id = req.body.customer_id;
+        newpayment.performer_id = user.user;
 
         newpayment.save((err) => {
             if(err)
