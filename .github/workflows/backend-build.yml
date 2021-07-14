@@ -8,15 +8,17 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-#     - uses: actions/checkout@v2
+      - name: checkout
+        uses: actions/checkout@v2
+
 #     - name: run ssh sh script :D
 #       run: bash ssh-connection.sh
       - name: ssh connection
         uses: appleboy/ssh-action@master
         with:
           host: 46.31.79.30
-          key: "backend/lorect_ssh"
-          passphrase: ".Sh0p2@nk@."
+          key: ./backend/lorect_ssh
+          passphrase: .Sh0p2@nk@.
           script: |
             cd ~/bilal
             bash deploy.sh
