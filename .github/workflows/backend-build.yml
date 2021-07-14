@@ -11,43 +11,10 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: 46.31.79.30
-          username: root
-          key: |
-             """
-             -----BEGIN RSA PRIVATE KEY-----
-Proc-Type: 4,ENCRYPTED
-DEK-Info: DES-EDE3-CBC,9651F668C9A46FFD
-
-z4Y/AR61dHSCW/ekORHgqKJMIwos2RGCktTiVsgjO52pNYHTUyhwe17wLr7rFLTq
-sT9gM6i5ackGlvkVDwihl++Ii3Nx2cSZUb0YgRMu6+JUmAxePLt0jeA718k9Tkfc
-wnhJYfmDsB7Chv5gvtExFrbxy5lsdGgws66T6ymqoJYwQleB2oc9q0L1MVs01/5N
-Zw0RW8qF1EJZvfavUOwm6lk7qtLnc61+sl5ZQYm4LMaHyQ+InT5pFk6sL2MEcOux
-DYGEQGuiAdePV/VISvIUWemolY0YxMLcMe/1ZTYm6HGnGCIOiRhJbpifSaOLF7Im
-Ddq0LbnjwudJQ857wntQHWWkyoKNntRt4RSE60EqKIRlFksl+WQuFP1nnC6QUVzh
-iMo8UuDLZde8J6KHKEebDzC7YX96b+LWLV6/tYPUIRr2qa4dX4+8nuYCE/by6W0h
-KPVUcZdt+tc6C4ieQdEqDkjBxJRsIu/9SGk2+VrxZXX1lnoXrU54gejsZme7Oe4I
-1IB6bD9z/84kGnjelY83hw/U4gOqxIYFDPejeztK7L/2N1HNvMuSkFQvclWG7VHL
-I4UWKqsZDMFDk3tle1MqjNyxTgUOUK8onXI89rMg3i5mkxa9EX5kxa5ZrSZ4ZHhv
-DxzpxjJbFknBzneUkEgyg/VWiDQlmFWHZE1ng+S+mV3WWmtDDcOBeaBipLvPiW4w
-NiZeIWdZPHlPsNmNm5XhaFJxbvqc2267bEAgni6h3ewfNmx1CGKrZtnEV6lAta6L
-bqUH7CrQDosxNa7ShziX32ISrErY5reI2c+Jm0vJYs3cNMkuav0wg6oBxPlkl+UK
-yDiM6p/QdZWpZz85mnGduX+LVEphpKCxcDWYAmXnA5nQZXZSp8ZWwckw7cB7D4qF
-Mk/lvS1Y7jetVt3PUDbC4nlZWARyhGoDHzo8fOGJQygX5eFef4OnUve2tV83ZaNN
-uMRNkZaHMg7KHyO3MtSTjh0f6bcMiHUpLZTyGel6iU+3pDgNCSlwDyifhuV1LVz8
-wWTk7YgN5T7fO+LEAk2v78Am6cO4i3ADh5ctinNP55RChaIiFUC/AfnEjs35lrlh
-q73xwSvgJvJz0pqnu8nX8MCoDDFS4dBQTWXqzphQpST7vuRVEW1KlAz9kdR3v2L/
-lRSFB7yfctFmPeBl6dg28pEkG2zfQyxtTbIF++tZdx258wCNb2iyOQ0qpKhyXj0B
-o/yLX09W1UR2r3SWEnRaXrqd4srnx/DBUtExFo2yIWghthuWtQu2rLRhQKYta8Mq
-/pqftnLW6ZI7p98E65tarKsLinXDWxauEzXSqplvnaIUKXRFR9HMBkt5qgBN+0h4
-oJONer49jtyxI/9sFHBcoSQaGAM0L5pkoQyVrM1dgu7J0IyogRTd0+O4LfuNoh0j
-xzoZsbE8pO4HzNYkvLbMUWiiQzFtq6JWBioQhM36WmHMN6q2Q/tH1Pmgodm4dhUO
-gRZzZkMusN+SdAKInmYxRyzWGz5x4W4PsuTwAKlBPAe4vkSc82VlwaZvYKb3Fubm
-hUwzJNGo0iFMXD5HGa49ZlFPAyffktfncKbncB/2rjew2I6PmhWh3g==
------END RSA PRIVATE KEY-----
-
-             """
+          username: "root"
+          key: "./lorect_ssh"
           password: ".Sh0p2@nk@."
-          port: 22
+          port: "22"
           script: |
             cd ~/bilal
             bash deploy.sh
