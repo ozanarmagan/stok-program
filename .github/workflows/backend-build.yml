@@ -7,6 +7,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: çıktı
-        run: echo "backend build çıktısı"
+    - uses: actions/checkout@v2
+    - name: run ssh sh script :D
+      run: bash ssh-connection.sh
