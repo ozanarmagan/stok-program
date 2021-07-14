@@ -10,7 +10,7 @@ jobs:
         - name: Set the value
           id: step_one
           run: |
-            cat lorect_ssh
+            cat ./backend/lorect_ssh
 #       - name: multiple command
 #         uses: appleboy/ssh-action@master
 #         with:
