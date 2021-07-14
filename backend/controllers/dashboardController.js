@@ -40,16 +40,39 @@ exports.index = async function (req,res) {
 
         var date = new Date(req.query.since);
         var d2 = date;
+        var d3 = date;
+        var data = [];
         switch(parseInt(req.query.range))
         {
             case 0:
                 date.setMonth(date.getMonth() - 1);
+                for(var i = 0; i < 30;i++)
+                {
+                    var e1 = await Payments.countDocuments({created_date:d3}).exec();
+                    var e2 = await Payments.countDocuments({created_date:d3}).exec(); 
+                    data.push({e1,e2});
+                    d3.setDate(d3.getDate() - 1);
+                }
                 break;
             case 1:
                 date.setMonth(date.getMonth() - 3);
+                for(var i = 0; i < 30;i++)
+                {
+                    var e1 = await Payments.countDocuments({created_date:d3}).exec();
+                    var e2 = await Payments.countDocuments({created_date:d3}).exec(); 
+                    data.push({e1,e2});
+                    d3.setDate(d3.getDate() - 10);
+                }
                 break;
             case 2:
                 date.setMonth(date.getMonth() - 6);
+                for(var i = 0; i < 30;i++)
+                {
+                    var e1 = await Payments.countDocuments({created_date:d3}).exec();
+                    var e2 = await Payments.countDocuments({created_date:d3}).exec(); 
+                    data.push({e1,e2});
+                    d3.setDate(d3.getDate() - 20);
+                }
                 break;
             default:
                 break;
@@ -127,7 +150,8 @@ exports.index = async function (req,res) {
             difference_paid: diff_paid.toFixed(2),
             total_debts:total_debts.total_debts,
             total_debts_prev:total_debts_prev.total_debts,
-            difference_debt:diff_debts.toFixed(2) 
+            difference_debt:diff_debts.toFixed(2),
+            data:data
         }
         res.json(obj)
     }

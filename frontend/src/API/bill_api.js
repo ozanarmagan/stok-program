@@ -7,7 +7,7 @@ export async function apiGetBilling(){
 }
 
 export async function apiPostBilling(customer_id,products,created_date,pay_type,is_company){
-    return axios.post(API_URL +"login/",{
+    return axios.post(API_URL +"bills/",{
         customer_id:customer_id,
         products:products,
         created_date:created_date,
