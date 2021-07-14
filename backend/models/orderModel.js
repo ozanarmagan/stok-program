@@ -18,15 +18,17 @@ var orderSchema = mongoose.Schema({
     card_installment:{
         type:Number,
     },
-    product_id:{
-        type:String,
-    },
-    product_amount:{
-        type:Number,
-    },
+    products:[{
+        id:String,
+        amount:Number
+    }],
     is_sold:{
         type:Boolean,  /* fatura kesilip satıldı mı */ 
         default:false
+    },
+    performer_id:{
+        type:String,
+        required:true
     }
 });
 

@@ -36,7 +36,12 @@ var companyCustomerSchema = mongoose.Schema({
     },
     total_paid: {
         type:Number
+    },
+    performer_id:{
+        type:String,
+        required:true
     }
+    
 });
 
 var CompanyCustomer = module.exports = mongoose.model('companyCustomer',companyCustomerSchema);

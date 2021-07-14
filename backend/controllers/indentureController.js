@@ -1,6 +1,7 @@
 var Indenture = require("../models/indentureModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
@@ -14,6 +15,10 @@ exports.index = function (req,res) {
         .select(projection)
         .populate(population)
         .exec(function (err,indentures) {
+            indentures.forEach(element => {
+                element.performer = await User.findOne({_id:user.user});
+                element.performer.password = null;
+            });
             if(err)
             {
                 res.json({
@@ -83,8 +88,9 @@ exports.new = async function (req,res) {
         newindenture.customer_id = req.body.customer_id;
         newindenture.count = req.body.count;
         newindenture.paid_count = req.body.paid_count;
-        newcomapny.total_amount = req.body.total_amount;
-        newcomapny.paid_amount = req.body.paid_amount;
+        newindenture.total_amount = req.body.total_amount;
+        newindenture.paid_amount = req.body.paid_amount;
+        newindenture.performer_id = req.body.performer_id;
 
         newindenture.save((err) => {
             if(err)

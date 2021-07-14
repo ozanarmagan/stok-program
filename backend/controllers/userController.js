@@ -57,7 +57,6 @@ exports.register = async function (req,res) {
         newuser.surname = req.body.surname;
         newuser.created_date = Date.now();
         newuser.user_type = req.body.user_type;
-
         newuser.save((err) => {
             if(err)
             {

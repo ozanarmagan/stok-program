@@ -1,6 +1,7 @@
 var Customer = require("../models/customerModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
@@ -14,6 +15,10 @@ exports.index = function (req,res) {
         .select(projection)
         .populate(population)
         .exec(function (err,customers) {
+            customers.forEach(element => {
+                element.performer = await User.findOne({_id:user.user});
+                element.performer.password = null;
+            });
             if(err)
             {
                 res.json({
@@ -84,11 +89,12 @@ exports.new = async function (req,res) {
         var newcustomer = new Customer();
         newcustomer.name = req.body.name;
         newcustomer.address = req.body.address;
-        newcomapny.phone = req.body.phone;
-        newcomapny.tax_no = req.body.tax_no;
-        newcomapny.tax_place = req.body.tax_place;
-        newcomapny.note = req.body.note;
-        newcomapny.debtlimit = req.body.debtlimit;
+        newcustomer.phone = req.body.phone;
+        newcustomer.tax_no = req.body.tax_no;
+        newcustomer.tax_place = req.body.tax_place;
+        newcustomer.note = req.body.note;
+        newcustomer.debtlimit = req.body.debtlimit;
+        newcustomer.performer_id = user.user;
 
         newcustomer.save((err) => {
             if(err)

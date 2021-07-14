@@ -49,6 +49,10 @@ var productSchema = mongoose.Schema({
     },
     image: {
         type:Buffer
+    },
+    performer_id:{
+        type:String,
+        required:true
     }
 });
 

@@ -18,6 +18,10 @@ var debtSchema = mongoose.Schema({
     deadline: {
         type:Date,
         required:true
+    },
+    performer_id:{
+        type:String,
+        required:true
     }
 });
 

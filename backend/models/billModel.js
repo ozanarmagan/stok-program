@@ -19,6 +19,10 @@ var billSchema = mongoose.Schema({
     },
     is_company: {
         type:Boolean,
+    },
+    performer_id:{   /* ekleyen kişi id */
+        type:String,
+        required:true
     }
 });
 

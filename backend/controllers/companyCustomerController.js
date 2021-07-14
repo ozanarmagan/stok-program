@@ -1,6 +1,7 @@
 var Company = require("../models/companyCustomer");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
@@ -14,6 +15,10 @@ exports.index = function (req,res) {
         .select(projection)
         .populate(population)
         .exec(function (err,companys) {
+            companys.forEach(element => {
+                element.performer = await User.findOne({_id:user.user});
+                element.performer.password = null;
+            });
             if(err)
             {
                 res.json({
@@ -88,13 +93,14 @@ exports.new = async function (req,res) {
         newcompany.name = req.body.name;
         newcompany.owner = req.body.owner;
         newcompany.address = req.body.address;
-        newcomapny.phone_gsm = req.body.phone_gsm;
-        newcomapny.phone = req.body.phone;
-        newcomapny.fax = req.body.fax;
-        newcomapny.tax_no = req.body.tax_no;
-        newcomapny.tax_place = req.body.tax_place;
-        newcomapny.total_debt = req.body.total_debt;
-        newcomapny.total_paid = req.body.total_paid;
+        newcompany.phone_gsm = req.body.phone_gsm;
+        newcompany.phone = req.body.phone;
+        newcompany.fax = req.body.fax;
+        newcompany.tax_no = req.body.tax_no;
+        newcompany.tax_place = req.body.tax_place;
+        newcompany.total_debt = req.body.total_debt;
+        newcompany.total_paid = req.body.total_paid;
+        newcompany.performer_id = user.user;
 
         newcompany.save((err) => {
             if(err)

@@ -1,6 +1,7 @@
 var Debt = require("../models/debtModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
@@ -14,6 +15,10 @@ exports.index = function (req,res) {
         .select(projection)
         .populate(population)
         .exec(function (err,debts) {
+            debts.forEach(element => {
+                element.performer = await User.findOne({_id:user.user});
+                element.performer.password = null;
+            });
             if(err)
             {
                 res.json({
@@ -83,8 +88,9 @@ exports.new = async function (req,res) {
         newdebt.customer_id = req.body.customer_id;
         newdebt.amount = req.body.amount;
         newdebt.customer_type = req.body.customer_type;
-        newcomapny.note = req.body.note;
-        newcomapny.deadline = req.body.deadline;
+        newdebt.note = req.body.note;
+        newdebt.deadline = req.body.deadline;
+        newdebt.performer_id = req.body.performer;
 
         newdebt.save((err) => {
             if(err)
