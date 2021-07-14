@@ -9,4 +9,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: run ssh sh script :D
-    - run: bash ssh-connection.sh
+      run: bash ssh-connection.sh
