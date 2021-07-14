@@ -13,7 +13,7 @@ jobs:
           host: 46.31.79.30
           username: "root"
           key: "./lorect_ssh"
-          password: ".Sh0p2@nk@."
+#           password: ".Sh0p2@nk@."
           port: "22"
           script: |
             cd ~/bilal
