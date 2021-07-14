@@ -7,6 +7,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: çıktı
-        run: echo "backend build çıktısı"
+      - name: multiple command
+        uses: appleboy/ssh-action@master
+        with:
+          host: 46.31.79.30
+          username: "root"
+          key: "./lorect_ssh"
+          password: ".Sh0p2@nk@."
+          port: "22"
+          script: |
+            cd ~/bilal
+            bash deploy.sh

@@ -20,7 +20,7 @@ exports.index = async function (req,res) {
             bills.forEach(async function (element) {
                 element.customer = await !element.is_company ? Customer.findOne({_id:element.customer_id}) : Company.findOne({_id:element.customer_id});
                 element.performer = await User.findOne({_id:user.user});
-                element.performer.password = null;
+                element.performer = element.performer.name + " " + element.performer.surname;
             });
             if(err)
             {

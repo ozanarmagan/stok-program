@@ -28,10 +28,10 @@ exports.index = function (req,res) {
             }
             else{
                 const products_ = [];
-                products.forEach(product => {
+                products.forEach(async product => {
                     var product_category = Category.findById(product.category_id);
                     var performer = await User.findOne({_id:user.user});
-                    performer.password = null;
+                    element.performer = element.performer.name + " " + element.performer.surname;
                     products_.push({...product,category:product_category,performer:performer});
                 });
 
