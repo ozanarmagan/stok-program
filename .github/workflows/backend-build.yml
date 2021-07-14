@@ -10,7 +10,7 @@ jobs:
         - name: Set the value
           id: step_one
           run: |
-            ls
+            ls -la
 #       - name: multiple command
 #         uses: appleboy/ssh-action@master
 #         with:
