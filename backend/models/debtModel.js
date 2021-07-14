@@ -19,6 +19,14 @@ var debtSchema = mongoose.Schema({
         type:Date,
         required:true
     },
+    created_date: {
+        type:Date,
+        required:true
+    },
+    is_paid: {
+        type:Boolean,
+        default:false
+    },
     performer_id:{
         type:String,
         required:true

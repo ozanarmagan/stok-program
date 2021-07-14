@@ -14,9 +14,9 @@ exports.index = function (req,res) {
         .select(projection)
         .populate(population)
         .exec(function (err,categorys) {
-            categorys.forEach(element => {
+            categorys.forEach(async element => {
                 element.performer = await User.findOne({_id:user.user});
-                element.performer.password = null;
+                element.performer = element.performer.name + " " + element.performer.surname;
             });
             if(err)
             {

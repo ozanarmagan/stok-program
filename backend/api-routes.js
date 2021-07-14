@@ -185,4 +185,13 @@ router.route('/debts/:debt_id')
     .put(debtController.edit)
     .delete(debtController.delete);
 
+
+
+/* DASHBOARD ROUTES */
+var dashboardController = require("./controllers/dashboardController");
+
+router.route('/dashboard')
+    .get(dashboardController.index)
+    .post(dashboardController.index)
+
 module.exports = router;

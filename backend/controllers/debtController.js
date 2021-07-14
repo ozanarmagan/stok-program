@@ -15,9 +15,9 @@ exports.index = function (req,res) {
         .select(projection)
         .populate(population)
         .exec(function (err,debts) {
-            debts.forEach(element => {
+            debts.forEach(async element => {
                 element.performer = await User.findOne({_id:user.user});
-                element.performer.password = null;
+                element.performer = element.performer.name + " " + element.performer.surname;
             });
             if(err)
             {
@@ -52,6 +52,7 @@ exports.edit = function (req,res) {
                 debttoedit.customer_type = req.body.customer_type || debttoedit.customer_type;
                 debttoedit.note = req.body.note || debttoedit.note;
                 debttoedit.deadline = req.body.deadline || debttoedit.deadline;
+                debttoedit.is_paid = req.body.is_paid || debttoedit.is_paid;
 
                 debttoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
             })
@@ -90,7 +91,10 @@ exports.new = async function (req,res) {
         newdebt.customer_type = req.body.customer_type;
         newdebt.note = req.body.note;
         newdebt.deadline = req.body.deadline;
-        newdebt.performer_id = req.body.performer;
+        newdebt.performer_id = user.user;
+        newdebt.is_paid = req.body.is_paid || false;
+        newdebt.created_date = Date.now();
+
 
         newdebt.save((err) => {
             if(err)
