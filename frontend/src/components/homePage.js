@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {ImArrowUp2,ImArrowDown2} from 'react-icons/im';
 import {FaMinus} from 'react-icons/fa';
 import {Tooltip} from 'reactstrap';
@@ -11,8 +11,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
-
+import moment from 'moment';
+import axios from 'axios';
+import { API_URL } from '../constants/api_constant';
+import { useSelector } from 'react-redux';
+import tr from "moment/locale/tr";
 
 function createData(customer,amount,time,type) {
     return { customer,amount,time,type };
@@ -22,15 +25,45 @@ function createData(customer,amount,time,type) {
     createData('Ubeyd Talha Alkan', 1000, 5, 'Senet'),
   ];
 
+
+  moment().locale("tr",tr);
+
 export default function HomePage(props) {
 
     const options = [
-        {value:'lastmonth',label:"Son 1 Ay"},
-        {value:'last3months',label:"Son 3 Ay"},
-        {value:'last6months',label:"Son 6 Ay"}
+        {value:0,label:"Son 1 Ay"},
+        {value:1,label:"Son 3 Ay"},
+        {value:2,label:"Son 6 Ay"}
     ]
     
+    const token = useSelector(state => state.userReducer.user.access_token)
+
     const [netToolTip,setNet] = useState(false);
+
+    const [dataP,setDataP] = useState([]);
+
+    const [netRev,setNetR] = useState(0);
+
+    const [tPaid,setTpaid] = useState(0);
+
+    const [tDebt,setTdebt] = useState(0);
+
+    const [tBills,setTbills] = useState(0);
+
+
+    const [pnetRev,setNetRp] = useState(0);
+
+    const [ptPaid,setTpaidp] = useState(0);
+
+    const [ptDebt,setTdebtp] = useState(0);
+
+    const [ptBills,setTbillsp] = useState(0);
+
+    const [dataO,setDataO] = useState([]);
+
+    const [dataN,setDataN] = useState([]);
+
+    const [label,setLabel] = useState([]);
 
     const [incomeToolTip,setIncome] = useState(false);
 
@@ -48,7 +81,133 @@ export default function HomePage(props) {
 
     const toggleSell = () => setSell(!sellToolTip);
 
-    const onSelect = (selected) => setOpt(selected);
+    const fetch =  async function () {
+        var labels = [];
+        var date = moment().subtract(1,'month');
+        var res = await axios.get(API_URL+"dashboard?token="+token+"&since="+date.format("YYYY-MM-DD") + "&range=" + option.value);
+        var dataP_ = [];
+        var dataO_ = [];
+        var dataN_ = [];
+        
+        for(var i = 29;i>=0;i--)
+        {
+            dataP_.push(res.data.data[i].e1);
+            dataO_.push(res.data.data[i].e2);
+            dataN_.push(res.data.data[i].e1 - res.data.data[i].e2);
+        }
+        setNetR(res.data.total_paid - res.data.total_debts);
+        setTpaid(res.data.total_paid);
+        setTdebt(res.data.total_debts);
+        setTbills(res.data.count);
+        setNetRp(parseFloat(res.data.difference_net));
+        setTpaidp(parseFloat(res.data.difference_paid));
+        setTdebtp(parseFloat(res.data.difference_debt));
+        setTbills(parseFloat(res.data.difference_count));
+        setTpaid(res.data.total_paid);
+        setTdebt(res.data.total_debts);
+        setTbills(res.data.count);
+        setDataP(dataP_);
+        console.log(dataP_);
+        setDataO(dataO_);
+        setDataN(dataN_);
+        var d = moment();
+        for(i=0;i < 30;i++)
+        {
+
+            labels.push(d.format("Do MMM"));
+            switch(option.value)
+            {
+                case 0:
+                    d.subtract(1,'day');
+                    break;
+                case 1:
+                    d.subtract(3,'day');
+                    break;
+                case 2:
+                    d.subtract(6,'day');
+                    break;
+                default:
+                    break;
+            }
+        }
+        labels.reverse();
+        setLabel(labels);
+    }
+
+    useEffect(() => {
+        fetch();
+    },[]);
+
+    const onSelect = async (selected) => {
+        if(selected === option)
+            return;
+        setOpt(selected);
+
+        switch(selected.value)
+        {
+            case 0:
+                var date = moment().subtract(1,'month');
+                break;
+            case 1:
+                date = moment().subtract(3,'month');
+                break;
+            case 2:
+                date = moment().subtract(6,'month');
+                break;
+            default:
+                break;
+        }
+        
+
+        var labels = [];
+        var d = moment();
+        for(var i=0;i < 30;i++)
+        {
+            labels.push(d.format("Do MMM"));
+            switch(selected.value)
+            {
+                case 0:
+                    d.subtract(1,'day');
+                    break;
+                case 1:
+                    d.subtract(3,'day');
+                    break;
+                case 2:
+                    d.subtract(6,'day');
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        labels.reverse();
+    
+        setLabel(labels);
+
+        var res = await axios.get(API_URL+"dashboard?token="+token+"&since="+date.format("YYYY-MM-DD") + "&range=" + selected.value);
+        
+        var dataP_ = [];
+        var dataO_ = [];
+        var dataN_ = [];
+        for(i = 29;i>=0;i--)
+        {
+            dataP_.push(res.data.data[i].e1);
+            dataO_.push(res.data.data[i].e2);
+            dataN_.push(res.data.data[i].e1 - res.data.data[i].e2);
+        }
+
+        setDataP(dataP_);
+        setNetR(res.data.total_paid - res.data.total_debts);
+        setTpaid(res.data.total_paid);
+        setTdebt(res.data.total_debts);
+        setTbills(res.data.count);
+        setNetRp(parseFloat(res.data.difference_net));
+        setTpaidp(parseFloat(res.data.difference_paid));
+        setTdebtp(parseFloat(res.data.difference_debt));
+        setTbills(parseFloat(res.data.difference_count));
+        setDataO(dataO_);
+        setDataN(dataN_);
+    }
 
 
     return(
@@ -64,14 +223,16 @@ export default function HomePage(props) {
                             <div className="col mr-2">
                                 <div className="text-xs  text-primary text-uppercase mb-1" style={{fontWeight:"800"}}>
                                     Net Kazanç</div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">20000 ₺</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{netRev} ₺</div>
                             </div>
                             <div className="col-auto align-middle" id="net">
-                                <ImArrowUp2 className="d-block" style={{color:'green',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/>
-                                <span className="d-block" style={{color:'green',fontSize:"14px",fontWeight:"600"}}>%15.74</span>
+                                {pnetRev === 0 ?  <FaMinus className="d-block" style={{color:'black',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/> :  
+                                (pnetRev > 0  ?  <ImArrowUp2 className="d-block" style={{color:'green',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/> : <ImArrowDown2 className="d-block" style={{color:'red',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/>)
+                                }
+                                <span className="d-block" style={{color:pnetRev === 0  ? 'black' : (pnetRev > 0 ? 'green' : 'red') ,fontSize:"14px",fontWeight:"600"}}>%{Math.abs(pnetRev).toFixed(2)}</span>
                             </div>
                             <Tooltip placement="bottom" isOpen={netToolTip} target="net" toggle={toggleNet}>
-                                {option.label}a Göre Karşılaştırma
+                                Önceki Döneme Göre Karşılaştırma
                             </Tooltip>
                         </div>
                     </div>
@@ -85,14 +246,16 @@ export default function HomePage(props) {
                             <div className="col mr-2">
                                 <div className="text-xs  text-success text-uppercase mb-1" style={{fontWeight:"800"}}>
                                     Gelir</div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">40000 ₺</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{tPaid} ₺</div>
                             </div>
                             <div className="col-auto align-middle text-center" id="income">
-                                <ImArrowDown2 className="d-block" style={{color:'red',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/>
-                                <span className="d-block" style={{color:'red',fontSize:"14px",fontWeight:"600"}}>-%10.82</span>
+                            {ptPaid === 0 ?  <FaMinus className="d-block" style={{color:'black',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/> :  
+                                (ptPaid > 0  ?  <ImArrowUp2 className="d-block" style={{color:'green',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/> : <ImArrowDown2 className="d-block" style={{color:'red',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/>)
+                                }
+                                <span className="d-block" style={{color:ptPaid === 0  ? 'black' : (ptPaid > 0 ? 'green' : 'red') ,fontSize:"14px",fontWeight:"600"}}>%{Math.abs(ptPaid).toFixed(2)}</span>
                             </div>
                             <Tooltip placement="bottom" isOpen={incomeToolTip} target="income" toggle={toggleIn}>
-                                {option.label}a Göre Karşılaştırma
+                                Önceki Döneme Göre Karşılaştırma
                             </Tooltip>
                         </div>
                     </div>
@@ -106,14 +269,16 @@ export default function HomePage(props) {
                             <div className="col mr-2">
                                 <div className="text-xs  text-danger text-uppercase mb-1" style={{fontWeight:"800"}}>
                                     Gider</div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">20000 ₺</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{tDebt} ₺</div>
                             </div>
                             <div className="col-auto align-middle text-center" id="outcome">
-                                <FaMinus className="d-block" style={{color:'black',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/>
-                                <span className="d-block" style={{color:'black',fontSize:"14px",fontWeight:"600"}}>%0.00</span>
+                            {ptDebt === 0 ?  <FaMinus className="d-block" style={{color:'black',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/> :  
+                                (ptDebt > 0  ?  <ImArrowUp2 className="d-block" style={{color:'green',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/> : <ImArrowDown2 className="d-block" style={{color:'red',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/>)
+                                }
+                                <span className="d-block" style={{color:ptDebt === 0  ? 'black' : (ptDebt > 0 ? 'green' : 'red') ,fontSize:"14px",fontWeight:"600"}}>%{Math.abs(ptDebt).toFixed(2)}</span>
                             </div>
                             <Tooltip placement="bottom" isOpen={outcomeToolTip} target="outcome" toggle={toggleOut}>
-                                {option.label}a Göre Karşılaştırma
+                                Önceki Döneme Göre Karşılaştırma
                             </Tooltip>
                         </div>
                     </div>
@@ -127,14 +292,16 @@ export default function HomePage(props) {
                             <div className="col mr-2">
                                 <div className="text-xs  text-warning text-uppercase mb-1" style={{fontWeight:"800"}}>
                                     Satış Sayısı</div>
-                                <div className="h5 mb-0 font-weight-bold text-gray-800">252</div>
+                                <div className="h5 mb-0 font-weight-bold text-gray-800">{tBills}</div>
                             </div>
                             <div className="col-auto align-middle" id="sell">
-                                <ImArrowUp2 className="d-block" style={{color:'green',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/>
-                                <span className="d-block" style={{color:'green',fontSize:"14px",fontWeight:"600"}}>%22.89</span>
+                            {ptBills === 0 ?  <FaMinus className="d-block" style={{color:'black',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/> :  
+                                (ptBills > 0  ?  <ImArrowUp2 className="d-block" style={{color:'green',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/> : <ImArrowDown2 className="d-block" style={{color:'red',fontSize:"24px",marginLeft:"auto",marginRight:"auto"}}/>)
+                                }
+                                <span className="d-block" style={{color:ptBills === 0  ? 'black' : (ptBills > 0 ? 'green' : 'red') ,fontSize:"14px",fontWeight:"600"}}>%{Math.abs(ptBills).toFixed(2)}</span>
                             </div>
                             <Tooltip placement="bottom" isOpen={sellToolTip} target="sell" toggle={toggleSell}>
-                                {option.label}a Göre Karşılaştırma
+                                Önceki Döneme Göre Karşılaştırma
                             </Tooltip>
                         </div>
                     </div>
@@ -149,7 +316,7 @@ export default function HomePage(props) {
                     </div>
                     <div className="card-body">
                         <Line data={ {
-                                labels: ["OcaK", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran"],
+                                labels: label,
                                 datasets: [{
                                 label: "Net Kazanç",
                                 lineTension: 0.3,
@@ -163,7 +330,7 @@ export default function HomePage(props) {
                                 pointHoverBorderColor: "rgba(28,230,138, 1)",
                                 pointHitRadius: 10,
                                 pointBorderWidth: 2,
-                                data: [0, 10000, 5000, 15000, 10000, 20000],
+                                data: dataP,
                                 }],
                             }}
                             legend="false"
@@ -178,7 +345,7 @@ export default function HomePage(props) {
                     </div>
                     <div className="card-body">
                         <Line data={ {
-                                labels: ["OcaK", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran"],
+                                labels: label,
                                 datasets: [{
                                 label: "Gider",
                                 lineTension: 0.3,
@@ -192,7 +359,7 @@ export default function HomePage(props) {
                                 pointHoverBorderColor: "rgba(220,53,69, 1)",
                                 pointHitRadius: 10,
                                 pointBorderWidth: 2,
-                                data: [0, 10000, 5000, 15000, 10000, 20000],
+                                data: dataO,
                                 }],
                             }}
                             legend="false"
@@ -208,7 +375,7 @@ export default function HomePage(props) {
                     </div>
                     <div className="card-body">
                         <Line data={ {
-                                labels: ["OcaK", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran"],
+                                labels: label,
                                 datasets: [{
                                 label: "Gider",
                                 lineTension: 0.3,
@@ -222,7 +389,7 @@ export default function HomePage(props) {
                                 pointHoverBorderColor: "rgba(13,110,253, 1)",
                                 pointHitRadius: 10,
                                 pointBorderWidth: 2,
-                                data: [0, 10000, 5000, 15000, 10000, 20000],
+                                data: dataN,
                                 }],
                             }}
                             legend="false"

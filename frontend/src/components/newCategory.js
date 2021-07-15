@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button, FormGroup, Label,Input } from "reactstrap";
 import {NotificationManager} from "react-notifications";
 
-
 export default function NewCategory(props) {
     const [name,setName] = useState("");
     const [tax_rate,setTax] = useState(0);
