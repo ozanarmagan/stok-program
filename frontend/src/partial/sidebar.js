@@ -110,7 +110,7 @@ export default function Sidebar(props) {
     <div className="submenu">
         <div className="submenu-heading">ÜRÜN İŞLEMLERİ</div>
         <Link className="submenu-item" to="/">Ürün Ekle</Link>
-        <Link className="submenu-item" to="/">Kategori Ekle</Link>
+        <Link className="submenu-item" to="/newcategory">Kategori Ekle</Link>
         <Link className="submenu-item" to="/">Tüm Kategoriler</Link>
         <Link className="submenu-item" to="/">Tüm Ürünler</Link>
     </div>

@@ -6,7 +6,7 @@ var User = require("../models/userModel");
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         const { filter, skip, limit, sort, projection, population } = aqp(req.query);
         Indenture.find(filter)
         .skip(skip)
@@ -107,7 +107,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var indenture = Indenture.findById(req.params.indenture_id);

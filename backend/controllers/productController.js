@@ -9,7 +9,7 @@ var aqp = require('api-query-params');
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         const { filter, skip, limit, sort, projection, population } = aqp(req.query);
         Product.find(filter)
         .skip(skip)
@@ -41,15 +41,16 @@ exports.index = function (req,res) {
                 });}
         });
     }
-    catch
+    catch(err)
     {
         res.json({status:400,message:"Invalid token"});
+        console.log(err);
     }
 };
 
 exports.get = function (req,res) {
     try {
-        var user = token.verifyToken(req.body.token,'access_token');
+        var user = token.verifyToken(req.query.token,'access_token');
 
         Product.get((err,product) => {
             if(err){
@@ -161,7 +162,7 @@ exports.delete = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var product = Product.findById(req.params.product_id);

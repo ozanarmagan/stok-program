@@ -79,7 +79,7 @@ exports.index = async function(req,res) {
     console.log(filter);
     try
     {
-        var user = await User.findOne({_id:token.verifyToken(req.body.token,'access').user});
+        var user = await User.findOne({_id:token.verifyToken(req.query.token,'access').user});
         if(user.user_type == 0)
             res.json({status:400,message:"You have no permission for this request"});
         User.find(filter)
@@ -184,7 +184,7 @@ exports.delete = async function(req,res) {
 exports.view = async function(req,res) {
     try
     {
-        var user = await User.findOne({_id:token.verifyToken(req.body.token,'access').user});
+        var user = await User.findOne({_id:token.verifyToken(req.query.token,'access').user});
         try
         {
             var user_to_view = await User.findOne({_id:req.params.user_id});

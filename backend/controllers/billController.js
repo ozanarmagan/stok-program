@@ -8,7 +8,7 @@ var aqp = require('api-query-params');
 exports.index = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         const { filter, skip, limit, sort, projection, population } = aqp(req.query);
         Bill.find(filter)
         .skip(skip)
@@ -110,7 +110,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var bill = Bill.findById(req.params.bill_id);

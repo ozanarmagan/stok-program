@@ -8,7 +8,7 @@ const aqp = require("api-query-params");
 exports.index = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         var count = await Bills.countDocuments({created_date:{$gte:new Date(req.query.since)}}).exec();
 
         var count_paid = await Payments.countDocuments({created_date:{$gte:new Date(req.query.since)}}).exec();

@@ -5,7 +5,7 @@ var User = require("../models/userModel")
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         const { filter, skip, limit, sort, projection, population } = aqp(req.query);
         Category.find(filter)
         .skip(skip)
@@ -102,7 +102,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var category = Category.findById(req.params.category_id);
