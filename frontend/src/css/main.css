@@ -80,9 +80,9 @@ body {
     display: block;
     width: 100%;
     height: calc(1.5em + .75rem + 2px);
-    font-size: .8rem;
+    font-size: .9rem;
     border-radius: 10rem;
-    padding: 1.5rem 1rem;
+    padding: 1rem 0.8rem;
     font-weight: 400;
     line-height: 1.5;
     color: #6e707e;

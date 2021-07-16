@@ -7,31 +7,35 @@ exports.index = function (req,res) {
     try
     {
         var user = token.verifyToken(req.query.token,'access');
-        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Debt.find(filter)
         .skip(skip)
         .limit(limit)
         .sort(sort)
         .select(projection)
         .populate(population)
-        .exec(function (err,debts) {
-            debts.forEach(async element => {
-                element.performer = await User.findOne({_id:user.user});
-                element.performer = element.performer.name + " " + element.performer.surname;
+        .exec(async function  (err,docs) {
+            const objects = [];
+            Promise.all(docs.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.performer = performer.name + " " + performer.surname;
+                objects.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:objects
+                    });
             });
-            if(err)
-            {
-                res.json({
-                    status:400,
-                    message:err
-                });
-                console.log(err);
-            }
-            else
-                res.json({
-                    status:200,
-                    data:debts
-                });
         });
     }
     catch

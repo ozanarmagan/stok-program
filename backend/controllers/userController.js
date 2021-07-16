@@ -75,7 +75,7 @@ exports.register = async function (req,res) {
 
 exports.index = async function(req,res) {
 
-    const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+    const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
     console.log(filter);
     try
     {

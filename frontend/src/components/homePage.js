@@ -102,7 +102,7 @@ export default function HomePage(props) {
         setNetRp(parseFloat(res.data.difference_net));
         setTpaidp(parseFloat(res.data.difference_paid));
         setTdebtp(parseFloat(res.data.difference_debt));
-        setTbills(parseFloat(res.data.difference_count));
+        setTbillsp(parseFloat(res.data.difference_count));
         setTpaid(res.data.total_paid);
         setTdebt(res.data.total_debts);
         setTbills(res.data.count);
@@ -136,6 +136,7 @@ export default function HomePage(props) {
 
     useEffect(() => {
         fetch();
+        // eslint-disable-next-line 
     },[]);
 
     const onSelect = async (selected) => {
@@ -318,7 +319,7 @@ export default function HomePage(props) {
                         <Line data={ {
                                 labels: label,
                                 datasets: [{
-                                label: "Net Kazanç",
+                                label: "Gelir",
                                 lineTension: 0.3,
                                 backgroundColor: "rgba(78, 115, 223, 0.05)",
                                 borderColor: "rgba(28,230,138, 1)",
@@ -377,7 +378,7 @@ export default function HomePage(props) {
                         <Line data={ {
                                 labels: label,
                                 datasets: [{
-                                label: "Gider",
+                                label: "Net Kazanç",
                                 lineTension: 0.3,
                                 backgroundColor: "rgba(78, 115, 223, 0.05)",
                                 borderColor: "rgba(13,110,253, 1)",
