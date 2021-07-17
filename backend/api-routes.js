@@ -8,7 +8,7 @@ let userController = require('./controllers/userController');
 router.get('/', (req,res) => {
     res.json({
         status:'OK',
-        message: 'API V1'
+        message: 'API V1.1'
     });
 });
 
