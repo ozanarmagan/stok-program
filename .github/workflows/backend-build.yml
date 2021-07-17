@@ -15,7 +15,7 @@ jobs:
 #         run: bash ssh-connection.sh
         
       - name: ssh connection
-        uses: appleboy/ssh-action@v0.1.4
+        uses: fifsky/ssh-action@master
         with:
           host: ${{ secrets.IP }}
           key: ${{ secrets.ID_RSA2 }}
