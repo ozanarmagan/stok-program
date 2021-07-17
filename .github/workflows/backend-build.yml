@@ -15,7 +15,7 @@ jobs:
 #         run: bash ssh-connection.sh
         
       - name: ssh connection
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.IP }}
           key: ${{ secrets.ID_RSA2 }}
