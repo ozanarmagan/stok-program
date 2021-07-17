@@ -6,6 +6,7 @@ let router = require('express').Router();
 
 let userController = require('./controllers/userController');
 router.get('/', (req,res) => {
+    console.log(":D");
     res.json({
         status:'OK',
         message: 'API V1.1'
