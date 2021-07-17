@@ -44,7 +44,6 @@ exports.index = async function (req,res) {
 };
 
 exports.edit = function (req,res) {
-    console.log("aaaa");
     try
     {
         var user = token.verifyToken(req.body.token,'access');
@@ -63,9 +62,9 @@ exports.edit = function (req,res) {
             res.json({status:400,message:"Category could not found"});
         }
     }
-    catch
+    catch(err)
     {
-        res.json({status:400,message:"Invalid Token"});
+        res.json({status:400,message:err});
     }
 }
 
@@ -74,11 +73,11 @@ exports.delete = async function(req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Category.deleteOne({_id:req.params.category_id},(err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Category has been deleted"})});
+        Category.deleteOne({_id:req.params.category_id}).exec((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Category has been deleted"})});
     }
-    catch
+    catch(err)
     {
-        res.json({status:400,message:"Invalid Token"});
+        res.json({status:400,message:err});
     }
 } 
 
@@ -86,17 +85,26 @@ exports.new = async function (req,res) {
     try 
     {
         var user = token.verifyToken(req.body.token,'access');
-        var newcategory = new Category();
-        newcategory.name = req.body.name;
-        newcategory.tax_rate = req.body.tax_rate;
-        newcategory.interests = req.body.interests;
-        newcategory.performer_id = user.user;
-
-
-        newcategory.save((err) => {
+        Category.findOne({name:req.body.name}).exec((err,doc) => {
             if(err)
-                res.json({status:400,message:err});
-            res.json({status:200,message:"Category created"});
+            {console.log(err)}
+            if(doc !== null)
+            {
+                res.json({status:402,message:"Category exists"});
+                return;
+            }
+            var newcategory = new Category();
+            newcategory.name = req.body.name;
+            newcategory.tax_rate = req.body.tax_rate;
+            newcategory.interests = req.body.interests;
+            newcategory.performer_id = user.user;
+    
+    
+            newcategory.save((err) => {
+                if(err)
+                    res.json({status:400,message:err});
+                res.json({status:200,message:"Category created"});
+            })
         })
     }
     catch(err)
@@ -111,16 +119,23 @@ exports.view = async function (req,res) {
         var user = token.verifyToken(req.query.token,'access');
         try
         {
-            var category = Category.findById(req.params.category_id);
-            res.json({status:200,data:category});
+            Category.findOne({_id:req.params.category_id}).exec((err,doc) => {
+                if(err)
+                {
+                    res.json({status:400,message:err});
+                    return;
+                }
+
+                res.json({status:200,data:doc});
+            });
         }
-        catch
+        catch(err)
         {
-            res.json({status:400,message:"Category could not found"});
+            res.json({status:400,message:err});
         }
     }
-    catch
+    catch(err)
     {
-        res.json({status:400,message:"Invalid token"});
+        res.json({status:400,message:err});
     }
 };

@@ -63,7 +63,7 @@ export default function Sidebar(props) {
 
 
     <div className="sidebar-heading">İŞLEMLER</div>
-    <Link to='/' onClick={handleClickBills}>
+    <Link  onClick={handleClickBills}>
         <RiBillFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Faturalar</span> 
         {state.bills ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -76,7 +76,7 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Yeni Fatura</Link>
     </div>
     </Collapse>
-    <Link to='/' onClick={handleClickIndenture}>
+    <Link  onClick={handleClickIndenture}>
         <RiMoneyCnyBoxFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Senetler</span> 
         {state.indentures ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -89,7 +89,7 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Tüm Senetler</Link>
     </div>
     </Collapse>
-    <Link to='/' onClick={handleClickCustomers}>
+    <Link  onClick={handleClickCustomers}>
         <MdPersonPin style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Müşteriler</span>
         {state.customers ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -101,7 +101,7 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Tüm Müşteriler</Link>
     </div>
     </Collapse>
-    <Link to='/' onClick={handleClickProducts}>
+    <Link  onClick={handleClickProducts}>
         <IoMdFiling style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Ürünler</span>
         {state.products ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -111,11 +111,11 @@ export default function Sidebar(props) {
         <div className="submenu-heading">ÜRÜN İŞLEMLERİ</div>
         <Link className="submenu-item" to="/">Ürün Ekle</Link>
         <Link className="submenu-item" to="/newcategory">Kategori Ekle</Link>
-        <Link className="submenu-item" to="/">Tüm Kategoriler</Link>
+        <Link className="submenu-item" to="/categories">Tüm Kategoriler</Link>
         <Link className="submenu-item" to="/">Tüm Ürünler</Link>
     </div>
     </Collapse>
-    <Link to='/' onClick={handleClickStocks}>
+    <Link  onClick={handleClickStocks}>
         <FaBoxes style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Stok</span>
         {state.stocks ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -128,7 +128,7 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Stok Sayımı</Link>
     </div>
     </Collapse>
-    <Link to='/' onClick={handleClickOrders}>
+    <Link  onClick={handleClickOrders}>
         <IoMdCart style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke",fontSize:"17px"}}/> 
         <span style={{marginLeft:"5px"}}>Siparişler</span>
         {state.orders ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -140,7 +140,7 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Tüm Siparişler</Link>
     </div>
     </Collapse>
-    <Link to='/' onClick={handleClickReports}>
+    <Link  onClick={handleClickReports}>
         <RiBarChart2Fill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Raporlar</span>
         {state.reports ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -155,7 +155,7 @@ export default function Sidebar(props) {
     </Collapse>
     
     <div className="sidebar-heading">PROFIL</div>
-    <Link to='/' onClick={handleClickProfile}>
+    <Link  onClick={handleClickProfile}>
         <RiProfileFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Profil</span>
         {state.profile ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -172,7 +172,7 @@ export default function Sidebar(props) {
 
     { user.user_type === 1 || user.user_type === 2 ? <div>
     <div className="sidebar-heading">ADMIN</div>
-    <Link to='/' onClick={handleClickCompany}>
+    <Link  onClick={handleClickCompany}>
         <RiSettings3Fill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Şirket</span>
         {state.admin_company? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -183,7 +183,7 @@ export default function Sidebar(props) {
         <Link className="submenu-item" to="/">Şirket Ayarları</Link>
     </div>
     </Collapse>
-    <Link to='/' onClick={handleClickUsers}>
+    <Link  onClick={handleClickUsers}>
         <IoMdPerson style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Üyelik</span>
         {state.admin_users ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 
@@ -202,7 +202,7 @@ export default function Sidebar(props) {
 
     {user.user_type === 2 ? <div>
     <div className="sidebar-heading">SUPER ADMIN</div>
-    <Link to='/' onClick={handleClickSuperAdmin}>
+    <Link  onClick={handleClickSuperAdmin}>
         <RiAdminFill style={{marginBottom:"2px",marginLeft:"5px",color:"whitesmoke"}}/> 
         <span style={{marginLeft:"5px"}}>Admin</span>
         {state.superadmin_admins ? <IoIosArrowUp className="collapsebtn"/> : <IoIosArrowForward className="collapsebtn"/>} 

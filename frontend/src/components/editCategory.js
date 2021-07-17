@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, FormGroup, Label,Input} from "reactstrap";
 import {NotificationManager} from "react-notifications";
 import Table from '@material-ui/core/Table';
@@ -15,8 +15,28 @@ import { API_URL } from "../constants";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-export default function NewCategory(props) {
+
+export default function Editcategory(props) {
+
+
+    const fetch = async function () {
+
+        var res = await axios.get(API_URL + "/categories/"+ props.match.params.category_id + "?token=" + token);
+        
+        setName(res.data.data.name);
+        setTax(res.data.data.tax_rate);
+        setInts(res.data.data.interests.map(element => {
+            return({count:element.count,amount:element.amount});
+        }))
+    }
+
+
+    useEffect(() => {
+        fetch();
+        // eslint-disable-next-line 
+    },[])
     
+
     const history = useHistory();
     const [name,setName] = useState("");
     const [tax_rate,setTax] = useState(0);
@@ -26,6 +46,7 @@ export default function NewCategory(props) {
     const [interests_a,setIntsa] = useState(null);
 
     const addInterest = () => {
+
         if(interests_m >= 0 && interests_a >=0 && !interests.some(element => element.count === interests_m))
         {
             var n = [...interests,{count:interests_m,amount:interests_a}];
@@ -35,6 +56,8 @@ export default function NewCategory(props) {
         }
         else
             NotificationManager.error("Hatalı Giriş Yaptınız","Hata");
+
+        console.log(interests);
 
     }
 
@@ -87,20 +110,15 @@ export default function NewCategory(props) {
             return;
         }
 
-        var res = await axios.post(API_URL + "categories",{token:token,name:name,tax_rate:parseInt(tax_rate),interests:interests});
+        var res = await axios.put(API_URL + "categories/" + props.match.params.category_id ,{token:token,name:name,tax_rate:parseInt(tax_rate),interests:interests});
         if(res.data.status === 200)
         {
-            NotificationManager.success("Kategori Başarıyla Eklendi","Başarılı");
+            NotificationManager.success("Kategori Başarıyla Düzenlendi","Başarılı");
             history.push("/categories");
         }
-        else if(res.data.status === 402)
-            NotificationManager.error("Kategori zaten var","Hata");
         else
             NotificationManager.error("Bir hata oluştu","Hata");
-
-        console.log(res);
     }
-
 
     return( 
         <div className="container-fluid">
@@ -108,7 +126,7 @@ export default function NewCategory(props) {
                 <div className="col-4 mt-4"><h5>Kategori Ekle</h5></div>
                     
                     <div className="col-4 d-flex flex-row-reverse mt-4">
-                    <Button color="primary" onClick={addCat} style={{float:"left",fontSize:"15px"}}>Kategoriyi Ekle</Button>
+                    <Button color="primary" onClick={addCat} style={{float:"left",fontSize:"15px"}}>Kaydet</Button>
                     </div>  
                 </div>
             <div className="row justify-content-evenly">

@@ -344,7 +344,7 @@ export default function HomePage(props) {
                     <div className="card-header">
                         <h6 className="text-danger" style={{fontWeight:"600",fontSize:"20px"}}>Gider</h6>
                     </div>
-                    <div className="card-body">
+                    <div className="card-body" style={{position:"relative"}}>
                         <Line data={ {
                                 labels: label,
                                 datasets: [{
