@@ -18,7 +18,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: 46.31.79.30
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.ID_RSA2 }}
           script: |
             cd ~/bilal
             bash deploy.sh
