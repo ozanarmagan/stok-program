@@ -19,6 +19,6 @@ jobs:
         with:
           host: ${{ secrets.IP }}
           key: ${{ secrets.ID_RSA2 }}
-          script: |
+          command: |
             cd ~/bilal
             bash deploy.sh
