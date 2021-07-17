@@ -17,7 +17,7 @@ jobs:
       - name: ssh connection
         uses: appleboy/ssh-action@master
         with:
-          host: "46.31.79.30"
+          host: ${{ secrets.IP }}
           key: ${{ secrets.ID_RSA2 }}
           script: |
             cd ~/bilal
