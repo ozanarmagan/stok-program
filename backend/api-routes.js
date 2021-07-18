@@ -189,6 +189,9 @@ router.route('/products')
     .get(productController.index)
     .post(upload.single('image'),productController.new)
 
+router.route('/products/short')
+    .get(productController.shortindex);
+
 router.route('/products/:product_id')
     .get(productController.view)
     .post(upload.single('image'),productController.edit)
