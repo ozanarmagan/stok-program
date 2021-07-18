@@ -48,7 +48,7 @@ var productSchema = mongoose.Schema({
         type:Date,
     },
     image: {
-        type:Buffer
+        type:String
     },
     performer_id:{
         type:String,

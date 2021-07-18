@@ -96,7 +96,7 @@ exports.new = async function (req,res) {
         new_product.origin = req.body.origin;
         new_product.last_change_date = Date.now();
         new_product.created_date = Date.now();
-        new_product.image = req.body.image;
+        new_product.image = req.header('host') + "api/images/" + req.body.image_name;
         new_product.performer_id = user.user;
 
         new_product.save((err) => {
@@ -132,7 +132,7 @@ exports.edit = function (req,res) {
                 product.product_unit = req.body.product_unit ||  product.product_unit;
                 product.origin = req.body.origin ||  product.origin;
                 product.last_change_date = Date.now();
-                product.image = req.body.image || product.image;
+                product.image = req.body.image_url ? req.header('host') + "api/images/" + req.body.image_name :  product.image;
 
                 product.save((err)=> { 
                     if(err) {
