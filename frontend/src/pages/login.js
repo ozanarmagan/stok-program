@@ -25,6 +25,7 @@ export default function Login(props) {
         event.preventDefault();
         axios.post(API_URL + "/login",{email:email,password:pw})
             .then(res => {
+				console.log(res);
                 if(res.data.status === 200)
                 {
 					NotificationManager.success("Hoşgeldiniz " + res.data.name,"Başarılı");
