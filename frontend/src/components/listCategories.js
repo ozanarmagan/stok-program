@@ -5,24 +5,11 @@ import axios from 'axios';
 import { API_URL } from '../constants';
 import {Link} from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import EditIcon from '@material-ui/icons/Edit';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteCategory from '../partial/deleteCategoryModal';
 import NotificationManager from 'react-notifications/lib/NotificationManager';
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

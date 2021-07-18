@@ -51,6 +51,34 @@ exports.index = async function (req,res) {
 
 
 
+exports.shortindex = async function (req,res) {
+    try
+    {
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
+        Product.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(async function  (err,docs) {
+            var objects = [];
+            docs.map(element => objects.push({id:element._id,name:element.name}));
+            if(err)
+            {
+                res.json({status:400,message:err})
+                return;
+            }
+            res.json({status:200,data:objects});
+        })
+    }
+    catch (err) {
+        res.json({status:400,message:err});
+    }
+}
+
+
 exports.new = async function (req,res) {
     try {
         var user = token.verifyToken(req.body.token,'access');

@@ -7,10 +7,16 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
+import IconButton from '@material-ui/core/IconButton';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from "@material-ui/core";
-
+import Tooltip from '@material-ui/core/Tooltip';
+import {Link} from "react-router-dom";
+import DeleteCategory from '../partial/deleteCategoryModal';
+import NotificationManager from "react-notifications/lib/NotificationManager";
+import { useHistory } from "react-router";
+import EditIcon from '@material-ui/icons/Edit';
 const usestyle = makeStyles( (theme => ({
     root: {
         fontFamily:"Poppins",
@@ -20,6 +26,10 @@ const usestyle = makeStyles( (theme => ({
 
 
 export default function ViewCategory(props) {
+    
+    const history = useHistory();
+
+    const id = props.match.params.category_id;
 
     const [name,setName] = useState("");
 
@@ -57,6 +67,19 @@ export default function ViewCategory(props) {
         // eslint-disable-next-line 
     },[]);
 
+    
+    const deleteCat = async function(id,toggle) {
+        var res = await axios.delete(API_URL + "categories/" + id,{data:{token:token}})
+
+        if(res.status === 200)
+        {
+            NotificationManager.success("Kategori Başarıyla Silindi","Başarılı");
+            toggle();
+            history.push("/categories");
+        }
+        else
+            NotificationManager.error("Bir hata oluştu","Hata");
+    }
 
 
 
@@ -64,8 +87,18 @@ export default function ViewCategory(props) {
     return (
         <div className="container">
             <div className="shadow-lg p-3 mt-4 mb-5 bg-white rounded">
-                <h4>Kategori</h4>
-
+                <div className="row justify-content-between">
+                    <div className="col-4 mt-2"> <h4>Kategori</h4></div>
+                   
+                    <div className="col-2 d-flex flex-row-reverse">
+                    <Tooltip title="Sil">
+                    <DeleteCategory id={id} delete={deleteCat}/>
+                    </Tooltip>
+                    <Tooltip title="Düzenle">
+                    <Link to={"/editcategory/" + props.match.params.category_id} style={{textDecoration:"none"}}><IconButton><EditIcon style={{color:"blue"}}/></IconButton></Link>
+                    </Tooltip>
+                    </div>
+                </div>
                 <div className="row">
                     <div className="col-4 mt-4">
                         Kategori İsmi:        <strong>{name}</strong>
