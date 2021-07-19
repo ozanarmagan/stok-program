@@ -25,7 +25,6 @@ function createData(customer,amount,time,type) {
     createData('Ubeyd Talha Alkan', 1000, 5, 'Senet'),
   ];
 
-
   moment().locale("tr",tr);
 
 export default function HomePage(props) {
@@ -91,9 +90,14 @@ export default function HomePage(props) {
         
         for(var i = 29;i>=0;i--)
         {
+            try {
             dataP_.push(res.data.data[i].e1);
             dataO_.push(res.data.data[i].e2);
             dataN_.push(res.data.data[i].e1 - res.data.data[i].e2);
+            } catch (error) {
+                
+            }
+            
         }
         setNetR(res.data.total_paid - res.data.total_debts);
         setTpaid(res.data.total_paid);
