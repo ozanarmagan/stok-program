@@ -17,6 +17,7 @@ import { API_URL } from '../constants/api_constant';
 import { useSelector } from 'react-redux';
 import tr from "moment/locale/tr";
 
+//
 function createData(customer,amount,time,type) {
     return { customer,amount,time,type };
   }
