@@ -7,6 +7,11 @@ import reportWebVitals from './reportWebVitals';
 import store from './redux/store';
 import './css/main.css';
 
+import { install } from 'resize-observer'
+
+
+install();
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

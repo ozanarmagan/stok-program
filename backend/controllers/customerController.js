@@ -1,32 +1,41 @@
 var Customer = require("../models/customerModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
-        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Customer.find(filter)
         .skip(skip)
         .limit(limit)
         .sort(sort)
         .select(projection)
         .populate(population)
-        .exec(function (err,customers) {
-            if(err)
-            {
-                res.json({
-                    status:400,
-                    message:err
-                });
-                console.log(err);
-            }
-            else
-                res.json({
-                    status:200,
-                    data:customers
-                });
+        .exec(async function  (err,docs) {
+            const objects = [];
+            Promise.all(docs.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.performer = performer.name + " " + performer.surname;
+                objects.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:objects
+                    });
+            });
         });
     }
     catch
@@ -84,11 +93,12 @@ exports.new = async function (req,res) {
         var newcustomer = new Customer();
         newcustomer.name = req.body.name;
         newcustomer.address = req.body.address;
-        newcomapny.phone = req.body.phone;
-        newcomapny.tax_no = req.body.tax_no;
-        newcomapny.tax_place = req.body.tax_place;
-        newcomapny.note = req.body.note;
-        newcomapny.debtlimit = req.body.debtlimit;
+        newcustomer.phone = req.body.phone;
+        newcustomer.tax_no = req.body.tax_no;
+        newcustomer.tax_place = req.body.tax_place;
+        newcustomer.note = req.body.note;
+        newcustomer.debtlimit = req.body.debtlimit;
+        newcustomer.performer_id = user.user;
 
         newcustomer.save((err) => {
             if(err)
@@ -105,7 +115,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var customer = Customer.findById(req.params.customer_id);

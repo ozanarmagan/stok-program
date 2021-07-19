@@ -1,32 +1,40 @@
 var Card = require("../models/cardModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
-
+var User = require("../models/userModel");
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
-        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Card.find(filter)
         .skip(skip)
         .limit(limit)
         .sort(sort)
         .select(projection)
         .populate(population)
-        .exec(function (err,cards) {
-            if(err)
-            {
-                res.json({
-                    status:400,
-                    message:err
-                });
-                console.log(err);
-            }
-            else
-                res.json({
-                    status:200,
-                    data:cards
-                });
+        .exec(async function  (err,docs) {
+            const objects = [];
+            Promise.all(docs.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.performer = performer.name + " " + performer.surname;
+                objects.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:objects
+                    });
+            });
         });
     }
     catch
@@ -81,7 +89,7 @@ exports.new = async function (req,res) {
         newcard.name = req.body.name;
         newcard.installment = req.body.installment;
         newcard.interest = req.body.interest;
-
+        newcard.performer_id = user.user;
         newcard.save((err) => {
             if(err)
                 res.json({status:400,message:err});
@@ -97,7 +105,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var card = Card.findById(req.params.card_id);

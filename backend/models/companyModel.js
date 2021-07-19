@@ -29,6 +29,10 @@ var companySchema = mongoose.Schema({
         type:String,
         required:true
     },
+    performer_id:{
+        type:String,
+        required:true
+    }
 });
 
 var Company = module.exports = mongoose.model('company',companySchema);

@@ -5,6 +5,6 @@ export async function apiLogin(username,password){
     return axios.post(API_URL +"login/",{username:username,password:password})
 }
 
-export async function apiRegister(username,email,password){
-    return axios.post(API_URL+"register/",{username:username,email:email,password:password})
+export async function apiRegister(username,email,password,user_type){
+    return axios.post(API_URL+"register/",{username:username,email:email,password:password,user_type:user_type})
 }

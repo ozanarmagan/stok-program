@@ -1,32 +1,41 @@
 var Company = require("../models/companyCustomer");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
-        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Company.find(filter)
         .skip(skip)
         .limit(limit)
         .sort(sort)
         .select(projection)
         .populate(population)
-        .exec(function (err,companys) {
-            if(err)
-            {
-                res.json({
-                    status:400,
-                    message:err
-                });
-                console.log(err);
-            }
-            else
-                res.json({
-                    status:200,
-                    data:companys
-                });
+        .exec(async function  (err,docs) {
+            const objects = [];
+            Promise.all(docs.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.performer = performer.name + " " + performer.surname;
+                objects.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:objects
+                    });
+            });
         });
     }
     catch
@@ -88,13 +97,14 @@ exports.new = async function (req,res) {
         newcompany.name = req.body.name;
         newcompany.owner = req.body.owner;
         newcompany.address = req.body.address;
-        newcomapny.phone_gsm = req.body.phone_gsm;
-        newcomapny.phone = req.body.phone;
-        newcomapny.fax = req.body.fax;
-        newcomapny.tax_no = req.body.tax_no;
-        newcomapny.tax_place = req.body.tax_place;
-        newcomapny.total_debt = req.body.total_debt;
-        newcomapny.total_paid = req.body.total_paid;
+        newcompany.phone_gsm = req.body.phone_gsm;
+        newcompany.phone = req.body.phone;
+        newcompany.fax = req.body.fax;
+        newcompany.tax_no = req.body.tax_no;
+        newcompany.tax_place = req.body.tax_place;
+        newcompany.total_debt = req.body.total_debt;
+        newcompany.total_paid = req.body.total_paid;
+        newcompany.performer_id = user.user;
 
         newcompany.save((err) => {
             if(err)
@@ -111,7 +121,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var company = Company.findById(req.params.company_id);

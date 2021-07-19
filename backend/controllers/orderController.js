@@ -1,32 +1,41 @@
 var Order = require("../models/orderModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
-        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Order.find(filter)
         .skip(skip)
         .limit(limit)
         .sort(sort)
         .select(projection)
         .populate(population)
-        .exec(function (err,orders) {
-            if(err)
-            {
-                res.json({
-                    status:400,
-                    message:err
-                });
-                console.log(err);
-            }
-            else
-                res.json({
-                    status:200,
-                    data:orders
-                });
+        .exec(async function  (err,docs) {
+            const objects = [];
+            Promise.all(docs.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.performer = performer.name + " " + performer.surname;
+                objects.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:objects
+                    });
+            });
         });
     }
     catch
@@ -47,8 +56,7 @@ exports.edit = function (req,res) {
                 ordertoedit.advance_pay_type = req.body.advance_pay_type || ordertoedit.advance_pay_type;
                 ordertoedit.card_id = req.body.card_id || ordertoedit.card_id;
                 ordertoedit.card_installment = req.body.card_installment || ordertoedit.card_installment;
-                ordertoedit.product_id = req.body.product_id || ordertoedit.product_id;
-                ordertoedit.product_amount = req.body.product_amount || ordertoedit.product_amount;
+                ordertoedit.products = req.body.products || ordertoedit.products;
                 ordertoedit.is_sold = req.body.is_sold || ordertoedit.is_sold;
 
                 ordertoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
@@ -86,11 +94,11 @@ exports.new = async function (req,res) {
         neworder.installment = req.body.installment;
         neworder.advance_pay = req.body.advance_pay;
         neworder.advance_pay_type = req.body.advance_pay_type;
-        newcomapny.card_id = req.body.card_id;
-        newcomapny.card_installment = req.body.card_installment;
-        newcomapny.product_id = req.body.product_id;
-        newcomapny.product_amount = req.body.product_amount;
-        newcomapny.is_sold = req.body.is_sold;
+        neworder.card_id = req.body.card_id;
+        neworder.card_installment = req.body.card_installment;
+        neworder.products = req.body.products;
+        neworder.is_sold = req.body.is_sold;
+        neworder.performer_id = user.user;
 
         neworder.save((err) => {
             if(err)
@@ -107,7 +115,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var order = Order.findById(req.params.order_id);

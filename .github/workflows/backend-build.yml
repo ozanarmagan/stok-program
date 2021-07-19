@@ -1,0 +1,24 @@
+name: backend build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+#       - name: checkout
+#         uses: actions/checkout@v2
+
+#       - name: run ssh sh script :D
+#         run: bash ssh-connection.sh
+        
+      - name: ssh connection
+        uses: fifsky/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          key: ${{ secrets.ID_RSA2 }}
+          command: |
+            cd ~/bilal
+            bash deploy.sh

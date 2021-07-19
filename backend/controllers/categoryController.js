@@ -1,32 +1,40 @@
 var Category = require("../models/categoryModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
-
-exports.index = function (req,res) {
+var User = require("../models/userModel")
+exports.index = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
-        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Category.find(filter)
         .skip(skip)
         .limit(limit)
         .sort(sort)
         .select(projection)
         .populate(population)
-        .exec(function (err,categorys) {
-            if(err)
-            {
-                res.json({
-                    status:400,
-                    message:err
-                });
-                console.log(err);
-            }
-            else
-                res.json({
-                    status:200,
-                    data:categorys
-                });
+        .exec(async function  (err,categorys) {
+            const categories = [];
+            Promise.all(categorys.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.performer = performer.name + " " + performer.surname;
+                categories.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:categories
+                    });
+            });
         });
     }
     catch
@@ -43,19 +51,8 @@ exports.edit = function (req,res) {
         {
             Category.findById(req.params.category_id,function (err,categorytoedit) {
                 categorytoedit.name = req.body.name || categorytoedit.name ;
-                categorytoedit.tax_Rate = req.body.tax_Rate || categorytoedit.tax_Rate;
-                categorytoedit.interest_2 = req.body.interest_2 || categorytoedit.interest_2;
-                categorytoedit.interest_4 = req.body.interest_4 || categorytoedit.interest_4;
-                categorytoedit.interest_6 = req.body.interest_6 || categorytoedit.interest_6;
-                categorytoedit.interest_8 = req.body.interest_8 || categorytoedit.interest_8;
-                categorytoedit.interest_10 = req.body.interest_10 || categorytoedit.interest_10;
-                categorytoedit.interest_12 = req.body.interest_12 || categorytoedit.interest_12;
-                categorytoedit.interest_14 = req.body.interest_14 || categorytoedit.interest_14;
-                categorytoedit.interest_16 = req.body.interest_16 || categorytoedit.interest_16;
-                categorytoedit.interest_18 = req.body.interest_18 || categorytoedit.interest_18;
-                categorytoedit.interest_20 = req.body.interest_20 || categorytoedit.interest_20;
-                categorytoedit.interest_22 = req.body.interest_22 || categorytoedit.interest_22;
-                categorytoedit.interest_24 = req.body.interest_24 || categorytoedit.interest_24;
+                categorytoedit.tax_rate = req.body.tax_Rate || categorytoedit.tax_rate;
+                categorytoedit.interests = req.body.interests || categorytoedit.interests;
 
                 categorytoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
             })
@@ -65,9 +62,9 @@ exports.edit = function (req,res) {
             res.json({status:400,message:"Category could not found"});
         }
     }
-    catch
+    catch(err)
     {
-        res.json({status:400,message:"Invalid Token"});
+        res.json({status:400,message:err});
     }
 }
 
@@ -76,11 +73,11 @@ exports.delete = async function(req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Category.deleteOne({_id:req.params.category_id},(err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Category has been deleted"})});
+        Category.deleteOne({_id:req.params.category_id}).exec((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Category has been deleted"})});
     }
-    catch
+    catch(err)
     {
-        res.json({status:400,message:"Invalid Token"});
+        res.json({status:400,message:err});
     }
 } 
 
@@ -88,27 +85,26 @@ exports.new = async function (req,res) {
     try 
     {
         var user = token.verifyToken(req.body.token,'access');
-        var newcategory = new Category();
-        newcategory.name = req.body.name;
-        newcategory.tax_Rate = req.body.tax_Rate;
-        newcategory.interest_2 = req.body.interest_2;
-        newcategory.interest_4 = req.body.interest_4;
-        newcategory.interest_6 = req.body.interest_6;
-        newcategory.interest_8 = req.body.interest_8;
-        newcategory.interest_10 = req.body.interest_10;
-        newcategory.interest_12 = req.body.interest_12;
-        newcategory.interest_14 = req.body.interest_14;
-        newcategory.interest_16 = req.body.interest_16;
-        newcategory.interest_18 = req.body.interest_18;
-        newcategory.interest_20 = req.body.interest_20;
-        newcategory.interest_22 = req.body.interest_22;
-        newcategory.interest_24 = req.body.interest_24;
-
-
-        newcategory.save((err) => {
+        Category.findOne({name:req.body.name}).exec((err,doc) => {
             if(err)
-                res.json({status:400,message:err});
-            res.json({status:200,message:"Category created"});
+            {console.log(err)}
+            if(doc !== null)
+            {
+                res.json({status:402,message:"Category exists"});
+                return;
+            }
+            var newcategory = new Category();
+            newcategory.name = req.body.name;
+            newcategory.tax_rate = req.body.tax_rate;
+            newcategory.interests = req.body.interests;
+            newcategory.performer_id = user.user;
+    
+    
+            newcategory.save((err) => {
+                if(err)
+                    res.json({status:400,message:err});
+                res.json({status:200,message:"Category created"});
+            })
         })
     }
     catch(err)
@@ -120,19 +116,26 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
-            var category = Category.findById(req.params.category_id);
-            res.json({status:200,data:category});
+            Category.findOne({_id:req.params.category_id}).exec((err,doc) => {
+                if(err)
+                {
+                    res.json({status:400,message:err});
+                    return;
+                }
+
+                res.json({status:200,data:doc});
+            });
         }
-        catch
+        catch(err)
         {
-            res.json({status:400,message:"Category could not found"});
+            res.json({status:400,message:err});
         }
     }
-    catch
+    catch(err)
     {
-        res.json({status:400,message:"Invalid token"});
+        res.json({status:400,message:err});
     }
 };

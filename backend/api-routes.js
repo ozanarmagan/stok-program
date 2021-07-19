@@ -6,9 +6,10 @@ let router = require('express').Router();
 
 let userController = require('./controllers/userController');
 router.get('/', (req,res) => {
+    console.log(":D");
     res.json({
         status:'OK',
-        message: 'API V1'
+        message: 'API V1.1'
     });
 });
 
@@ -170,5 +171,28 @@ router.route('/products/:product_id')
     .patch(productController.edit)
     .put(productController.edit)
     .delete(productController.delete);
+
+/* DEBT ROUTES */
+var debtController = require("./controllers/debtController");
+
+router.route('/debts')
+    .get(debtController.index)
+    .post(debtController.new)
+
+router.route('/debts/:debt_id')
+    .get(debtController.view)
+    .post(debtController.edit)
+    .patch(debtController.edit)
+    .put(debtController.edit)
+    .delete(debtController.delete);
+
+
+
+/* DASHBOARD ROUTES */
+var dashboardController = require("./controllers/dashboardController");
+
+router.route('/dashboard')
+    .get(dashboardController.index)
+    .post(dashboardController.index)
 
 module.exports = router;

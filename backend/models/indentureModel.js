@@ -16,6 +16,10 @@ var indentureSchema = mongoose.Schema({
     },
     paid_amount:{
         type:Number
+    },
+    performer_id:{
+        type:String,
+        required:true
     }
 });
 

@@ -1,32 +1,41 @@
 var Payment = require("../models/paymentModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
+var User = require("../models/userModel");
 
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
-        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Payment.find(filter)
         .skip(skip)
         .limit(limit)
         .sort(sort)
         .select(projection)
         .populate(population)
-        .exec(function (err,payments) {
-            if(err)
-            {
-                res.json({
-                    status:400,
-                    message:err
-                });
-                console.log(err);
-            }
-            else
-                res.json({
-                    status:200,
-                    data:payments
-                });
+        .exec(async function  (err,docs) {
+            const objects = [];
+            Promise.all(docs.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.performer = performer.name + " " + performer.surname;
+                objects.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:objects
+                    });
+            });
         });
     }
     catch
@@ -84,9 +93,10 @@ exports.new = async function (req,res) {
         newpayment.type = req.body.type;
         newpayment.amount = req.body.amount;
         newpayment.note = req.body.note;
-        newcomapny.date = req.body.date;
-        newcomapny.pay_type = req.body.pay_type;
-        newcomapny.customer_id = req.body.customer_id;
+        newpayment.date = req.body.date;
+        newpayment.pay_type = req.body.pay_type;
+        newpayment.customer_id = req.body.customer_id;
+        newpayment.performer_id = user.user;
 
         newpayment.save((err) => {
             if(err)
@@ -103,7 +113,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var payment = Payment.findById(req.params.payment_id);

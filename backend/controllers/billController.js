@@ -2,36 +2,42 @@ var Bill = require("../models/billModel");
 var Customer = require("../models/customerModel");
 var Company = require("../models/companyCustomer");
 var token = require("../utility/token");
+var User = require("../models/userModel");
 var aqp = require('api-query-params');
 
 exports.index = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
-        const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Bill.find(filter)
         .skip(skip)
         .limit(limit)
         .sort(sort)
         .select(projection)
         .populate(population)
-        .exec(function (err,bills) {
-            bills.forEach(async function (element) {
-                element.customer = await !element.is_company ? Customer.findOne({_id:element.customer_id}) : Company.findOne({_id:element.customer_id});
+        .exec(async function  (err,bills) {
+            const bills_ = [];
+            Promise.all(bills.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.performer = performer.name + " " + performer.surname;
+                bills_.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:bills_
+                    });
             });
-            if(err)
-            {
-                res.json({
-                    status:400,
-                    message:err
-                });
-                console.log(err);
-            }
-            else
-                res.json({
-                    status:200,
-                    data:bills
-                });
         });
     }
     catch
@@ -89,6 +95,7 @@ exports.new = async function (req,res) {
         newbill.created_date = Date.now();
         newbill.pay_type = req.body.pay_type;
         newbill.is_company = req.body.is_company;
+        newbill.performer_id = user.user;
 
 
         newbill.save((err) => {
@@ -106,7 +113,7 @@ exports.new = async function (req,res) {
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.query.token,'access');
         try
         {
             var bill = Bill.findById(req.params.bill_id);

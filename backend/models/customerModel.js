@@ -25,6 +25,10 @@ var customerSchema = mongoose.Schema({
     tax_place: {
         type:String,
     },
+    performer_id:{
+        type:String,
+        required:true
+    }
 });
 
 var Customer = module.exports = mongoose.model('customer',customerSchema);
