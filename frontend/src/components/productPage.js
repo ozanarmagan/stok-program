@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { TextField, makeStyles, Container, Grid, Box, Paper, CircularProgress, Typography, ButtonBase } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import SearchBar from './productPageMeterials/searchBar';
-import ProductDetailPage from './productPageMeterials/productDetailPage';
 import { API_URL } from '../constants';
 import { FormControl, InputLabel, Input, ButtonGroup, Button, MenuItem } from '@material-ui/core';
 import axios from 'axios';
