@@ -51,6 +51,34 @@ exports.index = async function (req,res) {
 
 
 
+exports.shortindex = async function (req,res) {
+    try
+    {
+        var user = token.verifyToken(req.query.token,'access');
+        const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
+        Product.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population)
+        .exec(async function  (err,docs) {
+            var objects = [];
+            docs.map(element => objects.push({id:element._id,name:element.name}));
+            if(err)
+            {
+                res.json({status:400,message:err})
+                return;
+            }
+            res.json({status:200,data:objects});
+        })
+    }
+    catch (err) {
+        res.json({status:400,message:err});
+    }
+}
+
+
 exports.new = async function (req,res) {
     try {
         var user = token.verifyToken(req.body.token,'access');
@@ -68,7 +96,7 @@ exports.new = async function (req,res) {
         new_product.origin = req.body.origin;
         new_product.last_change_date = Date.now();
         new_product.created_date = Date.now();
-        new_product.image = req.body.image;
+        new_product.image = req.header('host') + "api/images/" + req.body.image_name;
         new_product.performer_id = user.user;
 
         new_product.save((err) => {
@@ -104,7 +132,7 @@ exports.edit = function (req,res) {
                 product.product_unit = req.body.product_unit ||  product.product_unit;
                 product.origin = req.body.origin ||  product.origin;
                 product.last_change_date = Date.now();
-                product.image = req.body.image || product.image;
+                product.image = req.body.image_url ? req.header('host') + "api/images/" + req.body.image_name :  product.image;
 
                 product.save((err)=> { 
                     if(err) {
