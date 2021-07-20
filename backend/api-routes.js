@@ -193,8 +193,6 @@ router.route('/products')
     .post(function (req, res) {
   up(req, res, function (err) {
     console.log(err);
-
-    next();
   })
 },productController.new)
 
@@ -207,21 +205,17 @@ router.route('/products/:product_id')
         upload(req, res, function (err) {
           console.log(err);
       
-          next();
+
         })
       },productController.edit)
     .patch(function (req, res) {
   upload(req, res, function (err) {
     console.log(err);
-
-    next();
   })
 },productController.edit)
     .put(function (req, res) {
   upload(req, res, function (err) {
     console.log(err);
-
-    next();
   })
 },productController.edit)
     .delete(productController.delete);
