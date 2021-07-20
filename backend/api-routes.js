@@ -203,7 +203,12 @@ router.route('/products/short')
 
 router.route('/products/:product_id')
     .get(productController.view)
-    .post(,productController.edit)
+    .post(function (req, res) {
+        upload(req, res, function (err) {
+          console.log(err);
+      
+          next();
+        },productController.edit)
     .patch(function (req, res) {
   upload(req, res, function (err) {
     console.log(err);
