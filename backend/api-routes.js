@@ -208,7 +208,8 @@ router.route('/products/:product_id')
           console.log(err);
       
           next();
-        },productController.edit)
+        })
+      },productController.edit)
     .patch(function (req, res) {
   upload(req, res, function (err) {
     console.log(err);
