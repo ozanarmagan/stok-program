@@ -187,18 +187,37 @@ router.route('/payments/:payment_id')
 /* PRODUCT ROUTES */
 var productController = require("./controllers/productController");
 
+var up = upload.single('image');
 router.route('/products')
     .get(productController.index)
-    .post(upload.single('image'),productController.new)
+    .post(function (req, res) {
+  up(req, res, function (err) {
+    console.log(err);
+
+    next();
+  })
+},productController.new)
 
 router.route('/products/short')
     .get(productController.shortindex);
 
 router.route('/products/:product_id')
     .get(productController.view)
-    .post(upload.single('image'),productController.edit)
-    .patch(upload.single('image'),productController.edit)
-    .put(upload.single('image'),productController.edit)
+    .post(,productController.edit)
+    .patch(function (req, res) {
+  upload(req, res, function (err) {
+    console.log(err);
+
+    next();
+  })
+},productController.edit)
+    .put(function (req, res) {
+  upload(req, res, function (err) {
+    console.log(err);
+
+    next();
+  })
+},productController.edit)
     .delete(productController.delete);
 
 /* DEBT ROUTES */
@@ -219,6 +238,7 @@ router.route('/debts/:debt_id')
 
 /* DASHBOARD ROUTES */
 var dashboardController = require("./controllers/dashboardController");
+const { nextTick } = require('process');
 
 router.route('/dashboard')
     .get(dashboardController.index)
