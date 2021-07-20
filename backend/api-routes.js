@@ -1,11 +1,11 @@
 let router = require('express').Router();
-
+let fs = require('fs');
 const multer = require('multer')
 
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        const path = `./images/`
+        const path = `./images`
         fs.mkdirSync(path, { recursive: true })
         return cb(null, path)
     },
