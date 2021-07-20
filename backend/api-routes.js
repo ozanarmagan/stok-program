@@ -16,16 +16,9 @@ const storage = multer.diskStorage({
 
 
 
-const fileFilter = (req, file, cb) => {
-    const allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    if(allowedFileTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(null, false);
-    }
-}
 
-let upload = multer({ storage, fileFilter });
+
+let upload = multer({ storage});
 
 
 /* USER ROUTES */
@@ -187,37 +180,18 @@ router.route('/payments/:payment_id')
 /* PRODUCT ROUTES */
 var productController = require("./controllers/productController");
 
-var up = upload.single('image');
 router.route('/products')
     .get(productController.index)
-    .post(function (req, res) {
-  up(req, res, function (err) {
-    console.log(err);
-  })
-},productController.new)
+    .post(upload.single('image'),productController.new)
 
 router.route('/products/short')
     .get(productController.shortindex);
 
 router.route('/products/:product_id')
     .get(productController.view)
-    .post(function (req, res) {
-        upload(req, res, function (err) {
-          console.log(err);
-      
-
-        })
-      },productController.edit)
-    .patch(function (req, res) {
-  upload(req, res, function (err) {
-    console.log(err);
-  })
-},productController.edit)
-    .put(function (req, res) {
-  upload(req, res, function (err) {
-    console.log(err);
-  })
-},productController.edit)
+    .post(upload.single('image'),productController.edit)
+    .patch(upload.single('image'),productController.edit)
+    .put(upload.single('image'),productController.edit)
     .delete(productController.delete);
 
 /* DEBT ROUTES */
@@ -238,7 +212,6 @@ router.route('/debts/:debt_id')
 
 /* DASHBOARD ROUTES */
 var dashboardController = require("./controllers/dashboardController");
-const { nextTick } = require('process');
 
 router.route('/dashboard')
     .get(dashboardController.index)
