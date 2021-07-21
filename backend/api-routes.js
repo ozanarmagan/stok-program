@@ -184,18 +184,7 @@ var productController = require("./controllers/productController");
 
 router.route('/products')
     .get(productController.index)
-    .post(function (req, res) {
-        up(req, res, function (err) {
-          if (err instanceof multer.MulterError) {
-            console.log(err)
-          } else if (err) {
-           console.log('unk',err);
-          }
-      
-         console.log(req.file)
-         console.log(req.body)
-        })
-      },productController.new)
+    .post(upload.single("file"),productController.new)
 
 router.route('/products/short')
     .get(productController.shortindex);
