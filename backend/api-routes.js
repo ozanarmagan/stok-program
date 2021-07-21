@@ -182,16 +182,16 @@ var productController = require("./controllers/productController");
 
 router.route('/products')
     .get(productController.index)
-    .post(upload.single('image'),productController.new)
+    .post(upload.single('file'),productController.new)
 
 router.route('/products/short')
     .get(productController.shortindex);
 
 router.route('/products/:product_id')
     .get(productController.view)
-    .post(upload.single('image'),productController.edit)
-    .patch(upload.single('image'),productController.edit)
-    .put(upload.single('image'),productController.edit)
+    .post(upload.single('file'),productController.edit)
+    .patch(upload.single('file'),productController.edit)
+    .put(upload.single('file'),productController.edit)
     .delete(productController.delete);
 
 /* DEBT ROUTES */
