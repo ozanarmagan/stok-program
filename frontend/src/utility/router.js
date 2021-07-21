@@ -10,8 +10,8 @@ import ViewCategory from "../components/viewCategory";
 export default function PageRouter(props) {
     return (
         <Switch>
-            <Route path="/product/" component={ProductPage}/>
-            <Route path="/" component={HomePage} />
+            <Route exact path="/product/" component={ProductPage}/>
+            <Route exact path="/" component={HomePage} />
             
             <Route exact path="/" component={HomePage} />
             <Route exact path="/newcategory" component={NewCategory} />

@@ -9,7 +9,9 @@ var billSchema = mongoose.Schema({
         amount:Number
     }],
     bill_no:{
-        type:Number
+        type:Number,
+        uniqiue:true,
+        dropDups:true
     },
     created_date: {
         type:Date,

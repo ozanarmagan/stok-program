@@ -3,7 +3,9 @@ var mongoose = require('mongoose');
 var cardSchema = mongoose.Schema({
     name: {
         type:String,
-        required:true
+        required:true,
+        uniqiue:true,
+        dropDups:true
     },
     installment: {  /* taksit sayısı */
         type:Number,
