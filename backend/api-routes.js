@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 
 
 let upload = multer({ storage});
-
+let up = upload.single('file');
 
 /* USER ROUTES */
 
@@ -184,7 +184,7 @@ var productController = require("./controllers/productController");
 
 router.route('/products')
     .get(productController.index)
-    .post(upload.single('file'),productController.new)
+    .post(up((req,res,(err) => {if(err) console.log(err); console.log(req.file)})) ,productController.new)
 
 router.route('/products/short')
     .get(productController.shortindex);
