@@ -184,7 +184,11 @@ var productController = require("./controllers/productController");
 
 router.route('/products')
     .get(productController.index)
-    .post(up((req,res,(err) => {if(err) console.log(err); console.log(req.file)})) ,productController.new)
+    .post(up((req,res,(err) => {    if (err instanceof multer.MulterError) {
+        console.log(err);
+      } else if (err) {
+        console.log('unknown',err)
+      }})) ,productController.new)
 
 router.route('/products/short')
     .get(productController.shortindex);
