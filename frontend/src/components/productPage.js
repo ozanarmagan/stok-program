@@ -47,6 +47,7 @@ function ProductPage(props) {
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
     const loading = open && options.length === 0;
+    const barcodeInputRef = React.createRef();
 
     useMemo(() => {
         const getProducts = async () => {
@@ -149,6 +150,13 @@ function ProductPage(props) {
         console.log("Clicked");
     }
 
+    const createNewBarcode = (event) => {
+        console.log(event);
+
+        setProducts([...products,{barcode:barcode,name:"No",category:"No"}]);
+        console.log(products);
+    }
+
     const imageUpload = (event) => {
 
     }
@@ -171,9 +179,13 @@ function ProductPage(props) {
                         id="grouped-demo"
                         options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
                         groupBy={(option) => option.firstLetter}
-                        getOptionLabel={(option) => option.barcode.toString()}
+                        getOptionLabel={(option) => option?option.barcode.toString():"0"}
                         getOptionSelected={(option, value) => option.barcode === value.barcode}
                         onChange={async (e, newValue) => { setBarcode(e.target.value); setProduct(newValue) }}
+                        noOptionsText={
+                            <Button onMouseDown={createNewBarcode}>
+                              Ürün Bulununamadı Yeni Oluşturmak İçin Tıklayınız!!!
+                            </Button>}
                         renderOption={(option) => (
                             <React.Fragment>
                                 <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
@@ -188,6 +200,8 @@ function ProductPage(props) {
                              variant="outlined" 
                              onChange={readBarcode}
                              />}
+                        ref={barcodeInputRef}
+                        
                     />
                     <ButtonGroup disableElevation variant="contained" color="primary" style={{ padding: "10px" }}>
                         <Button>Ürünü Getir</Button>
