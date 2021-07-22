@@ -2,56 +2,84 @@ import IconButton from '@material-ui/core/IconButton';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import EditIcon from '@material-ui/icons/Edit';
 import Tooltip from '@material-ui/core/Tooltip';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../constants';
 import { useSelector } from 'react-redux';
 import DataTable from 'react-data-table-component';
 import { Input } from 'reactstrap';
-const columns = [
-    {
-        cell:(row) => {
-            return(<img src={row.image} alt="row" style={{height:"80px",width:"80px"}} />)
-        },
-        width:"150px"
-    },
-    {
-      name: 'İsim',
-      selector: 'name',
-      sortable: true,
-    },
-    {
-      name: 'Kategori',
-      selector: 'category',
-      sortable: true,
-    },
-    {
-        cell: (row) => {
-            return(
-                <div>
-                    <Tooltip title="İncele">
-                    <Link to={"/viewproduct/"+ row.id}>
-                        <IconButton style={{color:"#1b5e20"}}>
-                            <PageviewIcon />
-                        </IconButton>
-                    </Link>
-                    </Tooltip>
-                    <Tooltip title="Düzenle">
-                        <Link to={"/product/"+ row.id}>
-                            <IconButton color="primary">
-                                <EditIcon />
-                            </IconButton>
-                        </Link>
-                    </Tooltip>
-                </div>
-            )
-        }
-    }
-  ];
+import DeleteProduct from '../partial/deleteProductModal';
+import NotificationManager from "react-notifications/lib/NotificationManager";
+
+
+  
 
 
   export default function ListProducts(props) {
+
+    const columns = [
+        {
+            cell:(row) => {
+                return(<img src={row.image} alt="row" style={{height:"80px",width:"80px"}} />)
+            },
+            width:"150px"
+        },
+        {
+          name: 'İsim',
+          selector: 'name',
+          sortable: true,
+        },
+        {
+          name: 'Kategori',
+          selector: 'category',
+          sortable: true,
+        },
+        {
+            cell: (row) => {
+                return(
+                    <div>
+                        <Tooltip title="İncele">
+                        <Link to={"/viewproduct/"+ row.id}>
+                            <IconButton style={{color:"#1b5e20"}}>
+                                <PageviewIcon />
+                            </IconButton>
+                        </Link>
+                        </Tooltip>
+                        <Tooltip title="Düzenle">
+                            <Link to={"/product/"+ row.id}>
+                                <IconButton color="primary">
+                                    <EditIcon />
+                                </IconButton>
+                            </Link>
+                        </Tooltip>
+                        <Tooltip title="Sil">
+                            <DeleteProduct delete={deleteProduct} id={row.id}/>
+                        </Tooltip>
+                    </div>
+                )
+            }
+        }
+      ];
+
+
+    const history = useHistory();
+
+    const deleteProduct = async function(id,toggle) {
+        var res = await axios.delete(API_URL + "products/" + id,{data:{token:token}})
+
+        if(res.status === 200)
+        {
+            NotificationManager.success("Ürün Başarıyla Silindi","Başarılı");
+            toggle();
+            history.push("/listproducts");
+        }
+        else
+            NotificationManager.error("Bir hata oluştu","Hata");
+    }
+
+
+
 
         var token = useSelector(state => state.userReducer.user.access_token)
         const [items,setItems] = useState([]);
