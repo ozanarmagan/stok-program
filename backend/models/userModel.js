@@ -3,7 +3,9 @@ var mongoose = require('mongoose');
 var userSchema = mongoose.Schema({
     email: {
         type:String,
-        required:true
+        required:true,
+        uniqiue:true,
+        dropDups:true
     },
     password: {
         type:String,

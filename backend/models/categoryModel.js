@@ -3,7 +3,9 @@ var mongoose = require('mongoose');
 var categorySchema = mongoose.Schema({
     name: {
         type:String,
-        required:true
+        required:true,
+        uniqiue:true,
+        dropDups:true
     },
     tax_rate:{
         type:Number,

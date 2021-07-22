@@ -15,7 +15,9 @@ var productSchema = mongoose.Schema({
     },
     barcode: {
         type:Number,
-        required:true
+        required:true,
+        uniqiue:true,
+        dropDups:true
     },
     price_to_sell: {
         type:Number,

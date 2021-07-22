@@ -3,7 +3,9 @@ var mongoose = require('mongoose');
 var companySchema = mongoose.Schema({
     name: {
         type:String,
-        required:true
+        required:true,
+        uniqiue:true,
+        dropDups:true
     },
     address: {
         type:String,

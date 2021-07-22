@@ -39,6 +39,7 @@
     "reactstrap": "^8.9.0",
     "redux": "^4.1.0",
     "resize-observer": "^1.0.2",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.1.2"
   },
   "scripts": {

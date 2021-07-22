@@ -1,30 +1,23 @@
 let router = require('express').Router();
-
+let fs = require('fs');
 const multer = require('multer')
 
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'images');
+        fs.mkdirSync('./images');
+        cb(null, 'images/')
     },
-    filename: function(req, file, cb) {   
-        cb(file.originalname);
+    filename: function(req,file,cb) {
+        cb(null,file.originalname);
     }
 });
 
 
 
-const fileFilter = (req, file, cb) => {
-    const allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    if(allowedFileTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(null, false);
-    }
-}
 
-let upload = multer({ storage, fileFilter });
 
+let upload = multer({ storage:storage});
 
 /* USER ROUTES */
 
@@ -187,16 +180,16 @@ var productController = require("./controllers/productController");
 
 router.route('/products')
     .get(productController.index)
-    .post(upload.single('image'),productController.new)
+    .post(upload.single("file"),productController.new)
 
 router.route('/products/short')
     .get(productController.shortindex);
 
 router.route('/products/:product_id')
     .get(productController.view)
-    .post(upload.single('image'),productController.edit)
-    .patch(upload.single('image'),productController.edit)
-    .put(upload.single('image'),productController.edit)
+    .post(upload.single('file'),productController.edit)
+    .patch(upload.single('file'),productController.edit)
+    .put(upload.single('file'),productController.edit)
     .delete(productController.delete);
 
 /* DEBT ROUTES */

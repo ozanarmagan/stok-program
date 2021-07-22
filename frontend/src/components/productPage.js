@@ -8,7 +8,8 @@ import { useSelector } from "react-redux";
 import Select from '@material-ui/core/Select';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import IconButton from '@material-ui/core/IconButton';
-
+import {NotificationManager} from 'react-notifications';
+import { v4 as uuidv4 } from 'uuid';
 //
 
 
@@ -45,10 +46,13 @@ function ProductPage(props) {
     const [product, setProduct] = useState({});
     const [products, setProducts] = useState([]);
     const [open, setOpen] = useState(false);
+    const [fcount,setF] = useState(0);
     const [options, setOptions] = useState([]);
+    const [isEditing,setEdit] = useState(false);
     const loading = open && options.length === 0;
     const barcodeInputRef = React.createRef();
 
+    const [imglink,setImg] = useState(null);
     useMemo(() => {
         const getProducts = async () => {
             axios.get(API_URL + "products", { params: { token: token } }).then((result) => {
@@ -91,8 +95,21 @@ function ProductPage(props) {
     }, [])
 
     useEffect(() => {
-        if (barcode === "") setProduct({})
+        if (barcode === "") { setProduct({}); setImg(null);}
+
     }, [barcode])
+
+
+    useEffect(() => {
+        var p_sell = product.price_to_sell ? product.price_to_sell : 0;
+        var p_buy = product.price_to_buy ? product.price_to_buy : 0;
+
+        var p_rate = p_buy === 0 ? (p_sell === 0 ?  0 : 100) : (p_sell - p_buy) / p_buy * 100;
+
+        console.log(p_buy,p_sell);
+
+        setProduct({...product,profit_rate:p_rate.toFixed(2)});
+    },[fcount]);
 
     useEffect(() => {
 
@@ -120,10 +137,12 @@ function ProductPage(props) {
         setProduct({ ...product, barcode: event.target.value });
     }
     const sellPriceChange = (event, newValue) => {
-        setProduct({ ...product, price_to_sell: event.target.value });
+        setProduct({ ...product, price_to_sell: event.target.value === "" ? 0 : parseInt(event.target.value) });
+        setF(fcount + 1);
     }
     const buyPriceChange = (event, newValue) => {
-        setProduct({ ...product, price_to_buy: event.target.value });
+        setProduct({ ...product, price_to_buy: event.target.value === "" ? 0 : parseInt(event.target.value) });
+        setF(fcount + 1);
     }
     const stockChange = (event, newValue) => {
         setProduct({ ...product, stock: event.target.value });
@@ -137,17 +156,64 @@ function ProductPage(props) {
     const unitChange = (event, newValue) => {
         setProduct({ ...product, unit: event.target.value });
     }
-    const profitChange = (event, newValue) => {
-        setProduct({ ...product, profit: event.target.value });
-    }
     const countryChange = (event, newValue) => {
         setProduct({ ...product, countryChange: event.target.value });
     }
 
-    const save = (event, newValue) => {
-        
-        if (product !== {}) setProduct({ ...product, last_change_date: new Date() });
-        console.log("Clicked");
+    const save = async (event, newValue) => {
+        if(!product.barcode)
+            NotificationManager.error("Lütfen Ürün Barkodunu Girin","Hata");
+        if(!product.name)
+            NotificationManager.error("Lütfen Ürün Adını Girin","Hata");
+        if(!product.price_to_sell)
+            NotificationManager.error("Lütfen Ürün Satış Fiyatını Girin","Hata");
+        if(!product.price_to_buy)
+            NotificationManager.error("Lütfen Ürün Alış Fiyatını Girin","Hata");
+        if(!product.stock)
+            NotificationManager.error("Lütfen Ürün Stoğunu Girin","Hata");
+        if(!product.critical_stock)
+            NotificationManager.error("Lütfen Ürün Kritik Stoğunu Girin","Hata");
+        if(!product.catgegory)
+            NotificationManager.error("Lütfen Ürün Kategorisini Girin","Hata");
+
+
+        let form = new FormData();
+        form.append("name",product.name);
+        if(!isEditing)
+            form.append("category_id",categories[product.category]._id);
+        else
+            form.append("category_id",product.category._id);
+        form.append("price_to_buy",product.price_to_buy)
+        form.append("price_to_sell",product.price_to_sell)
+        form.append("profit_rate",product.profit_rate);
+        form.append("barcode",product.barcode);
+        form.append("unit",product.unit)
+        if(product.origin)
+            form.append("origin",product.origin.name)
+        form.append("stock",product.stock);
+        form.append("critical_stock",product.critical_stock);
+        if(product.image) {
+            var imgname = uuidv4() + "." +  product.image.name.split('.').pop();;
+            form.append("file",product.image,imgname);
+        }
+        form.append("token",token);
+        if(!isEditing)
+            var res = await axios.post(API_URL + "products",form,{
+                headers: {
+                    'content-type': 'multipart/form-data'
+                }
+            });
+        else
+            res = await axios.put(API_URL + "products/" + product._id,form,{
+                headers: {
+                    'content-type': 'multipart/form-data'
+                }
+            });
+
+        if(res.data.status === 200)
+            NotificationManager.success("Ürün Başarıyla Oluşturuldu","Başarılı");
+        else
+            NotificationManager.error("Bir hata oluştu","Hata");
     }
 
     const createNewBarcode = (event) => {
@@ -158,7 +224,8 @@ function ProductPage(props) {
     }
 
     const imageUpload = (event) => {
-
+        setProduct({...product,image:event.target.files[0]});
+        setImg(URL.createObjectURL(event.target.files[0]));
     }
 
     return (
@@ -168,7 +235,6 @@ function ProductPage(props) {
                 justifyContent="center"
                 alignItems="flex-start"
                 marginTop="15px"
-                minHeight="100px"
             >
                 <Container className={classes.layoutSearch}>
                     {/* <FormControl >
@@ -181,11 +247,12 @@ function ProductPage(props) {
                         groupBy={(option) => option.firstLetter}
                         getOptionLabel={(option) => option?option.barcode.toString():"0"}
                         getOptionSelected={(option, value) => option.barcode === value.barcode}
-                        onChange={async (e, newValue) => { setBarcode(e.target.value); setProduct(newValue) }}
+                        // onChange={async (e, newValue) => { setBarcode(e.target.value); setProduct(newValue) }}
                         noOptionsText={
                             <Button onMouseDown={createNewBarcode}>
                               Ürün Bulununamadı Yeni Oluşturmak İçin Tıklayınız!!!
                             </Button>}
+                        onChange={async (e, newValue) => { setBarcode(e.target.value); newValue === null ? setEdit(false) : setEdit(true); setProduct(newValue); newValue !== null ?  setImg(newValue.image) : setImg(null) }}
                         renderOption={(option) => (
                             <React.Fragment>
                                 <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
@@ -203,10 +270,6 @@ function ProductPage(props) {
                         ref={barcodeInputRef}
                         
                     />
-                    <ButtonGroup disableElevation variant="contained" color="primary" style={{ padding: "10px" }}>
-                        <Button>Ürünü Getir</Button>
-                        <Button>Yeni Barkod Üret</Button>
-                    </ButtonGroup>
                 </Container>
 
             </Box>
@@ -225,6 +288,7 @@ function ProductPage(props) {
                             <hr></hr>
                         </Grid>
                         <Grid item xs={12} sm={12}>
+                            {imglink ? <div>Ürünün Görseli <img src={imglink} style={{width:"100px",height:"100px",marginLeft:"50px"}} alt="Ürün Görseli"/><Button color="primary" variant="contained" style={{marginLeft:"20px"}} onClick={() => {setProduct({...product,image:null});setImg(null);}}>Görseli Sil</Button> <br/>Görseli Değiştir</div>  : <div>Görsel Ekle</div> }
                             <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={imageUpload}/>
                             <label htmlFor="icon-button-file">
                                 <IconButton color="primary" aria-label="upload picture" component="span">
@@ -291,7 +355,7 @@ function ProductPage(props) {
                             <TextField
                                 id="profit_rate"
                                 name="profit_rate"
-                                label="Kar"
+                                label="Kar Oranı (%)"
                                 defaultValue={0}
                                 fullWidth
                                 InputProps={{ readOnly: true, }}
@@ -317,7 +381,7 @@ function ProductPage(props) {
                                 label="Kritik stok"
                                 defaultValue="0"
                                 onChange={criticalStockChange}
-                                value={product ? product.stock : 0}
+                                value={product ? product.critical_stock : 0}
                                 fullWidth
                             //   autoComplete="shipping postal-code"
                             />
@@ -343,8 +407,8 @@ function ProductPage(props) {
                                 id="combo-box-demo"
                                 options={categories}
                                 onChange={categoryChange}
-                                value={product ? product.category : 0}
-                                defaultValue={{name:"Lütfen Kategori Seçiniz"}}
+                                value={product ? product.category : null}
+                                defaultValue={{name:"Lütfen Kategori Seçiniz",value:null}}
                                 getOptionLabel={(option) => option.name}
                                 getOptionSelected={(option, value) => option.name === value.name}
                                 style={{ width: 300 }}
@@ -393,6 +457,7 @@ function ProductPage(props) {
                                     shrink: true,
                                 }}
                                 InputProps={{ readOnly: true }}
+                                disabled={true}
                             />
 
 
@@ -412,13 +477,14 @@ function ProductPage(props) {
                                     shrink: true,
                                 }}
                                 InputProps={{ readOnly: true }}
+                                disabled={true}
                             />
 
 
                         </Grid>
                         <Grid item xs={4}  sm={5}/>
                         <Grid item xs={4}  sm={3}>
-                                <Button variant="contained" color="primary" style={{padding:"10px", margin:"10px" }} onClick={save}>Kaydet</Button>
+                                <Button variant="contained" color="primary" style={{padding:"10px", margin:"10px" }} onClick={save}>{isEditing ? "Ürünü Düzenle" : "Ürünü Ekle"}</Button>
                                 <Button variant="contained" color="secondary" style={{padding:"10px" , marign:"10px"}}>Ürünü Sil</Button>
 
                         </Grid>
