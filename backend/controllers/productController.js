@@ -132,7 +132,7 @@ exports.edit = function (req,res) {
                 product.product_unit = req.body.product_unit ||  product.product_unit;
                 product.origin = req.body.origin ||  product.origin;
                 product.last_change_date = Date.now();
-                product.image = req.body.image_url ? "http://" + req.header('host') + "/" + req.file.path :  product.image;
+                product.image = req.file ? "http://" + req.header('host') + "/" + req.file.path :  (req.body.image ? req.body.image : null);
 
                 product.save((err)=> { 
                     if(err) {
