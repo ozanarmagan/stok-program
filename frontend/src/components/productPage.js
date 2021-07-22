@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     layoutSearch: {
-        width: 'auto',
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
         [theme.breakpoints.up(1600 + theme.spacing(2) * 2)]: {
@@ -47,10 +46,12 @@ function ProductPage(props) {
     const [products, setProducts] = useState([]);
     const [open, setOpen] = useState(false);
     const [fcount,setF] = useState(0);
+    const [defaultVal,setDefault] = useState(null);
     const [options, setOptions] = useState([]);
     const [isEditing,setEdit] = useState(false);
     const loading = open && options.length === 0;
     const [imglink,setImg] = useState(null);
+    const [imgUp,setUp] = useState(false);
     useMemo(() => {
         const getProducts = async () => {
             axios.get(API_URL + "products", { params: { token: token } }).then((result) => {
@@ -69,6 +70,23 @@ function ProductPage(props) {
 
         getCategories();
     }, [])
+
+
+    useEffect(() => {
+        if(props.match.params.product_id)
+            axios.get(API_URL + "products/" + props.match.params.product_id + "?token=" + token)
+                .then(
+                    res => {
+                        if(res.data.status === 200)
+                        {
+                            setProduct(res.data.data);
+                            setEdit(true)
+                            setImg(res.data.data.image)
+                        }
+                    }
+                )
+    },[]);
+
     useEffect(() => {
 
         const getProducts = async () => {
@@ -124,8 +142,8 @@ function ProductPage(props) {
         setBarcode(event.target.value)
     };
 
-    const categoryChange = (event) => {
-        setProduct({ ...product, category: event.target.value });
+    const categoryChange = (event,newValue) => {
+        setProduct({ ...product, category: newValue });
     };
 
     const nameChange = (event, newValue) => {
@@ -177,10 +195,7 @@ function ProductPage(props) {
 
         let form = new FormData();
         form.append("name",product.name);
-        if(!isEditing)
-            form.append("category_id",categories[product.category]._id);
-        else
-            form.append("category_id",product.category._id);
+        form.append("category_id",product.category._id);
         form.append("price_to_buy",product.price_to_buy)
         form.append("price_to_sell",product.price_to_sell)
         form.append("profit_rate",product.profit_rate);
@@ -190,7 +205,7 @@ function ProductPage(props) {
             form.append("origin",product.origin.name)
         form.append("stock",product.stock);
         form.append("critical_stock",product.critical_stock);
-        if(product.image) {
+        if(product.image && imgUp) {
             var imgname = uuidv4() + "." +  product.image.name.split('.').pop();;
             form.append("file",product.image,imgname);
         }
@@ -215,8 +230,14 @@ function ProductPage(props) {
     }
 
     const imageUpload = (event) => {
-        setProduct({...product,image:event.target.files[0]});
-        setImg(URL.createObjectURL(event.target.files[0]));
+        if(event.target.files)
+        {
+            setProduct({...product,image:event.target.files[0]});
+            setImg(URL.createObjectURL(event.target.files[0]));
+            setUp(true);
+        }
+        else
+            setUp(false);
     }
 
     return (
@@ -237,6 +258,7 @@ function ProductPage(props) {
                         options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
                         groupBy={(option) => option.firstLetter}
                         getOptionLabel={(option) => option.barcode.toString()}
+                        defaultValue={defaultVal ? defaultVal : null}
                         getOptionSelected={(option, value) => option.barcode === value.barcode}
                         onChange={async (e, newValue) => { setBarcode(e.target.value); newValue === null ? setEdit(false) : setEdit(true); setProduct(newValue); newValue !== null ?  setImg(newValue.image) : setImg(null) }}
                         renderOption={(option) => (
@@ -433,9 +455,7 @@ function ProductPage(props) {
                                 id="datetime-local"
                                 fullWidth
                                 label="Oluşturulma tarihi"
-                                
-                                defaultValue="g.a.y s.d"
-                                value={product ? (new Date(product.created_date)).toLocaleDateString('tr-TR',date_optinus): "None"}
+                                value={product ? (new Date(product.created_date)).toLocaleDateString('tr-TR',date_optinus): ""}
                                 className={classes.textField}
                                 InputLabelProps={{
                                     shrink: true,
@@ -454,9 +474,8 @@ function ProductPage(props) {
                                 fullWidth
                                 label="Son değiştirilme tarihi"
                                 // type="datetime-local"
-                                defaultValue="2017-05-24T10:30"
                                 className={classes.textField}
-                                value={product ? (new Date(product.last_change_date)).toLocaleDateString('tr-TR',date_optinus) : "None"}
+                                value={product ? (new Date(product.last_change_date)).toLocaleDateString('tr-TR',date_optinus) : ""}
                                 InputLabelProps={{
                                     shrink: true,
                                 }}

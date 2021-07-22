@@ -109,12 +109,10 @@ export default function Sidebar(props) {
     <Collapse isOpen={state.products}>
     <div className="submenu">
         <div className="submenu-heading">ÜRÜN İŞLEMLERİ</div>
-        <Link className="submenu-item" to="/product/">Ürün Ekle</Link>
-        <Link className="submenu-item" to="/">Kategori Ekle</Link>
-        <Link className="submenu-item" to="/">Tüm Kategoriler</Link>
+        <Link className="submenu-item" to="/product/">Ürün Ekle / Düzenle </Link>
         <Link className="submenu-item" to="/newcategory">Kategori Ekle</Link>
         <Link className="submenu-item" to="/categories">Tüm Kategoriler</Link>
-        <Link className="submenu-item" to="/">Tüm Ürünler</Link>
+        <Link className="submenu-item" to="/listproducts">Tüm Ürünler</Link>
     </div>
     </Collapse>
     <Link  onClick={handleClickStocks}>
