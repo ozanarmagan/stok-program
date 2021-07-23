@@ -449,7 +449,7 @@ function ProductPage(props) {
                                 onChange={criticalStockChange}
                                 value={product ? product.critical_stock : 0}
                                 fullWidth
-                            //   autoComplete="shipping postal-code"
+                            
                             />
                         </Grid>
                         <Grid item xs={12} sm={4}>
