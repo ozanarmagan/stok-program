@@ -60,6 +60,7 @@ function ProductPage(props) {
         const getProducts = async () => {
             axios.get(API_URL + "products", { params: { token: token } }).then((result) => {
                 setProducts(result.data.data);
+                // console.log(result.data.data);
             })
         }
         getProducts();
@@ -67,7 +68,7 @@ function ProductPage(props) {
     useMemo(() => {
         const getCategories = async () => {
             axios.get(API_URL + "categories", { params: { token: token } }).then((result) => {
-                console.log("memo", result);
+                // console.log("memo", result);
                 setCategories(result.data.data);
             })
         }
@@ -120,20 +121,20 @@ function ProductPage(props) {
     }, [barcode])
 
     useEffect(() => {
-        if (!profit) return;
+        // if (!profit) return;
         if (product.price_to_buy){
             var price_to_sell =( parseFloat(product.price_to_buy) / 100 * profit) + parseFloat(product.price_to_buy) ;
-            console.log("seel",price_to_sell);
+            // console.log("seel",price_to_sell);
             setProduct({...product,price_to_sell:price_to_sell?price_to_sell.toFixed(2):0.0,profit_rate:profit});
 
         }
-        else if (product.price_to_sell) {
-            var price_to_buy = Math.abs((parseFloat(product.price_to_sell) / 100 * profit) - parseFloat(product.price_to_sell));
-            console.log("buy",price_to_buy);
-            setProduct({...product,price_to_buy:price_to_buy?price_to_buy.toFixed(2):0.0,profit_rate:profit});
-        }
+        // else if (product.price_to_sell) {
+        //     var price_to_buy = Math.abs((parseFloat(product.price_to_sell) / 100 * profit) - parseFloat(product.price_to_sell));
+        //     console.log("buy",price_to_buy);
+        //     setProduct({...product,price_to_buy:price_to_buy?price_to_buy.toFixed(2):0.0,profit_rate:profit});
+        // }
         else {
-            NotificationManager.error("Satış veya Alış fiyatı giriniz.","Hata");
+            NotificationManager.error("Alış fiyatı giriniz.","Hata");
         }
         
     }, [profit])
@@ -144,7 +145,7 @@ function ProductPage(props) {
 
         var p_rate = p_buy === 0 ? (p_sell === 0 ?  0 : 100) : (p_sell - p_buy) / p_buy * 100;
 
-        console.log(p_buy,p_sell);
+        // console.log(p_buy,p_sell);
 
         setProduct({...product,profit_rate:p_rate.toFixed(2)});
     },[fcount]);
@@ -165,6 +166,7 @@ function ProductPage(props) {
     };
 
     const categoryChange = (event,newValue) => {
+        // console.log("new Cat",newValue);
         setProduct({ ...product, category: newValue });
     };
 
@@ -192,10 +194,11 @@ function ProductPage(props) {
         setProduct({ ...product, origin: event.target.value });
     }
     const unitChange = (event, newValue) => {
-        setProduct({ ...product, unit: event.target.value });
+        
+        setProduct({ ...product, unit: newValue });
     }
     const countryChange = (event, newValue) => {
-        setProduct({ ...product, countryChange: event.target.value });
+        setProduct({ ...product, countryChange: newValue});
     }
     const profitChange = (event, newValue) => {
         var profit = event.target.value?parseFloat(event.target.value):0.0;
@@ -226,9 +229,8 @@ function ProductPage(props) {
         form.append("price_to_sell",product.price_to_sell)
         form.append("profit_rate",product.profit_rate);
         form.append("barcode",product.barcode);
-        form.append("unit",product.unit)
-        if(product.origin)
-            form.append("origin",product.origin.name)
+        form.append("unit",product.unit);
+        form.append("origin",product.origin?product.origin:"Diğer");
         form.append("stock",product.stock);
         form.append("critical_stock",product.critical_stock);
         if(product.image && imgUp) {
@@ -256,10 +258,10 @@ function ProductPage(props) {
     }
 
     const createNewBarcode = (event) => {
-        console.log(event);
+        // console.log(event);
 
         setProducts([...products,{barcode:barcode,name:"No",category:"No"}]);
-        console.log(products);
+        // console.log(products);
     }
 
     const imageUpload = (event) => {
@@ -294,7 +296,13 @@ function ProductPage(props) {
                         //     <Button onMouseDown={createNewBarcode}>
                         //       Ürün Bulununamadı Yeni Oluşturmak İçin Tıklayınız!!!
                         //     </Button>}
-                        onChange={async (e, newValue) => { setBarcode(e.target.value); newValue === null ? setEdit(false) : setEdit(true); setProduct(newValue); newValue !== null ?  setImg(newValue.image) : setImg(null) }}
+                        onChange={async (e, newValue) => { 
+                            setBarcode(e.target.value); 
+                            newValue === null ? setEdit(false) : setEdit(true); 
+                            setProduct(newValue); 
+                            newValue !== null ?  setImg(newValue.image) : setImg(null) 
+                            // console.log(newValue);
+                        }}
                         renderOption={(option) => (
                             <React.Fragment>
                                 <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
@@ -423,6 +431,7 @@ function ProductPage(props) {
                             <TextField
                                 id="stock"
                                 name="stock"
+                                type="number"
                                 label="Stok"
                                 defaultValue="0"
                                 onChange={stockChange}
@@ -433,6 +442,7 @@ function ProductPage(props) {
                             <TextField
                                 required
                                 id="critical_stock"
+                                type="number"
                                 name="critical_stock"
                                 label="Kritik stok"
                                 defaultValue="0"
@@ -449,9 +459,12 @@ function ProductPage(props) {
                                 id="combo-box-demo"
                                 options={categories}
                                 onChange={categoryChange}
-                                value={product ? product.category : null}
-                                defaultValue={{name:"Lütfen Kategori Seçiniz",value:null}}
-                                getOptionLabel={(option) => option.name}
+                                value={{name:product ? product.category?product.category.name:null : null}}
+                                defaultValue={"Lütfen Kategori Seçiniz"}
+                                getOptionLabel={(option) => {
+                                    // console.log(option);
+                                    return option.name ?  option.name  :"";
+                                }}
                                 getOptionSelected={(option, value) => option.name === value.name}
                                 style={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Kategori" variant="outlined" />}
@@ -465,11 +478,11 @@ function ProductPage(props) {
                                 options={countries}
                                 onChange={countryChange}
                                 value={product ? product.origin : 0}
-                                defaultValue={{name:"Türkiye",code:"TR"}}
-                                getOptionLabel={(option) => option.name}
+                                defaultValue={{name:"Türkiye",code:"TR"}.name}
+                                getOptionLabel={(option) => option.name ?  option.name  :""}
                                 getOptionSelected={(option, value) => option.name === value.name}
                                 style={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Kategori" variant="outlined" />}
+                                renderInput={(params) => <TextField {...params} label="Menşei" variant="outlined" />}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -478,7 +491,8 @@ function ProductPage(props) {
                                 options={units}
                                 onChange={unitChange}
                                 defaultValue={"Adet"}
-                                getOptionLabel={(option) => option}
+                                value={product ? product.unit  : "Adet"}
+                                getOptionLabel={(option) => option?option:""}
                                 getOptionSelected={(option, value) => option === value}
                                 style={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Birim" variant="outlined" />}
