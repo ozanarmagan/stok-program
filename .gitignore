@@ -4,3 +4,4 @@ frontend/src/constants/api_constant.js
 backend/package-lock.json
 
 .gitignore
+frontend/package-lock.json

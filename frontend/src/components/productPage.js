@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { TextField, makeStyles, Container, Grid, Box, Paper, CircularProgress, Typography, ButtonBase } from '@material-ui/core';
+import { TextField, makeStyles, Container, Grid, Box, Paper, CircularProgress, Typography, ButtonBase, InputAdornment } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { API_URL } from '../constants';
 import { FormControl, InputLabel, Input, ButtonGroup, Button, MenuItem } from '@material-ui/core';
@@ -49,13 +49,18 @@ function ProductPage(props) {
     const [defaultVal,setDefault] = useState(null);
     const [options, setOptions] = useState([]);
     const [isEditing,setEdit] = useState(false);
+    const [profit,setProfit] = useState(0);
+    const [profitController, setProfitController] = useState(false)
     const loading = open && options.length === 0;
+    const barcodeInputRef = React.createRef();
+
     const [imglink,setImg] = useState(null);
     const [imgUp,setUp] = useState(false);
     useMemo(() => {
         const getProducts = async () => {
             axios.get(API_URL + "products", { params: { token: token } }).then((result) => {
                 setProducts(result.data.data);
+                // console.log(result.data.data);
             })
         }
         getProducts();
@@ -63,7 +68,7 @@ function ProductPage(props) {
     useMemo(() => {
         const getCategories = async () => {
             axios.get(API_URL + "categories", { params: { token: token } }).then((result) => {
-                console.log("memo", result);
+                // console.log("memo", result);
                 setCategories(result.data.data);
             })
         }
@@ -115,6 +120,24 @@ function ProductPage(props) {
 
     }, [barcode])
 
+    useEffect(() => {
+        // if (!profit) return;
+        if (product.price_to_buy){
+            var price_to_sell =( parseFloat(product.price_to_buy) / 100 * profit) + parseFloat(product.price_to_buy) ;
+            // console.log("seel",price_to_sell);
+            setProduct({...product,price_to_sell:price_to_sell?price_to_sell.toFixed(2):0.0,profit_rate:profit});
+
+        }
+        // else if (product.price_to_sell) {
+        //     var price_to_buy = Math.abs((parseFloat(product.price_to_sell) / 100 * profit) - parseFloat(product.price_to_sell));
+        //     console.log("buy",price_to_buy);
+        //     setProduct({...product,price_to_buy:price_to_buy?price_to_buy.toFixed(2):0.0,profit_rate:profit});
+        // }
+        else {
+            NotificationManager.error("Alış fiyatı giriniz.","Hata");
+        }
+        
+    }, [profit])
 
     useEffect(() => {
         var p_sell = product.price_to_sell ? product.price_to_sell : 0;
@@ -122,7 +145,7 @@ function ProductPage(props) {
 
         var p_rate = p_buy === 0 ? (p_sell === 0 ?  0 : 100) : (p_sell - p_buy) / p_buy * 100;
 
-        console.log(p_buy,p_sell);
+        // console.log(p_buy,p_sell);
 
         setProduct({...product,profit_rate:p_rate.toFixed(2)});
     },[fcount]);
@@ -143,6 +166,7 @@ function ProductPage(props) {
     };
 
     const categoryChange = (event,newValue) => {
+        // console.log("new Cat",newValue);
         setProduct({ ...product, category: newValue });
     };
 
@@ -153,11 +177,11 @@ function ProductPage(props) {
         setProduct({ ...product, barcode: event.target.value });
     }
     const sellPriceChange = (event, newValue) => {
-        setProduct({ ...product, price_to_sell: event.target.value === "" ? 0 : parseInt(event.target.value) });
+        setProduct({ ...product, price_to_sell: event.target.value === "" ? 0.0 : parseFloat(event.target.value) });
         setF(fcount + 1);
     }
     const buyPriceChange = (event, newValue) => {
-        setProduct({ ...product, price_to_buy: event.target.value === "" ? 0 : parseInt(event.target.value) });
+        setProduct({ ...product, price_to_buy: event.target.value === "" ? 0.0 : parseFloat(event.target.value) });
         setF(fcount + 1);
     }
     const stockChange = (event, newValue) => {
@@ -170,10 +194,15 @@ function ProductPage(props) {
         setProduct({ ...product, origin: event.target.value });
     }
     const unitChange = (event, newValue) => {
-        setProduct({ ...product, unit: event.target.value });
+        
+        setProduct({ ...product, unit: newValue });
     }
     const countryChange = (event, newValue) => {
-        setProduct({ ...product, countryChange: event.target.value });
+        setProduct({ ...product, countryChange: newValue});
+    }
+    const profitChange = (event, newValue) => {
+        var profit = event.target.value?parseFloat(event.target.value):0.0;
+        setProfit(profit);
     }
 
     const save = async (event, newValue) => {
@@ -200,9 +229,8 @@ function ProductPage(props) {
         form.append("price_to_sell",product.price_to_sell)
         form.append("profit_rate",product.profit_rate);
         form.append("barcode",product.barcode);
-        form.append("unit",product.unit)
-        if(product.origin)
-            form.append("origin",product.origin.name)
+        form.append("unit",product.unit);
+        form.append("origin",product.origin?product.origin:"Diğer");
         form.append("stock",product.stock);
         form.append("critical_stock",product.critical_stock);
         if(product.image && imgUp) {
@@ -229,6 +257,13 @@ function ProductPage(props) {
             NotificationManager.error("Bir hata oluştu","Hata");
     }
 
+    const createNewBarcode = (event) => {
+        // console.log(event);
+
+        setProducts([...products,{barcode:barcode,name:"No",category:"No"}]);
+        // console.log(products);
+    }
+
     const imageUpload = (event) => {
         if(event.target.files)
         {
@@ -249,18 +284,25 @@ function ProductPage(props) {
                 marginTop="15px"
             >
                 <Container className={classes.layoutSearch}>
-                    {/* <FormControl >
-                <InputLabel htmlFor="product_barcode_label">Barkod</InputLabel>
-                <Input id="product_barcode" aria-describedby="product_barcode" />
-            </FormControl> */}
+                    
                     <Autocomplete
                         id="grouped-demo"
                         options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
                         groupBy={(option) => option.firstLetter}
-                        getOptionLabel={(option) => option.barcode.toString()}
-                        defaultValue={defaultVal ? defaultVal : null}
+                        getOptionLabel={(option) => option?option.barcode.toString():"0"}
                         getOptionSelected={(option, value) => option.barcode === value.barcode}
-                        onChange={async (e, newValue) => { setBarcode(e.target.value); newValue === null ? setEdit(false) : setEdit(true); setProduct(newValue); newValue !== null ?  setImg(newValue.image) : setImg(null) }}
+                        
+                        // noOptionsText={
+                        //     <Button onMouseDown={createNewBarcode}>
+                        //       Ürün Bulununamadı Yeni Oluşturmak İçin Tıklayınız!!!
+                        //     </Button>}
+                        onChange={async (e, newValue) => { 
+                            setBarcode(e.target.value); 
+                            newValue === null ? setEdit(false) : setEdit(true); 
+                            setProduct(newValue); 
+                            newValue !== null ?  setImg(newValue.image) : setImg(null) 
+                            // console.log(newValue);
+                        }}
                         renderOption={(option) => (
                             <React.Fragment>
                                 <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
@@ -275,6 +317,8 @@ function ProductPage(props) {
                              variant="outlined" 
                              onChange={readBarcode}
                              />}
+                        ref={barcodeInputRef}
+                        
                     />
                 </Container>
 
@@ -313,6 +357,7 @@ function ProductPage(props) {
                                 value={product ? product.name : ""}
                                 InputProps={{
                                     readOnly: false,
+                                    
                                 }}
                                 fullWidth
                             //   autoComplete="given-name"
@@ -333,12 +378,16 @@ function ProductPage(props) {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
+                                type="number"
                                 required
                                 id="price_to_sell"
                                 onChange={sellPriceChange}
                                 name="price_to_sell"
                                 defaultValue="0"
                                 label="Satış fiyatı"
+                                InputProps={{ 
+                                    step: "0.1",
+                                    startAdornment: <InputAdornment position="start">₺</InputAdornment>, }}
                                 value={product ? product.price_to_sell : 0}
                                 fullWidth
                             //   autoComplete="shipping address-line1"
@@ -346,12 +395,16 @@ function ProductPage(props) {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
+                                type="number"
                                 required
                                 id="price_to_buy"
                                 name="price_to_buy"
                                 label="Alış fiyatı"
                                 defaultValue="0"
                                 onChange={buyPriceChange}
+                                InputProps={{ 
+                                    step: "0.1",
+                                    startAdornment: <InputAdornment position="start">₺</InputAdornment>, }}
                                 value={product ? product.price_to_buy : 0}
                                 fullWidth
                             //   autoComplete="shipping address-line2"
@@ -359,12 +412,17 @@ function ProductPage(props) {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
+                                type="number"
                                 id="profit_rate"
                                 name="profit_rate"
-                                label="Kar Oranı (%)"
+                                label="Kar Oranı "
+                                onChange={profitChange}
                                 defaultValue={0}
                                 fullWidth
-                                InputProps={{ readOnly: true, }}
+                                InputProps={{ 
+                                    // readOnly:product?false:true,
+                                    step: "0.1",
+                                    startAdornment: <InputAdornment position="start">%</InputAdornment>, }}
                                 value={product ? product.profit_rate : 0}
                             //   autoComplete="shipping address-level2"
                             />
@@ -373,6 +431,7 @@ function ProductPage(props) {
                             <TextField
                                 id="stock"
                                 name="stock"
+                                type="number"
                                 label="Stok"
                                 defaultValue="0"
                                 onChange={stockChange}
@@ -383,39 +442,29 @@ function ProductPage(props) {
                             <TextField
                                 required
                                 id="critical_stock"
+                                type="number"
                                 name="critical_stock"
                                 label="Kritik stok"
                                 defaultValue="0"
                                 onChange={criticalStockChange}
                                 value={product ? product.critical_stock : 0}
                                 fullWidth
-                            //   autoComplete="shipping postal-code"
+                            
                             />
                         </Grid>
                         <Grid item xs={12} sm={4}>
-                            {/* <InputLabel id="demo-simple-select-label">Kategori</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={product ? product.category : "None"}
-                                defaultValue = ""
-                                onChange={categoryChange}
-                                fullWidth
-                            >
-                                {categories? categories.map((category,index) => {
-                                    <MenuItem value={index *10}>{category.name}</MenuItem>
-                                }):<MenuItem value={10}>Loading</MenuItem>}
-
-
-                            </Select> */}
+                            
 
                             <Autocomplete
                                 id="combo-box-demo"
                                 options={categories}
                                 onChange={categoryChange}
-                                value={product ? product.category : null}
-                                defaultValue={{name:"Lütfen Kategori Seçiniz",value:null}}
-                                getOptionLabel={(option) => option.name}
+                                value={{name:product ? product.category?product.category.name:null : null}}
+                                defaultValue={"Lütfen Kategori Seçiniz"}
+                                getOptionLabel={(option) => {
+                                    // console.log(option);
+                                    return option.name ?  option.name  :"";
+                                }}
                                 getOptionSelected={(option, value) => option.name === value.name}
                                 style={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Kategori" variant="outlined" />}
@@ -429,11 +478,11 @@ function ProductPage(props) {
                                 options={countries}
                                 onChange={countryChange}
                                 value={product ? product.origin : 0}
-                                defaultValue={{name:"Türkiye",code:"TR"}}
-                                getOptionLabel={(option) => option.name}
+                                defaultValue={{name:"Türkiye",code:"TR"}.name}
+                                getOptionLabel={(option) => option.name ?  option.name  :""}
                                 getOptionSelected={(option, value) => option.name === value.name}
                                 style={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Kategori" variant="outlined" />}
+                                renderInput={(params) => <TextField {...params} label="Menşei" variant="outlined" />}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -442,7 +491,8 @@ function ProductPage(props) {
                                 options={units}
                                 onChange={unitChange}
                                 defaultValue={"Adet"}
-                                getOptionLabel={(option) => option}
+                                value={product ? product.unit  : "Adet"}
+                                getOptionLabel={(option) => option?option:""}
                                 getOptionSelected={(option, value) => option === value}
                                 style={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Birim" variant="outlined" />}
