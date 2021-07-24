@@ -49,6 +49,8 @@ import AddStock from '../partial/addStockModal';
         }
       ];
 
+      const getLastItem = thePath => thePath.substring(thePath.lastIndexOf('/') + 1)
+
 
       const add = async (id,amount,toggle,init,image) => {
           var res = await axios.put(API_URL + "products/" + id,{token:token,image:image,stock:init + amount});
@@ -64,7 +66,10 @@ import AddStock from '../partial/addStockModal';
         const [items,setItems] = useState([]);
         const [rows,setRows] = useState([]);
         var fetch = async function () {
-            var res = await axios.get(API_URL + "products?token=" + token);
+            if(getLastItem(window.location.pathname) == 'criticalstocks')
+                var res = await axios.get(API_URL + "critical_stocks?token=" + token);
+            else
+                res = await axios.get(API_URL + "products?token=" + token);
             if(res.data.status === 200)
                 {
                     var r = [];
@@ -94,7 +99,7 @@ import AddStock from '../partial/addStockModal';
         return (
             <div className="container">
                 <div className="row justify-content-between">
-                    <h4 className="mb-4 mt-4 col-6">Stoklar</h4>
+                    <h4 className="mb-4 mt-4 col-6">{getLastItem(window.location.pathname) == 'criticalstocks' ? "Kritik Stoktakiler" : "Stoklar"}</h4>
                     <div className="col-lg-2 mb-4 mt-4"><Input className="form-control" onChange={filterChange} placeholder="Filtrele"/></div>
                     
                 </div>

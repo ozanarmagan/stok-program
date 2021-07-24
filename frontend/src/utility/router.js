@@ -18,7 +18,8 @@ export default function PageRouter(props) {
             <Route exact path="/viewproduct/:product_id" component={ViewPorduct}/>
             <Route exact path="/" component={HomePage} />
             <Route exact path="/listproducts/" component={ListProducts}/>
-            <Route exact path="/stocks" component={Stock} />
+            <Route exact key="1" path="/stocks" component={Stock} />
+            <Route exact key="2" path="/criticalstocks" component={Stock} />
             <Route exact path="/newcategory" component={NewCategory} />
             <Route exact path="/categories" component={ListCategories} />
             <Route exact path="/category/:category_id" component={ViewCategory} />

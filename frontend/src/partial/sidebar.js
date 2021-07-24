@@ -123,7 +123,7 @@ export default function Sidebar(props) {
     <Collapse isOpen={state.stocks}>
     <div className="submenu">
         <div className="submenu-heading">STOK İŞLEMLERİ</div>
-        <Link className="submenu-item" to="/">Kritik Stoktakiler</Link>
+        <Link className="submenu-item" to="/criticalstocks">Kritik Stoktakiler</Link>
         <Link className="submenu-item" to="/stocks">Ürün Stokları</Link>
     </div>
     </Collapse>

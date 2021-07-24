@@ -72,7 +72,7 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
         {
             NotificationManager.success("Ürün Başarıyla Silindi","Başarılı");
             toggle();
-            history.push("/listproducts");
+            fetch();
         }
         else
             NotificationManager.error("Bir hata oluştu","Hata");
