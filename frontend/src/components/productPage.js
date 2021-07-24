@@ -531,17 +531,17 @@ function ProductPage(props) {
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                        <Autocomplete
-                                id="combo-box-demo"
-                                options={units}
-                                onChange={unitChange}
-                                defaultValue={"Adet"}
-                                value={product ? product.unit  : "Adet"}
-                                getOptionLabel={(option) => option?option:""}
-                                getOptionSelected={(option, value) => option === value}
-                                style={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Birim" variant="outlined" />}
-                            />
+                            <Autocomplete
+                                    id="combo-box-demo"
+                                    options={units}
+                                    onChange={unitChange}
+                                    defaultValue={"Adet"}
+                                    value={product ? product.unit  : "Adet"}
+                                    getOptionLabel={(option) => option?option:""}
+                                    getOptionSelected={(option, value) => option === value}
+                                    style={{ width: 300 }}
+                                    renderInput={(params) => <TextField {...params} label="Birim" variant="outlined" />}
+                                />
                         </Grid>
                         <Grid item xs={12} sm={6} >
 
