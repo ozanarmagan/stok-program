@@ -1,22 +1,17 @@
-import IconButton from '@material-ui/core/IconButton';
-import PageviewIcon from '@material-ui/icons/Pageview';
-import EditIcon from '@material-ui/icons/Edit';
-import Tooltip from '@material-ui/core/Tooltip';
-import {Link, useHistory} from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../constants';
 import { useSelector } from 'react-redux';
 import DataTable from 'react-data-table-component';
 import { Input } from 'reactstrap';
-import DeleteProduct from '../partial/deleteProductModal';
 import NotificationManager from "react-notifications/lib/NotificationManager";
+import AddStock from '../partial/addStockModal';
 
 
   
 
 
-  export default function ListProducts(props) {
+  export default function Stock(props) {
 
     const columns = [
         {
@@ -36,62 +31,52 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
           sortable: true,
         },
         {
+            name: 'Stok',
+            selector: 'stock',
+            sortable: true,
+        },
+        {
+            name: 'Kritik Stok',
+            selector: 'c_stock',
+            sortable: true,
+        },
+        {
             cell: (row) => {
                 return(
-                    <div>
-                        <Tooltip title="İncele">
-                        <Link to={"/viewproduct/"+ row.id}>
-                            <IconButton style={{color:"#1b5e20"}}>
-                                <PageviewIcon />
-                            </IconButton>
-                        </Link>
-                        </Tooltip>
-                        <Tooltip title="Düzenle">
-                            <Link to={"/product/"+ row.id}>
-                                <IconButton color="primary">
-                                    <EditIcon />
-                                </IconButton>
-                            </Link>
-                        </Tooltip>
-                        <Tooltip title="Sil">
-                            <DeleteProduct delete={deleteProduct} id={row.id}/>
-                        </Tooltip>
-                    </div>
+                    <AddStock id={row.id} init={parseInt(row.stock)} image={row.image} add={add}/>
                 )
             }
         }
       ];
 
-
-    const history = useHistory();
-
-    const deleteProduct = async function(id,toggle) {
-        var res = await axios.delete(API_URL + "products/" + id,{data:{token:token}})
-
-        if(res.status === 200)
-        {
-            NotificationManager.success("Ürün Başarıyla Silindi","Başarılı");
-            toggle();
-            fetch();
-        }
-        else
-            NotificationManager.error("Bir hata oluştu","Hata");
-    }
+      const getLastItem = thePath => thePath.substring(thePath.lastIndexOf('/') + 1)
 
 
-
+      const add = async (id,amount,toggle,init,image) => {
+          var res = await axios.put(API_URL + "products/" + id,{token:token,image:image,stock:init + amount});
+          if(res.data.status === 200)
+            NotificationManager.success("Stok Başarıyla Eklendi");
+          else
+            NotificationManager.error("Hata oluştu");
+          toggle();
+          fetch();
+      }
 
         var token = useSelector(state => state.userReducer.user.access_token)
         const [items,setItems] = useState([]);
         const [rows,setRows] = useState([]);
-
         var fetch = async function () {
-            var res = await axios.get(API_URL + "products?token=" + token);
+            if(getLastItem(window.location.pathname) == 'criticalstocks')
+                var res = await axios.get(API_URL + "critical_stocks?token=" + token);
+            else
+                res = await axios.get(API_URL + "products?token=" + token);
             if(res.data.status === 200)
                 {
                     var r = [];
                     res.data.data.map(element => {
-                        r.push({category:element.category.name,name:element.name,id:element._id,image:element.image})
+                        r.push({category:element.category.name,name:element.name,id:element._id,image:element.image,stock:element.stock,c_stock:element.critical_stock})
+
+                        return null;
                     })
                     setRows(r);
                     setItems(r);
@@ -114,7 +99,7 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
         return (
             <div className="container">
                 <div className="row justify-content-between">
-                    <h4 className="mb-4 mt-4 col-6">Ürünler</h4>
+                    <h4 className="mb-4 mt-4 col-6">{getLastItem(window.location.pathname) == 'criticalstocks' ? "Kritik Stoktakiler" : "Stoklar"}</h4>
                     <div className="col-lg-2 mb-4 mt-4"><Input className="form-control" onChange={filterChange} placeholder="Filtrele"/></div>
                     
                 </div>
@@ -127,5 +112,3 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
             </div>
         )
   }
-
-  
