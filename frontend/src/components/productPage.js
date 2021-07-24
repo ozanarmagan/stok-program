@@ -10,6 +10,12 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import IconButton from '@material-ui/core/IconButton';
 import {NotificationManager} from 'react-notifications';
 import { v4 as uuidv4 } from 'uuid';
+import {FaSave} from 'react-icons/fa';
+import {GrAdd} from 'react-icons/gr';
+import {AiFillDelete} from 'react-icons/ai';
+
+import {BiBarcodeReader} from 'react-icons/bi';
+
 //
 
 
@@ -18,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
         width: 'auto',
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
+        
         [theme.breakpoints.up(1600 + theme.spacing(2) * 2)]: {
             width: 1600,
             marginLeft: 'auto',
@@ -27,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     layoutSearch: {
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
+        alignItems:"center" ,
         [theme.breakpoints.up(1600 + theme.spacing(2) * 2)]: {
             width: 1600,
             marginLeft: 'auto',
@@ -133,7 +141,7 @@ function ProductPage(props) {
         //     console.log("buy",price_to_buy);
         //     setProduct({...product,price_to_buy:price_to_buy?price_to_buy.toFixed(2):0.0,profit_rate:profit});
         // }
-        else {
+        else if (!product.price_to_buy && profit){
             NotificationManager.error("Alış fiyatı giriniz.","Hata");
         }
         
@@ -166,7 +174,7 @@ function ProductPage(props) {
     };
 
     const categoryChange = (event,newValue) => {
-        // console.log("new Cat",newValue);
+        console.log("new Cat",newValue);
         setProduct({ ...product, category: newValue });
     };
 
@@ -218,7 +226,7 @@ function ProductPage(props) {
             NotificationManager.error("Lütfen Ürün Stoğunu Girin","Hata");
         if(!product.critical_stock)
             NotificationManager.error("Lütfen Ürün Kritik Stoğunu Girin","Hata");
-        if(!product.catgegory)
+        if(!product.category)
             NotificationManager.error("Lütfen Ürün Kategorisini Girin","Hata");
 
 
@@ -275,6 +283,36 @@ function ProductPage(props) {
             setUp(false);
     }
 
+    const findFreeBarcode =  () => {
+        var array = [];
+
+        products.map((product) => {
+            array.push(parseInt(product.barcode))
+        })
+        
+        var e;
+        do
+        {
+            e = Math.random() * 999999999999; // n + 1
+        } while (array.includes(e));
+        e = parseInt(e);
+        console.log(`/products/${e}`);
+        // const getProduct = async () => {
+        axios.get(`${API_URL}products/${e}`, { params: { token: token } }).then((result) => {
+            console.log(result);
+           
+        })
+        
+         NotificationManager.info(`${e} nolu barkod sistemde bulunamadı`);
+            
+        // }
+
+        // await getProduct();
+
+        
+        return e;
+    }
+
     return (
         <div >
             <Box
@@ -284,42 +322,49 @@ function ProductPage(props) {
                 marginTop="15px"
             >
                 <Container className={classes.layoutSearch}>
-                    
-                    <Autocomplete
-                        id="grouped-demo"
-                        options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-                        groupBy={(option) => option.firstLetter}
-                        getOptionLabel={(option) => option?option.barcode.toString():"0"}
-                        getOptionSelected={(option, value) => option.barcode === value.barcode}
-                        
-                        // noOptionsText={
-                        //     <Button onMouseDown={createNewBarcode}>
-                        //       Ürün Bulununamadı Yeni Oluşturmak İçin Tıklayınız!!!
-                        //     </Button>}
-                        onChange={async (e, newValue) => { 
-                            setBarcode(e.target.value); 
-                            newValue === null ? setEdit(false) : setEdit(true); 
-                            setProduct(newValue); 
-                            newValue !== null ?  setImg(newValue.image) : setImg(null) 
-                            // console.log(newValue);
-                        }}
-                        renderOption={(option) => (
-                            <React.Fragment>
-                                <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
-                                {option.name}
-                            </React.Fragment>
-                        )}
-                        renderInput={
-                            (params) => 
-                            <TextField
-                             {...params} 
-                             label="Ürün Barkodu" 
-                             variant="outlined" 
-                             onChange={readBarcode}
-                             />}
-                        ref={barcodeInputRef}
-                        
-                    />
+                    <Grid container spacing={3} direction="row" justifyContent="center" alignItems="stretch" >
+                        <Grid item xs={12} sm={9}>
+                            
+                            
+                            <Autocomplete
+                                id="grouped-demo"
+                                options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+                                groupBy={(option) => option.firstLetter}
+                                getOptionLabel={(option) => option?option.barcode.toString():"0"}
+                                getOptionSelected={(option, value) => option.barcode === value.barcode}
+                                
+                                
+                                onChange={async (e, newValue) => { 
+                                    setBarcode(e.target.value); 
+                                    newValue === null ? setEdit(false) : setEdit(true); 
+                                    setProduct(newValue); 
+                                    newValue !== null ?  setImg(newValue.image) : setImg(null) 
+                                    // console.log(newValue);
+                                }}
+                                renderOption={(option) => (
+                                    <React.Fragment>
+                                        <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
+                                        {option.name}
+                                    </React.Fragment>
+                                )}
+                                renderInput={
+                                    (params) => 
+                                    <TextField
+                                    {...params} 
+                                    label="Ürün Barkodu" 
+                                    variant="outlined" 
+                                    onChange={readBarcode}
+                                    />}
+                                ref={barcodeInputRef}
+                                
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={3} >
+                            <Button variant="contained" color="default" startIcon={<BiBarcodeReader></BiBarcodeReader>} onClick= {findFreeBarcode}>
+                                Boş Barkod Üret
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </Container>
 
             </Box>
@@ -502,7 +547,7 @@ function ProductPage(props) {
 
 
                             <TextField
-                                id="datetime-local"
+                                id="created-datetime-local"
                                 fullWidth
                                 label="Oluşturulma tarihi"
                                 value={product ? (new Date(product.created_date)).toLocaleDateString('tr-TR',date_optinus): ""}
@@ -520,7 +565,7 @@ function ProductPage(props) {
 
 
                             <TextField
-                                id="datetime-local"
+                                id="last-datetime-local"
                                 fullWidth
                                 label="Son değiştirilme tarihi"
                                 // type="datetime-local"
@@ -535,13 +580,17 @@ function ProductPage(props) {
 
 
                         </Grid>
-                        <Grid item xs={4}  sm={5}/>
-                        <Grid item xs={4}  sm={3}>
-                                <Button variant="contained" color="primary" style={{padding:"10px", margin:"10px" }} onClick={save}>{isEditing ? "Ürünü Düzenle" : "Ürünü Ekle"}</Button>
-                                <Button variant="contained" color="secondary" style={{padding:"10px" , marign:"10px"}}>Ürünü Sil</Button>
+                        <Grid item xs={12}  sm={4}></Grid>
+                        <Grid item xs={12}  sm={2}>
+                            <Button variant="contained" color="primary" onClick={save} startIcon={isEditing ? <FaSave></FaSave>:<GrAdd></GrAdd> }>{isEditing ? "Ürünü Kaydet" : "Ürünü Ekle"}</Button>
+                            </Grid>
+                        <Grid item xs={12}  sm={2}>
+                            
+                            <Button variant="contained" color="secondary" startIcon={<AiFillDelete></AiFillDelete>} >Ürünü Sil</Button>
 
                         </Grid>
-                    </Grid>
+                        <Grid item xs={12}  sm={4}></Grid>        
+                </Grid>
                 </Container>
             </Box>
         </div>
