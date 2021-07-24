@@ -133,7 +133,7 @@ exports.new = async function (req,res) {
         new_product.origin = req.body.origin;
         new_product.last_change_date = Date.now();
         new_product.created_date = Date.now();
-        new_product.image = "http://" + req.header('host') + "/" + req.file.path;
+        new_product.image = req.file ? "http://" + req.header('host') + "/" + req.file.path : null;
         new_product.performer_id = user.user;
 
         new_product.save((err) => {
