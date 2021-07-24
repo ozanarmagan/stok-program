@@ -192,6 +192,9 @@ router.route('/products/:product_id')
     .put(upload.single('file'),productController.edit)
     .delete(productController.delete);
 
+router.route('/critical_stocks')
+    .get(productController.critical);
+
 /* DEBT ROUTES */
 var debtController = require("./controllers/debtController");
 

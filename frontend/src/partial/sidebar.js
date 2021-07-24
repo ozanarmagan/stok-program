@@ -123,9 +123,8 @@ export default function Sidebar(props) {
     <Collapse isOpen={state.stocks}>
     <div className="submenu">
         <div className="submenu-heading">STOK İŞLEMLERİ</div>
-        <Link className="submenu-item" to="/">Stok Ekle</Link>
         <Link className="submenu-item" to="/">Kritik Stoktakiler</Link>
-        <Link className="submenu-item" to="/">Stok Sayımı</Link>
+        <Link className="submenu-item" to="/stocks">Ürün Stokları</Link>
     </div>
     </Collapse>
     <Link  onClick={handleClickOrders}>

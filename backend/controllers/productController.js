@@ -1,7 +1,6 @@
 var User = require('../models/userModel');
 var Product = require('../models/productModel');
 var token = require('../utility/token');
-var pw = require('../utility/password');
 var Category = require('../models/categoryModel');
 var aqp = require('api-query-params');
 
@@ -48,6 +47,44 @@ exports.index = async function (req,res) {
         console.log(err);
     }
 };
+
+
+
+exports.critical = async function (req,res) {
+    try
+    {
+        var user = token.verifyToken(req.query.token,'access');
+        Product.find({ $expr: { $gt: [ "$critical_stock" , "$stock" ] } })
+        .exec(async function  (err,docs) {
+            const objects = [];
+            Promise.all(docs.map(async element => {
+                var json = element.toObject();
+                var performer = await User.findOne({_id:element.performer_id}).exec();
+                json.category = await Category.findOne({_id:element.category_id});
+                json.performer = performer.name + " " + performer.surname;
+                objects.push(json);
+            })).then(res_ => {
+                if(err)
+                {
+                    res.json({
+                        status:400,
+                        message:err
+                    });
+                    console.log(err);
+                }
+                else
+                    res.json({
+                        status:200,
+                        data:objects
+                    });
+            });
+        });
+
+    }
+    catch (err) {
+        res.json({status:400,message:err});
+    }
+}
 
 
 
