@@ -15,6 +15,7 @@ import {GrAdd} from 'react-icons/gr';
 import {AiFillDelete} from 'react-icons/ai';
 
 import {BiBarcodeReader} from 'react-icons/bi';
+import { useHistory } from 'react-router-dom';
 
 //
 
@@ -45,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 function ProductPage(props) {
+    const history = useHistory();
     const token = useSelector(state => state.userReducer.user.access_token);
     const [barcode, setBarcode] = useState(0);
     const classes = useStyles();
@@ -213,6 +215,20 @@ function ProductPage(props) {
         setProfit(profit);
     }
 
+
+    const deleteProduct = async function() {
+        var res = await axios.delete(API_URL + "products/" + product._id,{data:{token:token}})
+
+        if(res.status === 200)
+        {
+            NotificationManager.success("Ürün Başarıyla Silindi","Başarılı");
+            history.push("/listproducts");
+        }
+        else
+            NotificationManager.error("Bir hata oluştu","Hata");
+    }
+
+
     const save = async (event, newValue) => {
         if(!product.barcode)
             NotificationManager.error("Lütfen Ürün Barkodunu Girin","Hata");
@@ -245,6 +261,8 @@ function ProductPage(props) {
             var imgname = uuidv4() + "." +  product.image.name.split('.').pop();;
             form.append("file",product.image,imgname);
         }
+        else if(product.image && isEditing)
+            form.append("image",product.image)
         form.append("token",token);
         if(!isEditing)
             var res = await axios.post(API_URL + "products",form,{
@@ -260,17 +278,15 @@ function ProductPage(props) {
             });
 
         if(res.data.status === 200)
+        {
             NotificationManager.success("Ürün Başarıyla Oluşturuldu","Başarılı");
+            history.push("/listproducts");
+        }
         else
             NotificationManager.error("Bir hata oluştu","Hata");
     }
 
-    const createNewBarcode = (event) => {
-        // console.log(event);
 
-        setProducts([...products,{barcode:barcode,name:"No",category:"No"}]);
-        // console.log(products);
-    }
 
     const imageUpload = (event) => {
         if(event.target.files)
@@ -298,19 +314,18 @@ function ProductPage(props) {
         e = parseInt(e);
         console.log(`/products/${e}`);
         // const getProduct = async () => {
-        axios.get(`${API_URL}products/${e}`, { params: { token: token } }).then((result) => {
-            console.log(result);
-           
+        axios.get(`${API_URL}products/?barcode=${e}`, { params: { token: token } }).then((result) => {
+            if(result.data.data.length === 0)
+            {
+                NotificationManager.info(`${e} nolu barkod sistemde bulunamadı`);
+        
+                setProduct({...product,barcode:e});
+            }
+            else
+                findFreeBarcode();
         })
         
-         NotificationManager.info(`${e} nolu barkod sistemde bulunamadı`);
-            
-        // }
 
-        // await getProduct();
-
-        
-        return e;
     }
 
     return (
@@ -586,7 +601,7 @@ function ProductPage(props) {
                             </Grid>
                         <Grid item xs={12}  sm={2}>
                             
-                            <Button variant="contained" color="secondary" startIcon={<AiFillDelete></AiFillDelete>} >Ürünü Sil</Button>
+                            <Button variant="contained" color="secondary"  disabled={isEditing ? false : true} startIcon={<AiFillDelete></AiFillDelete>} >Ürünü Sil</Button>
 
                         </Grid>
                         <Grid item xs={12}  sm={4}></Grid>        

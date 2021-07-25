@@ -48,8 +48,11 @@ export default function ViewPorduct(props) {
                 property:'Kar Oranı (%)',
                 value:res.data.data.profit_rate.toFixed(2)
             },
+            {
+                property:'Menşei',
+                value:res.data.data.origin
+            }
         ])
-        console.log(rows)
     }
 
 
@@ -84,9 +87,11 @@ export default function ViewPorduct(props) {
         <div className="container-fluid">
 
             <div className="row justify-content-center">
+                {product.image ?
                 <div className="col-lg-2 my-auto">
                     <img src={product.image} alt="ürün" style={{height:"300px",width:"300px"}}/>
                 </div>
+                : null }
                 <div className="col-lg-4" style={{marginLeft:"30px"}}>
                     <div className="shadow p-3 mt-5 bg-white rounded">
                     <div className="row justify-content-between">

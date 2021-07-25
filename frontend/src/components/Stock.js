@@ -8,7 +8,13 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
 import AddStock from '../partial/addStockModal';
 
 
-  
+  const customstyles = {
+      rows: {
+          style:{
+              minHeight:"80px"
+          }
+      }
+  };
 
 
   export default function Stock(props) {
@@ -16,7 +22,10 @@ import AddStock from '../partial/addStockModal';
     const columns = [
         {
             cell:(row) => {
-                return(<img src={row.image} alt="row" style={{height:"80px",width:"80px"}} />)
+                if(row.image)
+                    return(<img src={row.image} alt="row" style={{height:"80px",width:"80px"}} />)
+                else
+                    return null;
             },
             width:"150px"
         },
@@ -108,6 +117,7 @@ import AddStock from '../partial/addStockModal';
                     columns={columns}
                     data={rows}
                     pagination
+                    customStyles={customstyles}
                 />
             </div>
         )

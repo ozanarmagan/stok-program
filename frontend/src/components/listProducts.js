@@ -13,7 +13,13 @@ import DeleteProduct from '../partial/deleteProductModal';
 import NotificationManager from "react-notifications/lib/NotificationManager";
 
 
-  
+const customstyles = {
+    rows: {
+        style:{
+            minHeight:"80px"
+        }
+    }
+};
 
 
   export default function ListProducts(props) {
@@ -21,7 +27,10 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
     const columns = [
         {
             cell:(row) => {
-                return(<img src={row.image} alt="row" style={{height:"80px",width:"80px"}} />)
+                if(row.image)
+                    return(<img src={row.image} alt="row" style={{height:"80px",width:"80px"}} />)
+                else
+                    return null;
             },
             width:"150px"
         },
@@ -123,6 +132,7 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
                     columns={columns}
                     data={rows}
                     pagination
+                    customStyles={customstyles}
                 />
             </div>
         )

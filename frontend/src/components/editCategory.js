@@ -121,11 +121,11 @@ export default function Editcategory(props) {
     }
 
     return( 
-        <div className="container-fluid">
-            <div className="row justify-content-between">
-                <div className="col-4 mt-4"><h5>Kategori Ekle</h5></div>
+        <div className="container">
+            <div className="row justify-content-evenly">
+                <div className="col-6 col-md-2 mt-4"><h5>Kategori Ekle</h5></div>
                     
-                    <div className="col-4 d-flex flex-row-reverse mt-4">
+                    <div className="col-6 d-flex flex-row-reverse mt-3">
                     <Button color="primary" onClick={addCat} style={{float:"left",fontSize:"15px"}}>Kaydet</Button>
                     </div>  
                 </div>
