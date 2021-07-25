@@ -88,22 +88,22 @@ export default function ViewPorduct(props) {
 
             <div className="row justify-content-center">
                 {product.image ?
-                <div className="col-lg-2 my-auto">
+                <div className="col-lg-2 my-auto d-flex justify-content-center">
                     <img src={product.image} alt="ürün" style={{height:"300px",width:"300px"}}/>
                 </div>
                 : null }
                 <div className="col-lg-4" style={{marginLeft:"30px"}}>
                     <div className="shadow p-3 mt-5 bg-white rounded">
-                    <div className="row justify-content-between">
-                    <div className="col-3" style={{marginLeft:"10px"}}><h4>{product.name}</h4></div>
-                    <div className="col-3 d-flex flex-row-reverse">
-                    <Tooltip title="Sil">
-                    <DeleteProduct id={product._id} delete={deleteProduct}/>
-                    </Tooltip>
-                    <Tooltip title="Düzenle">
-                    <Link to={"/product/" + props.match.params.product_id} style={{textDecoration:"none"}}><IconButton><EditIcon style={{color:"blue"}}/></IconButton></Link>
-                    </Tooltip>
-                    </div>
+                        <div className="row justify-content-between">
+                        <div className="col-3" style={{marginLeft:"10px"}}><h4>{product.name}</h4></div>
+                        <div className="col-3 d-flex flex-row-reverse">
+                            <Tooltip title="Sil">
+                            <DeleteProduct id={product._id} delete={deleteProduct}/>
+                            </Tooltip>
+                            <Tooltip title="Düzenle">
+                            <Link to={"/product/" + props.match.params.product_id} style={{textDecoration:"none"}}><IconButton><EditIcon style={{color:"blue"}}/></IconButton></Link>
+                            </Tooltip>
+                        </div>
                 </div>
                 <div className="mt-3">
                     <DataTable

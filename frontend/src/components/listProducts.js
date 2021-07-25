@@ -127,13 +127,14 @@ const customstyles = {
                     <div className="col-lg-2 mb-4 mt-4"><Input className="form-control" onChange={filterChange} placeholder="Filtrele"/></div>
                     
                 </div>
-                
-                <DataTable
-                    columns={columns}
-                    data={rows}
-                    pagination
-                    customStyles={customstyles}
-                />
+                <div className="card shadow">
+                    <DataTable
+                        columns={columns}
+                        data={rows}
+                        pagination
+                        customStyles={customstyles}
+                    />
+                </div>
             </div>
         )
   }
