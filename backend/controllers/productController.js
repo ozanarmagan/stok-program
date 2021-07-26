@@ -149,14 +149,10 @@ exports.new = async function (req,res) {
     }
 }
 
-exports.edit = function (req,res) {
+exports.edit = async function (req,res) {
     try {
         var user = token.verifyToken(req.body.token,'access_token');
         try {
-
-            var changes = {}
-
-
             Product.findById(req.params.product_id,function (error,product){
 
                 if(req.body.stock && req.body.stock !== product.stock)
