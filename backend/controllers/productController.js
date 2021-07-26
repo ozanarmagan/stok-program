@@ -160,7 +160,7 @@ exports.edit = async function (req,res) {
                     var Stock = new StockHistory();
                     Stock.product_id = product._id;
                     Stock.amount = req.body.stock - product.stock;
-                    Stock.performer_id = token.verifyToken(req.query.token,'access').user;
+                    Stock.performer_id = token.verifyToken(req.body.token,'access').user;
                     Stock.save();
                 }
 
