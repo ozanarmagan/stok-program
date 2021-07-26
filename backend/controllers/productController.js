@@ -3,6 +3,7 @@ var Product = require('../models/productModel');
 var token = require('../utility/token');
 var Category = require('../models/categoryModel');
 var aqp = require('api-query-params');
+var StockHistory = require('../models/stockHistory');
 
 // Product Controller
 exports.index = async function (req,res) {
@@ -157,6 +158,16 @@ exports.edit = function (req,res) {
 
 
             Product.findById(req.params.product_id,function (error,product){
+
+                if(req.body.stock && req.body.stock !== product.stock)
+                {
+                    var Stock = new StockHistory();
+                    Stock.product_id = prdouct._id;
+                    Stock.amount = req.body.stock - product.stock;
+                    Stock.performer_id = user.user;
+                    Stock.save();
+                }
+
                 product.name = req.body.name || product.name;
                 product.stock = req.body.stock || product.stock;
                 product.critical_stock = req.body.critical_stock || product.critical_stock;
