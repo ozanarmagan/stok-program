@@ -162,7 +162,7 @@ exports.edit = function (req,res) {
                 if(req.body.stock && req.body.stock !== product.stock)
                 {
                     var Stock = new StockHistory();
-                    Stock.product_id = prdouct._id;
+                    Stock.product_id = product._id;
                     Stock.amount = req.body.stock - product.stock;
                     Stock.performer_id = user.user;
                     Stock.save();
