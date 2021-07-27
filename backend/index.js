@@ -2,7 +2,7 @@
 const constants = require('./constants/index');
 
 let express = require('express');
-
+let path = require('path');
 const cors = require('cors');
 
 const app = express();
@@ -33,7 +33,7 @@ mongoose.connect(constants.MONGO_URL,{useNewUrlParser:true,useUnifiedTopology:tr
 
 var db = mongoose.connection;
 
-
+app.use('/images', express.static(path.join(__dirname + '/images')));
 
 if(!db)
     console.log('DB Baglanti hatasi');

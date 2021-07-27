@@ -3,6 +3,7 @@ var Product = require('../models/productModel');
 var token = require('../utility/token');
 var Category = require('../models/categoryModel');
 var aqp = require('api-query-params');
+var StockHistory = require('../models/stockHistory');
 
 // Product Controller
 exports.index = async function (req,res) {
@@ -126,14 +127,14 @@ exports.new = async function (req,res) {
         new_product.barcode = req.body.barcode;
         new_product.price_to_buy = req.body.price_to_buy;
         new_product.price_to_sell = req.body.price_to_sell;
-        new_product.profit_rate = (parseFloat(new_product.price_to_sell) - parseFloat(new_product.price_to_buy)) / parseFloat(new_product.price_to_sell)  * 100;
+        new_product.profit_rate = parseFloat(req.body.profit_rate);
         new_product.category_id = req.body.category_id;
         new_product.publish = req.body.publish;
         new_product.product_unit = req.body.product_unit;
         new_product.origin = req.body.origin;
         new_product.last_change_date = Date.now();
         new_product.created_date = Date.now();
-        new_product.image = "http://" + req.header('host') + "/" + req.file.path;
+        new_product.image = req.file ? "http://" + req.header('host') + "/" + req.file.path : null;
         new_product.performer_id = user.user;
 
         new_product.save((err) => {
@@ -148,22 +149,28 @@ exports.new = async function (req,res) {
     }
 }
 
-exports.edit = function (req,res) {
+exports.edit = async function (req,res) {
     try {
         var user = token.verifyToken(req.body.token,'access_token');
         try {
-
-            var changes = {}
-
-
             Product.findById(req.params.product_id,function (error,product){
+
+                if(req.body.stock && req.body.stock !== product.stock)
+                {
+                    var Stock = new StockHistory();
+                    Stock.product_id = product._id;
+                    Stock.amount = req.body.stock - product.stock;
+                    Stock.performer_id = token.verifyToken(req.body.token,'access').user;
+                    Stock.save();
+                }
+
                 product.name = req.body.name || product.name;
                 product.stock = req.body.stock || product.stock;
                 product.critical_stock = req.body.critical_stock || product.critical_stock;
                 product.barcode = req.body.barcode || product.barcode;
                 product.price_to_buy = req.body.price_to_buy || product.price_to_buy;
                 product.price_to_sell = req.body.price_to_sell || product.price_to_sell;
-                product.profit_rate = (parseFloat(product.price_to_sell) - parseFloat(product.price_to_buy)) / parseFloat(product.price_to_sell)  * 100;
+                product.profit_rate = req.body.profit_rate ? parseFloat(req.body.profit_rate) : product.profit_rate;
                 product.category_id = req.body.category_id || product.category_id;
                 product.publish = req.body.publish || product.publish;
                 product.product_unit = req.body.product_unit ||  product.product_unit;
