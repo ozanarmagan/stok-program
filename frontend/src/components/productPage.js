@@ -299,7 +299,7 @@ function ProductPage(props) {
         console.log(`/products/${e}`);
         // const getProduct = async () => {
         axios.get(`${API_URL}products/${e}`, { params: { token: token } }).then((result) => {
-            console.log(result);
+            console.log("ress",result);
            
         })
         
@@ -310,7 +310,7 @@ function ProductPage(props) {
         // await getProduct();
 
         
-        return e;
+        // return e;
     }
 
     return (

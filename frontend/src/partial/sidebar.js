@@ -97,7 +97,7 @@ export default function Sidebar(props) {
     <Collapse isOpen={state.customers}>
     <div className="submenu">
         <div className="submenu-heading">MÜŞTERİ İŞLEMLERİ</div>
-        <Link className="submenu-item" to="/">Yeni Müşteri</Link>
+        <Link className="submenu-item" to="/customer">Yeni Müşteri</Link>
         <Link className="submenu-item" to="/">Tüm Müşteriler</Link>
     </div>
     </Collapse>

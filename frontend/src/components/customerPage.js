@@ -5,39 +5,124 @@ import { API_URL } from '../constants';
 import { FormControl, InputLabel, Input, ButtonGroup, Button, MenuItem } from '@material-ui/core';
 import axios from 'axios';
 import { useSelector } from "react-redux";
-import Select from '@material-ui/core/Select';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import IconButton from '@material-ui/core/IconButton';
-import { NotificationManager } from 'react-notifications';
-import { v4 as uuidv4 } from 'uuid';
-//
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import PhoneIcon from '@material-ui/icons/Phone';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import PersonPinIcon from '@material-ui/icons/PersonPin';
+import HelpIcon from '@material-ui/icons/Help';
+import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
+import ThumbDown from '@material-ui/icons/ThumbDown';
+import ThumbUp from '@material-ui/icons/ThumbUp';
+import PropTypes from 'prop-types';
+import CustomerEdit from './customer/customerEdit';
+import { FaUserEdit, FaShoppingCart } from 'react-icons/fa';
+import { AiFillShopping } from 'react-icons/ai';
+import { RiBillFill, RiFileUserFill, RiMoneyDollarCircleFill, RiSettings3Fill } from 'react-icons/ri';
+import { FiDollarSign } from "react-icons/fi";
+// import {  IoAddCircleSharp} from "react-icons/io";
+import { IoAddCircleSharp } from 'react-icons/io5';
+import CustomerInformation from './customer/customerInformation';
 
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`scrollable-force-tabpanel-${index}`}
+            aria-labelledby={`scrollable-force-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box p={3}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `scrollable-force-tab-${index}`,
+        'aria-controls': `scrollable-force-tabpanel-${index}`,
+    };
+}
 
 const useStyles = makeStyles((theme) => ({
-    layout: {
-        width: 'auto',
-        marginLeft: theme.spacing(2),
-        marginRight: theme.spacing(2),
-        [theme.breakpoints.up(1600 + theme.spacing(2) * 2)]: {
-            width: 1600,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-        },
+    root: {
+        flexGrow: 1,
+        width: '100%',
+        marginTop: "10px",
+        backgroundColor: theme.palette.background.paper,
     },
-    layoutSearch: {
-        width: 'auto',
-        marginLeft: theme.spacing(2),
-        marginRight: theme.spacing(2),
-        [theme.breakpoints.up(1600 + theme.spacing(2) * 2)]: {
-            width: 1600,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-        },
-    }
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+    },
 }));
 
+function CustomerPage(props) {
 
-function ProductPage(props) {
+
+
+    const token = useSelector(state => state.userReducer.user.access_token);
+    const [customer, setCustomer] = useState({})
+    const [options, setOptions] = useState([]);
+    const [imglink, setImg] = useState(null);
+    const [imgUp, setUp] = useState(false);
+    const [isEditing, setEdit] = useState(false);
+    const [id, setId] = useState(0);
+    const classes = useStyles();
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    useEffect(() => {
+
+        const getCustomers = async () => {
+            axios.get(API_URL + "customer", { params: { token: token } }).then((result) => {
+                if (!result.data.data) return;
+                setCustomer(result.data.data);
+                setOptions(result.data.data.map((option) => {
+                    const firstLetter = option.name;
+                    return {
+                        firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
+                        ...option,
+                    }
+                }))
+
+
+            })
+        }
+
+        getCustomers();
+
+    }, [])
+
+    const readId = (event) => {
+        setId(event.target.value)
+    };
+
+    const save = () => {
+
+    }
+
+
+
+
 
     return (
         <div >
@@ -47,37 +132,45 @@ function ProductPage(props) {
                 alignItems="flex-start"
                 marginTop="15px"
             >
-                <Container className={classes.layoutSearch}>
+                <Container style={{ maxWidth: "1450px" }}>
+                    <Grid container spacing={0} >
+                        <Grid item xs={12} sm={12}>
+                            <Autocomplete
+                                id="grouped-demo"
+                                options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+                                groupBy={(option) => option.firstLetter}
+                                getOptionLabel={(option) => option ? option.barcode.toString() : "0"}
+                                getOptionSelected={(option, value) => option.barcode === value.barcode}
+                                fullWidth
+                                noOptionsText={
 
-                    <Autocomplete
-                        id="grouped-demo"
-                        options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-                        groupBy={(option) => option.firstLetter}
-                        getOptionLabel={(option) => option ? option.barcode.toString() : "0"}
-                        getOptionSelected={(option, value) => option.barcode === value.barcode}
-                        // onChange={async (e, newValue) => { setBarcode(e.target.value); setProduct(newValue) }}
-                        noOptionsText={
-                            <Button onMouseDown={createNewBarcode}>
-                                Ürün Bulununamadı Yeni Oluşturmak İçin Tıklayınız!!!
-                            </Button>}
-                        onChange={async (e, newValue) => { setBarcode(e.target.value); newValue === null ? setEdit(false) : setEdit(true); setProduct(newValue); newValue !== null ? setImg(newValue.image) : setImg(null) }}
-                        renderOption={(option) => (
-                            <React.Fragment>
-                                <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
-                                {option.name}
-                            </React.Fragment>
-                        )}
-                        renderInput={
-                            (params) =>
-                                <TextField
-                                    {...params}
-                                    label="Ürün Barkodu"
-                                    variant="outlined"
-                                    onChange={readBarcode}
-                                />}
-                        ref={barcodeInputRef}
+                                    "Müşteri Bulununamadı"
+                                }
+                                onChange={async (e, newValue) => {
+                                    setId(e.target.value);
+                                    newValue === null ? setEdit(false) : setEdit(true);
+                                    setCustomer(newValue);
+                                    newValue !== null ? setImg(newValue.image) : setImg(null)
+                                }}
+                                renderOption={(option) => (
+                                    <React.Fragment>
+                                        <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
+                                        {option.name}
+                                    </React.Fragment>
+                                )}
+                                renderInput={
+                                    (params) =>
+                                        <TextField
+                                            {...params}
+                                            label="Müşteri Adı"
+                                            variant="outlined"
+                                            onChange={readId}
+                                        />}
 
-                    />
+
+                            />
+                        </Grid>
+                    </Grid>
                 </Container>
 
             </Box>
@@ -86,202 +179,67 @@ function ProductPage(props) {
                 display="flex"
                 justifyContent="center"
                 alignItems="flex-start"
-            
+
             >
-                <Container className={classes.layout}>
+                <Container style={{ maxWidth: "1450px" }}>
+                    <Grid container spacing={0}>
+                        <div className={classes.root}>
+                            <AppBar position="static" color="default">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    variant="scrollable"
+                                    scrollButtons="on"
+                                    indicatorColor="primary"
+                                    textColor="primary"
+                                    aria-label="scrollable force tabs example"
+                                >
+                                    <Tab label="Genel" icon={<RiFileUserFill size="2em" style={{ opacity: 1 }} />} {...a11yProps(0)} />
+                                    <Tab label="Ödeme Ekle" icon={<RiMoneyDollarCircleFill size="2em" />} {...a11yProps(1)} />
+                                    <Tab label="Borç ekle" icon={<IoAddCircleSharp size="2em" />} {...a11yProps(2)} />
+                                    <Tab label="Senetler" icon={<RiBillFill size="2em" />} {...a11yProps(3)} />
+                                    <Tab label="Siparişler" icon={<FaShoppingCart size="2em" />} {...a11yProps(4)} />
+                                    <Tab label="Satışlar" icon={<AiFillShopping size="2em" />} {...a11yProps(5)} />
+                                    <Tab label="Ayarlar" icon={<RiSettings3Fill size="2em" />} {...a11yProps(6)} />
+                                    <Tab label="Düzenle" icon={<FaUserEdit size="2em" />} {...a11yProps(7)} />
 
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={12}>
-                            <hr></hr>
-                        </Grid>
-                        <Grid item xs={12} sm={12}>
-                            {imglink ? <div>Müşteri Görseli <img src={imglink} style={{ width: "100px", height: "100px", marginLeft: "50px" }} alt="Müşteri Görseli" /><Button color="primary" variant="contained" style={{ marginLeft: "20px" }} onClick={() => { setProduct({ ...product, image: null }); setImg(null); }}>Görseli Sil</Button> <br />Görseli Değiştir</div> : <div>Görsel Ekle</div>}
-                            <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={imageUpload} />
-                            <label htmlFor="icon-button-file">
-                                <IconButton color="primary" aria-label="upload picture" component="span">
-                                    <PhotoCamera />
-                                </IconButton>
-                            </label>
-                        </Grid>
-                        <Grid item xs={12} sm={12}>
-                            <TextField
-                                required
-                                id="productname"
-                                name="productname"
-                                label="Müşteri adı"
-                                defaultValue="Müşteri adı"
-                                onChange={nameChange}
-                                value={product ? product.name : ""}
-                                InputProps={{
-                                    readOnly: false,
-                                }}
-                                fullWidth
-                            //   autoComplete="given-name"
-                            />
-                        </Grid>
-                        
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                required
-                                id="price_to_sell"
-                                onChange={sellPriceChange}
-                                name="price_to_sell"
-                                defaultValue="0"
-                                label="Satış fiyatı"
-                                value={product ? product.price_to_sell : 0}
-                                fullWidth
-                            //   autoComplete="shipping address-line1"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                required
-                                id="price_to_buy"
-                                name="price_to_buy"
-                                label="Alış fiyatı"
-                                defaultValue="0"
-                                onChange={buyPriceChange}
-                                value={product ? product.price_to_buy : 0}
-                                fullWidth
-                            //   autoComplete="shipping address-line2"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                id="profit_rate"
-                                name="profit_rate"
-                                label="Kar Oranı (%)"
-                                defaultValue={0}
-                                fullWidth
-                                InputProps={{ readOnly: true, }}
-                                value={product ? product.profit_rate : 0}
-                            //   autoComplete="shipping address-level2"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                id="stock"
-                                name="stock"
-                                label="Stok"
-                                defaultValue="0"
-                                onChange={stockChange}
-                                value={product ? product.stock : 0}
-                                fullWidth />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                required
-                                id="critical_stock"
-                                name="critical_stock"
-                                label="Kritik stok"
-                                defaultValue="0"
-                                onChange={criticalStockChange}
-                                value={product ? product.critical_stock : 0}
-                                fullWidth
-                            //   autoComplete="shipping postal-code"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
+                                </Tabs>
+                            </AppBar>
+                            <TabPanel value={value} index={0}>
+                                
+                                    <CustomerInformation />
+                                
+                            </TabPanel>
+                            <TabPanel value={value} index={1}>
+                                Item Two
+                            </TabPanel>
+                            <TabPanel value={value} index={2}>
+                                Item Three
+                            </TabPanel>
+                            <TabPanel value={value} index={3}>
+                                Item Four
+                            </TabPanel>
+                            <TabPanel value={value} index={4}>
+                                Item Five
+                            </TabPanel>
+                            <TabPanel value={value} index={5}>
+                                Item Six
+                            </TabPanel>
+                            <TabPanel value={value} index={6}>
 
-                            <Autocomplete
-                                id="combo-box-demo"
-                                options={categories}
-                                onChange={categoryChange}
-                                value={product ? product.category : null}
-                                defaultValue={{ name: "Lütfen Kategori Seçiniz", value: null }}
-                                getOptionLabel={(option) => option.name}
-                                getOptionSelected={(option, value) => option.name === value.name}
-                                style={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Kategori" variant="outlined" />}
-                            />
+                            </TabPanel>
+                            <TabPanel value={value} index={7}>
+                                <CustomerEdit></CustomerEdit>
+                            </TabPanel>
+                        </div>
 
-
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Autocomplete
-                                id="combo-box-demo"
-                                options={countries}
-                                onChange={countryChange}
-                                value={product ? product.origin : 0}
-                                defaultValue={{ name: "Türkiye", code: "TR" }}
-                                getOptionLabel={(option) => option.name}
-                                getOptionSelected={(option, value) => option.name === value.name}
-                                style={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Kategori" variant="outlined" />}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Autocomplete
-                                id="combo-box-demo"
-                                options={units}
-                                onChange={unitChange}
-                                defaultValue={"Adet"}
-                                getOptionLabel={(option) => option}
-                                getOptionSelected={(option, value) => option === value}
-                                style={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Birim" variant="outlined" />}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} >
-
-
-                            <TextField
-                                id="datetime-local"
-                                fullWidth
-                                label="Oluşturulma tarihi"
-
-                                defaultValue="g.a.y s.d"
-                                value={product ? (new Date(product.created_date)).toLocaleDateString('tr-TR', date_optinus) : "None"}
-                                className={classes.textField}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                InputProps={{ readOnly: true }}
-                                disabled={true}
-                            />
-
-
-                        </Grid>
-                        <Grid item xs={12} sm={6} >
-
-
-                            <TextField
-                                id="datetime-local"
-                                fullWidth
-                                label="Son değiştirilme tarihi"
-                                // type="datetime-local"
-                                defaultValue="2017-05-24T10:30"
-                                className={classes.textField}
-                                value={product ? (new Date(product.last_change_date)).toLocaleDateString('tr-TR', date_optinus) : "None"}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                InputProps={{ readOnly: true }}
-                                disabled={true}
-                            />
-
-
-                        </Grid>
-                        <Grid item xs={4} sm={5} />
-                        <Grid item xs={4} sm={3}>
-                            <Button variant="contained" color="primary" style={{ padding: "10px", margin: "10px" }} onClick={save}>{isEditing ? "Ürünü Düzenle" : "Ürünü Ekle"}</Button>
-                            <Button variant="contained" color="secondary" style={{ padding: "10px", marign: "10px" }}>Ürünü Sil</Button>
-
-                        </Grid>
                     </Grid>
                 </Container>
+
             </Box>
         </div>
     )
 }
 
-export default ProductPage
+export default CustomerPage
 
-
-const countries = [
-    { code: 'TR', name: 'Türkiye' },
-    { code: 'NAN', name: 'Diğer' }
-]
-
-
-const date_optinus = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: "numeric", minute: "numeric" }
