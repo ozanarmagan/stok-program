@@ -396,7 +396,15 @@ function ProductPage(props) {
                             <hr></hr>
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            {imglink ? <div>Ürünün Görseli <img src={imglink} style={{width:"100px",height:"100px",marginLeft:"50px"}} alt="Ürün Görseli"/><Button color="primary" variant="contained" style={{marginLeft:"20px"}} onClick={() => {setProduct({...product,image:null});setImg(null);}}>Görseli Sil</Button> <br/>Görseli Değiştir</div>  : <div>Görsel Ekle</div> }
+                            {imglink ? <div>
+                                Ürünün Görseli 
+                                <img src={imglink} style={{width:"100px",height:"100px",marginLeft:"50px"}} alt="Ürün Görseli"/>
+                                <Button 
+                                color="primary" 
+                                variant="contained" 
+                                style={{marginLeft:"20px"}} 
+                                onClick={() => {setProduct({...product,image:null});setImg(null);}}>Görseli Sil</Button> 
+                                <br/>Görseli Değiştir</div>  : <div>Görsel Ekle</div> }
                             <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={imageUpload}/>
                             <label htmlFor="icon-button-file">
                                 <IconButton color="primary" aria-label="upload picture" component="span">

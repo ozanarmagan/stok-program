@@ -20,26 +20,34 @@ function CustomerInformation() {
 
 
     return (
-        <div>
+        <div style={{marginTop:"20px"}}>
             <Container className={classes.layout}>
 
                 <Grid container fixed spacing={3}>
 
                     <Grid item xs >
                         {/* Toplam Satış */}
-                        <Budget></Budget>
+                        <Budget
+                            name="Toplam Hasılat"
+                        ></Budget>
                     </Grid>
-                    <Grid item xs>
-                        {/* Toplam Ödeme */}
-                        <Budget></Budget>
-                    </Grid>
+                    {/* <Grid item xs>
+                        Toplam Ödeme
+                        <Budget
+                            name="Toplam Harcama"
+                        ></Budget>
+                    </Grid> */}
                     <Grid item xs>
                         {/* Kalan Borç */}
-                        <Budget></Budget>
+                        <Budget
+                            name="Toplam Ödeme"
+                        ></Budget>
                     </Grid>
                     <Grid item xs>
                         {/* yaklaşan ödemeler */}
-                        <Budget></Budget>
+                        <Budget
+                            name="Kalan Borç"
+                        ></Budget>
                     </Grid>
 
                 </Grid>

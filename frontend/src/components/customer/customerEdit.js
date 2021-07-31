@@ -48,30 +48,30 @@ function CustomerEdit(props) {
     const [id, setId] = useState(0);
     const classes = useStyles();
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        const getCustomers = async () => {
-            axios.get(API_URL + "customer", { params: { token: token } }).then((result) => {
-                if(!result.data.data) return;
+    //     const getCustomers = async () => {
+    //         axios.get(API_URL + "customer", { params: { token: token } }).then((result) => {
+    //             if(!result.data.data) return;
                 
-                setCustomer(result.data.data);
+    //             setCustomer(result.data.data);
 
 
-                setOptions(result.data.data.map((option) => {
-                    const firstLetter = option.name;
-                    return {
-                        firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
-                        ...option,
-                    }
-                }))
+    //             setOptions(result.data.data.map((option) => {
+    //                 const firstLetter = option.name;
+    //                 return {
+    //                     firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
+    //                     ...option,
+    //                 }
+    //             }))
 
 
-            })
-        }
+    //         })
+    //     }
 
-        getCustomers();
+    //     getCustomers();
 
-    }, [])
+    // }, [])
 
     const readId = (event) => {
         setId(event.target.value)
@@ -83,7 +83,7 @@ function CustomerEdit(props) {
 
     const imageUpload = (event) => {
         if (event.target.files) {
-            setCustomer({ ...customer, image: event.target.files[0] });
+            setCustomer({ image: event.target.files[0] });
             setImg(URL.createObjectURL(event.target.files[0]));
             setUp(true);
         }
@@ -92,24 +92,52 @@ function CustomerEdit(props) {
     }
 
     const nameChange = (event, newValue) => {
-
+        props.setCustomer({name:event.target.value});
     }
 
+    const gsmChange = (event, newValue) => {
+        props.setCustomer({gsm:event.target.value});
+    }
+    const telChange = (event, newValue) => {
+        props.setCustomer({phone:event.target.value});
+    }
+    const tcChange = (event, newValue) => {
+        props.setCustomer({identity_number:event.target.value});
+    }
+    const addressChange = (event, newValue) => {
+        props.setCustomer({address:event.target.value});
+    }
 
+    const cityChange = (event, newValue) => {
+        props.setCustomer({city:event.target.value});
+    }
+    
+    const stateChange = (event, newValue) => {
+        props.setCustomer({state:event.target.value});
+    }
+    const countryChange = (event, newValue) => {
+        props.setCustomer({country:event.target.value});
+    }
+    const noteChange = (event, newValue) => {
+        props.setCustomer({note:event.target.value});
+    }
+   
     return (
         <div >
 
             <Container className={classes.layout}>
 
                 <Grid container spacing={3}>
-                    {/* <Grid item xs={12} sm={12}>
-                        <hr></hr>
-                    </Grid> */}
+                    <Grid item xs={12} sm={12}>
+                    {props.newCustomer?<div class="alert alert-info" role="alert">
+                        Yeni müşteri oluşturmak için formu doldurunuz...
+                    </div>:<React.Fragment/>}
+                    </Grid>
                     <Grid item xs={12} sm={12}>
                         {imglink ?
                             <div>Müşteri Görseli
                                 <img src={imglink} style={{ width: "100px", height: "100px", marginLeft: "50px" }} alt="Müşteri Görseli" />
-                                <Button color="primary" variant="contained" style={{ marginLeft: "20px" }} onClick={() => { setCustomer({ ...customer, image: null }); setImg(null); }}>Görseli Sil</Button>
+                                <Button color="primary" variant="contained" style={{ marginLeft: "20px" }} onClick={() => { setCustomer({image: null }); setImg(null); }}>Görseli Sil</Button>
                                 <br />Görseli Değiştir</div> : <div>Görsel Ekle</div>}
                         <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={imageUpload} />
                         <label htmlFor="icon-button-file">
@@ -124,7 +152,7 @@ function CustomerEdit(props) {
                             id="customername"
                             name="customername"
                             label="Müşteri adı"
-                            defaultValue="Müşteri adı"
+                            defaultValue=""
                             onChange={nameChange}
                             value={customer ? customer.name : ""}
                             InputProps={{
@@ -139,6 +167,7 @@ function CustomerEdit(props) {
 
 
                             required
+                            onChange={gsmChange}
                             id="phone_number"
                             // onChange={sellPriceChange}
                             name="phone_number"
@@ -156,7 +185,7 @@ function CustomerEdit(props) {
                     <Grid item xs={12} sm={6}>
                         <TextField
 
-
+                            onChange={telChange}
                             required
                             id="home_number"
                             // onChange={sellPriceChange}
@@ -177,26 +206,28 @@ function CustomerEdit(props) {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             required
-                            id="tax_no"
-                            name="tax_no"
-                            label="Vergi numarası"
+                            onChange={tcChange}
+                            id="tc_no"
+                            name="tc_no"
+                            label="TC numarası"
                             fullWidth
 
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField
+                        {/* <TextField
                             required
                             id="city"
                             name="city"
                             label="İlçe"
                             fullWidth
 
-                        />
+                        /> */}
                     </Grid>
                     <Grid item xs={12} sm={12}>
                         <TextField
                             required
+                            onChange={addressChange}
                             id="address1"
                             name="address1"
                             label="Adres"
@@ -209,7 +240,7 @@ function CustomerEdit(props) {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            required
+                            onChange={cityChange}
                             id="city"
                             name="city"
                             label="İlçe"
@@ -219,11 +250,16 @@ function CustomerEdit(props) {
 
                     </Grid>
                     <Grid item xs={12} sm={4}>
-                        <TextField id="state" name="state" label="İl" fullWidth />
+                        <TextField 
+                            onChange={stateChange}
+                            id="state" 
+                            name="state" 
+                            label="İl" 
+                            fullWidth />
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            required
+                            onChange={countryChange}
                             id="country"
                             name="country"
                             label="Ülke"
@@ -231,7 +267,19 @@ function CustomerEdit(props) {
                             autoComplete="country-name"
                         />
                     </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <TextField
+                            onChange={noteChange}
+                            id="note"
+                            name="note"
+                            label="Not"
+                            fullWidth
+                            multiline
+                            rows={2}
 
+
+                        />
+                    </Grid>
                     <Grid item xs={12} sm={6} >
 
 
@@ -255,12 +303,12 @@ function CustomerEdit(props) {
 
                     <Grid item xs={12} sm={6}></Grid>
                     <Grid item xs={12} sm={4}></Grid>
-                    <Grid item xs={12} sm={2}>
-                        <Button variant="contained" color="primary" onClick={save} startIcon={isEditing ? <FaSave></FaSave> : <GrAdd></GrAdd>}>{isEditing ? "Ürünü Kaydet" : "Ürünü Ekle"}</Button>
+                    <Grid item xs>
+                        <Button variant="contained" color="primary" onClick={props.save} startIcon={!props.newCustomer ? <FaSave></FaSave> : <GrAdd></GrAdd>}>{isEditing ? "Müşteriyi Kaydet" : "Müşteriyi Ekle"}</Button>
                     </Grid>
-                    <Grid item xs={12} sm={2}>
+                    <Grid item xs>
 
-                        <Button variant="contained" color="secondary" startIcon={<AiFillDelete></AiFillDelete>} >Ürünü Sil</Button>
+                        <Button variant="contained" color="secondary" startIcon={<AiFillDelete></AiFillDelete>} >Müşteriyi Sil</Button>
 
                     </Grid>
                     <Grid item xs={12} sm={4}></Grid>

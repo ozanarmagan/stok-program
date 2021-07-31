@@ -23,8 +23,8 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 
 
 
-function createData(id,type,productsNumber,sum,remainingDebt,note,date,process) {
-  return { id,type,productsNumber,sum,remainingDebt,note,date,process };
+function createData(name,type,productsNumber,sum,remainingDebt,note,date,process) {
+  return { name,type,productsNumber,sum,remainingDebt,note,date,process };
 }
 
 const rows = [
@@ -70,7 +70,7 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'id', numeric: false, disablePadding: true, label: 'İşlem Id' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'İşlem Id' },
   { id: 'type', numeric: false, disablePadding: false, label: 'İşlem Türü' },
   { id: 'productsNumber', numeric: false, disablePadding: false, label: 'Ürün Sayısı' },
   { id: 'sum', numeric: false, disablePadding: false, label: 'Toplam Borç' },
@@ -169,7 +169,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Nutrition
+          Son İşlemler
         </Typography>
       )}
 
@@ -218,7 +218,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -323,7 +323,7 @@ export default function EnhancedTable() {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.id}
+                        {row.name}
                        
                       </TableCell>
                       <TableCell align="center">{row.type}</TableCell>
