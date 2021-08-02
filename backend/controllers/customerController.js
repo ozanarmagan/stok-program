@@ -6,7 +6,7 @@ var User = require("../models/userModel");
 exports.index = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.query.token,'access');
+        var user = token.verifyToken(req.query.token,'token');
         const { filter, skip, limit, sort, projection, population } = aqp(req.query,{blacklist:['token'],});
         Customer.find(filter)
         .skip(skip)
@@ -47,7 +47,7 @@ exports.index = function (req,res) {
 exports.edit = function (req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.body.token,'token');
         try
         {
             Customer.findById(req.params.customer_id,function (error,customertoedit) {
@@ -77,7 +77,7 @@ exports.edit = function (req,res) {
 exports.delete = async function(req,res) {
     try
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.body.token,'token');
         Customer.deleteOne({_id:req.params.customer_id},(err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Customer has been deleted"})});
     }
     catch
@@ -89,7 +89,7 @@ exports.delete = async function(req,res) {
 exports.new = async function (req,res) {
     try 
     {
-        var user = token.verifyToken(req.body.token,'access');
+        var user = token.verifyToken(req.body.token,'token');
         var newcustomer = new Customer();
         newcustomer.name = req.body.name;
         newcustomer.address = req.body.address;
@@ -108,14 +108,14 @@ exports.new = async function (req,res) {
     }
     catch(err)
     {
-        res.json({status:400,message:"Invalid token"});
+        res.json({status:400,message:err});
     }
 };
 
 exports.view = async function (req,res) {
     try
     {
-        var user = token.verifyToken(req.query.token,'access');
+        var user = token.verifyToken(req.query.token,'token');
         try
         {
             var customer = Customer.findById(req.params.customer_id);
