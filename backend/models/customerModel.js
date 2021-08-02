@@ -13,7 +13,23 @@ var customerSchema = mongoose.Schema({
     },
     phone: {
         type:Number,
+    },
+    gsm: {
+        type:Number,
         required:true
+    },
+    identity_number: {
+        type:Number,
+        required:true
+    },
+    state: {
+        type:String,
+    },
+    town: {
+        type:String,
+    },
+    country: {
+        type:String,
     },
     note:{
         type:String
