@@ -3,7 +3,6 @@ var mongoose = require('mongoose');
 var orderSchema = mongoose.Schema({
     installment:{
         type:Number,
-        required:true
     },
     advance_pay:{
         type:Number,

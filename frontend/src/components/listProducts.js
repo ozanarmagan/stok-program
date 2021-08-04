@@ -133,6 +133,7 @@ const customstyles = {
                         data={rows}
                         pagination
                         customStyles={customstyles}
+                        noDataComponent="Hiç Ürün Yok.Lütfen Ürün Ekleyin"
                     />
                 </div>
             </div>

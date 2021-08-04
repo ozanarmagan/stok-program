@@ -30,7 +30,7 @@ export default function ViewPorduct(props) {
         setRows([
             {
                 property:'Ürün Adı',
-                value:res.data.data.name
+                value:res.data.data.name,
             },
             {
                 property:'Ürün Kategorisi',
@@ -107,7 +107,7 @@ export default function ViewPorduct(props) {
                 <div className="col-lg-4 productdetails" >
                     <div className="shadow p-3 mt-5 bg-white rounded">
                         <div className="row justify-content-between">
-                        <div className="col-3" style={{marginLeft:"10px"}}><h4>{product.name}</h4></div>
+                        <div className="col-8" style={{marginLeft:"10px"}}><h4>{product.name}</h4></div>
                         <div className="col-3 d-flex flex-row-reverse">
                             <Tooltip title="Sil">
                             <DeleteProduct id={product._id} delete={deleteProduct}/>

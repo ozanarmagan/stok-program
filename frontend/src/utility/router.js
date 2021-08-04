@@ -10,12 +10,14 @@ import NewCategory from "../components/newCategory";
 import ViewCategory from "../components/viewCategory";
 import ListProducts from "../components/listProducts";
 import ViewPorduct from "../components/viewProduct";
+import NewOrder from "../components/newOrder";
 
 export default function PageRouter(props) {
     return (
         <Switch>
             <Route exact path="/customer/" component={CustomerPage}/>
             <Route exact path="/product/" component={ProductPage}/>
+            <Route exact path="/neworder/" component={NewOrder}/>
             <Route exact path="/product/:product_id" component={ProductPage}/>
             <Route exact path="/viewproduct/:product_id" component={ViewPorduct}/>
             <Route exact key="0" path="/stocks" component={Stock}/>

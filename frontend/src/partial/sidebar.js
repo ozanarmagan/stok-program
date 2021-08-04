@@ -135,7 +135,7 @@ export default function Sidebar(props) {
     <Collapse isOpen={state.orders}>
     <div className="submenu">
         <div className="submenu-heading">SİPARİŞ İŞLEMLERİ</div>
-        <Link className="submenu-item" to="/">Sipariş Ekle</Link>
+        <Link className="submenu-item" to="/neworder">Sipariş Ekle</Link>
         <Link className="submenu-item" to="/">Tüm Siparişler</Link>
     </div>
     </Collapse>
