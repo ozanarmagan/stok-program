@@ -165,6 +165,9 @@ exports.edit = async function (req,res) {
                     Stock.save();
                 }
 
+                if(req.body.image !== product.image)
+                    fs.unlinkSync('./images/' + product.image.substring(product.image.lastIndexOf('/') + 1));
+
                 product.name = req.body.name || product.name;
                 product.stock = req.body.stock || product.stock;
                 product.critical_stock = req.body.critical_stock || product.critical_stock;
