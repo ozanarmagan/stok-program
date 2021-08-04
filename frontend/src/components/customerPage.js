@@ -101,11 +101,10 @@ function TransitionsModal(props) {
     const [open, setOpen] = React.useState(false);
   
     const handleOpen = () => {
-        console.log(props.customer);
       if(props.customer.lenght){
         setOpen(true);}
       else{
-          props.setNewCustomer(true);
+          props.setEdit(false);
           props.setValue(8);
       }  
     };
@@ -152,14 +151,12 @@ function CustomerPage(props) {
 
     const token = useSelector(state => state.userReducer.user.access_token);
     const [customer, setCustomer] = useState({})
+    const [customers, setCustomers] = useState([])
     const [options, setOptions] = useState([]);
-    const [imglink, setImg] = useState(null);
-    const [imgUp, setUp] = useState(false);
     const [isEditing, setEdit] = useState(false);
-    const [id, setId] = useState(0);
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
-    const [newCustomer, setNewCustomer] = useState(false)
+    const [val, setVal] = useState("person");
     const history = useHistory();
    
 
@@ -170,16 +167,47 @@ function CustomerPage(props) {
     useEffect(() => {
 
         const getCustomers = async () => {
-            axios.get(API_URL + "customer", { params: { token: token } }).then((result) => {
+            var customers = [];
+            var opts = [];
+            axios.get(API_URL + "customer", { params: { token: token } }).then(async (result) => {
                 if (!result.data.data) return;
-                setCustomer(result.data.data);
-                setOptions(result.data.data.map((option) => {
-                    const firstLetter = option.name;
-                    return {
+                
+                result.data.data.map(element => {
+                    customers.push({...element,type:'person'});
+                })
+                setCustomers(customers);
+                result.data.data.map((option) => {
+                    const firstLetter = option.name[0];
+                    opts.push({
                         firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
+                        type:'person',
                         ...option,
-                    }
-                }))
+                    });
+                    return null;
+                })
+
+
+            })
+
+            
+
+            axios.get(API_URL + "company", { params: { token: token } }).then((result) => {
+                if (!result.data.data) return;
+                var customers_ = [];
+                result.data.data.map(element => {
+                    customers_.push({...element,type:'company'});
+                })
+                setCustomers([...customers,...customers_]);
+                result.data.data.map((option) => {
+                    const firstLetter = option.name[0];
+                    opts.push({
+                        firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
+                        type:"company",
+                        ...option,
+                    });
+                    return null
+                })
+                setOptions(opts);
 
 
             })
@@ -190,71 +218,47 @@ function CustomerPage(props) {
     }, [])
 
 
-   useEffect(() => {
-       if(!customer.lenght){
+    useEffect( () => {
+        console.log("qqwewqeqw")
+    },[val]);
 
-       }
-   }, [customer])
 
-    const readId = (event) => {
-        setId(event.target.value)
-    };
+
 
     const save = async () => {
 
         if(!customer.name)
             NotificationManager.error("Lütfen Müşteri Adını Giriniz.","Hata")
 
-        let form = new FormData();
-        
-        for (const [key,value] of Object.entries(customer))
-        {
-            // console.log(key,value);
-            form.append(key.toString(),value);
-        
-        }
-        
-        if(customer.image && imgUp) {
-            var imgname = uuidv4() + "." +  customer.image.name.split('.').pop();;
-            form.set("file",customer.image,imgname);
-        }
-        else if(customer.image && !newCustomer)
-            form.set("image",customer.image);
-        form.append("token",token);
-        // form.forEach((k,v) => {console.log(k,v);});
-
-        if(newCustomer)
-            var res = await axios.post(API_URL + "customer",form,{
-                headers: {
-                    'content-type': 'multipart/form-data'
-                },
-                params :{
-                    token:token
-                }
-            });
+        if(!isEditing)
+            var res = await axios.post(API_URL + ( customer.type === 'person' ? "customer" : "company" ),{...customer,token:token});
         else
-            res = await axios.put(API_URL + "customer/" + customer._id,form,{
-                headers: {
-                    'content-type': 'multipart/form-data'
-                },
-                params :{
-                    token:token
-                }
-            });
+        {
+            var init = await customers.find(element => element._id === customer._id);
+            console.log(customer._id,customers)
+            if(init.type === val)
+                res = await axios.post(API_URL + (customer.type === 'person' ? "customer/" : "company/") + customer._id,{...customer,token:token});
+            else
+                res = res = await axios.post(API_URL + (val === 'person' ? "customer/" : "company/"),{...customer,token:token});
+        }
 
         if(res.data.status === 200)
         {
-            console.log(res);
-            NotificationManager.success("Müşteri Başarıyla Oluşturuldu","Başarılı");
+            if(isEditing)
+            {
+                NotificationManager.success("Müşteri Başarıyla Düzenlendi","Başarılı");
+                init = await customers.find(element => element._id === customer._id);
+                if(init.type !== val)
+                    axios.delete(API_URL + (init.type === "person" ?  "customer/" : "company/") + customer._id,{data:{token:token}});
+            }
+            else
+                NotificationManager.success("Müşteri Başarıyla Oluşturuldu","Başarılı");
             history.push("/listcustomer");
         }
         else
            {
-            console.log(res);
                 NotificationManager.error("Bir hata oluştu","Hata");}
-
-
-    }
+            }
 
 
     const customerUpdate = function cu (key_ )  {
@@ -286,7 +290,7 @@ function CustomerPage(props) {
                             <TransitionsModal 
                                 customer={customer} 
                                 setValue={setValue} 
-                                setNewCustomer={setNewCustomer}
+                                setEdit={setEdit}
                                 
                             />
                             
@@ -294,25 +298,24 @@ function CustomerPage(props) {
                         <Grid item xs={10} sm={10}>
                             <Autocomplete
                                 id="grouped-demo"
+                                value={customer ? customer.name : null}
                                 options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
                                 groupBy={(option) => option.firstLetter}
-                                getOptionLabel={(option) => option ? option.barcode.toString() : "0"}
-                                getOptionSelected={(option, value) => option.barcode === value.barcode}
+                                getOptionLabel={(option) => option.name}
+                                getOptionSelected={(option, value) => option.name === value.name}
                                 fullWidth
                                 noOptionsText={
 
                                     "Müşteri Bulununamadı"
                                 }
                                 onChange={async (e, newValue) => {
-                                    setId(e.target.value);
                                     newValue === null ? setEdit(false) : setEdit(true);
                                     setCustomer(newValue);
-                                    setNewCustomer(false);
-                                    newValue !== null ? setImg(newValue.image) : setImg(null)
+                                    if(newValue !== null)
+                                        setVal(newValue.type)
                                 }}
                                 renderOption={(option) => (
                                     <React.Fragment>
-                                        <span style={{ padding: "1px" }}>{option ? option.barcode : 0}-</span>
                                         {option.name}
                                     </React.Fragment>
                                 )}
@@ -322,7 +325,6 @@ function CustomerPage(props) {
                                             {...params}
                                             label="Müşteri Adı"
                                             variant="outlined"
-                                            onChange={readId}
                                         />}
 
 
@@ -408,8 +410,11 @@ function CustomerPage(props) {
                             <TabPanel value={value} index={8}>
                                 <Paper elevation={8} >
                                     <CustomerEdit 
-                                        newCustomer={newCustomer} 
+                                        newCustomer={!isEditing} 
                                         setCustomer={customerUpdate}
+                                        customer={customer}
+                                        value={val}
+                                        setValue={setVal}
                                         save={save}
                                     >
                                     </CustomerEdit>

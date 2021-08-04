@@ -1,20 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { TextField, makeStyles, Container, Grid, Box, Paper, CircularProgress, Typography, ButtonBase } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { API_URL } from '../../constants';
-import { FormControl, InputLabel, Input, ButtonGroup, Button, MenuItem } from '@material-ui/core';
-import axios from 'axios';
-import { useSelector } from "react-redux";
-import Select from '@material-ui/core/Select';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import IconButton from '@material-ui/core/IconButton';
-import { NotificationManager } from 'react-notifications';
-import { v4 as uuidv4 } from 'uuid';
+import React, { useEffect, useState} from 'react'
+import { TextField, makeStyles, Container, Grid} from '@material-ui/core';
+import { FormControl,Button} from '@material-ui/core';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
 import { FaSave } from 'react-icons/fa';
 import { GrAdd } from 'react-icons/gr';
 import { AiFillDelete } from 'react-icons/ai';
 
-import { BiBarcodeReader } from 'react-icons/bi';
 
 
 
@@ -39,87 +33,72 @@ const useStyles = makeStyles((theme) => ({
 
 
 function CustomerEdit(props) {
-    const token = useSelector(state => state.userReducer.user.access_token);
-    const [customer, setCustomer] = useState({})
-    const [options, setOptions] = useState([]);
-    const [imglink, setImg] = useState(null);
-    const [imgUp, setUp] = useState(false);
-    const [isEditing, setEdit] = useState(false);
-    const [id, setId] = useState(0);
     const classes = useStyles();
 
-    // useEffect(() => {
-
-    //     const getCustomers = async () => {
-    //         axios.get(API_URL + "customer", { params: { token: token } }).then((result) => {
-    //             if(!result.data.data) return;
-                
-    //             setCustomer(result.data.data);
+    const handleChange = (event) => {
+        props.setValue(event.target.value);
+      };
 
 
-    //             setOptions(result.data.data.map((option) => {
-    //                 const firstLetter = option.name;
-    //                 return {
-    //                     firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
-    //                     ...option,
-    //                 }
-    //             }))
+
+      useEffect(() => {
+          console.log(props.value)
+      },[props.value])
 
 
-    //         })
-    //     }
 
-    //     getCustomers();
 
-    // }, [])
-
-    const readId = (event) => {
-        setId(event.target.value)
-    };
-
-    const save = () => {
-
-    }
-
-    const imageUpload = (event) => {
-        if (event.target.files) {
-            setCustomer({ image: event.target.files[0] });
-            setImg(URL.createObjectURL(event.target.files[0]));
-            setUp(true);
-        }
-        else
-            setUp(false);
-    }
 
     const nameChange = (event, newValue) => {
-        props.setCustomer({name:event.target.value});
+        props.setCustomer({...props.customer,name:event.target.value});
     }
 
-    const gsmChange = (event, newValue) => {
-        props.setCustomer({gsm:event.target.value});
-    }
+
     const telChange = (event, newValue) => {
-        props.setCustomer({phone:event.target.value});
+        props.setCustomer({...props.customer,phone:event.target.value});
     }
     const tcChange = (event, newValue) => {
-        props.setCustomer({identity_number:event.target.value});
+        props.setCustomer({...props.customer,identity_number:event.target.value});
     }
     const addressChange = (event, newValue) => {
-        props.setCustomer({address:event.target.value});
+        props.setCustomer({...props.customer,address:event.target.value});
     }
 
     const cityChange = (event, newValue) => {
-        props.setCustomer({city:event.target.value});
+        props.setCustomer({...props.customer,town:event.target.value});
+    }
+
+    const taxNoChange = (event, newValue) => {
+        props.setCustomer({...props.customer,tax_no:event.target.value});
+    }
+
+    const gsmChange = (event, newValue) => {
+        props.setCustomer({...props.customer,gsm:event.target.value});
+    }
+
+    const taxPlaceChange = (event, newValue) => {
+        props.setCustomer({...props.customer,tax_place:event.target.value});
     }
     
+    const debtChange = (event, newValue) => {
+        props.setCustomer({...props.customer,debtlimit:event.target.value});
+    }
+    const faxChange = (event, newValue) => {
+        props.setCustomer({...props.customer,fax:event.target.value});
+    }
+
+    const ownerChange = (event, newValue) => {
+        props.setCustomer({...props.customer,owner:event.target.value});
+    }
+
     const stateChange = (event, newValue) => {
-        props.setCustomer({state:event.target.value});
+        props.setCustomer({...props.customer,state:event.target.value});
     }
     const countryChange = (event, newValue) => {
-        props.setCustomer({country:event.target.value});
+        props.setCustomer({...props.customer,country:event.target.value});
     }
     const noteChange = (event, newValue) => {
-        props.setCustomer({note:event.target.value});
+        props.setCustomer({...props.customer,note:event.target.value});
     }
    
     return (
@@ -134,17 +113,13 @@ function CustomerEdit(props) {
                     </div>:<React.Fragment/>}
                     </Grid>
                     <Grid item xs={12} sm={12}>
-                        {imglink ?
-                            <div>Müşteri Görseli
-                                <img src={imglink} style={{ width: "100px", height: "100px", marginLeft: "50px" }} alt="Müşteri Görseli" />
-                                <Button color="primary" variant="contained" style={{ marginLeft: "20px" }} onClick={() => { setCustomer({image: null }); setImg(null); }}>Görseli Sil</Button>
-                                <br />Görseli Değiştir</div> : <div>Görsel Ekle</div>}
-                        <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={imageUpload} />
-                        <label htmlFor="icon-button-file">
-                            <IconButton color="primary" aria-label="upload picture" component="span">
-                                <PhotoCamera />
-                            </IconButton>
-                        </label>
+                        <FormControl component="fieldset">
+                            <FormLabel component="legend">Müşteri Tipi</FormLabel>
+                            <RadioGroup row aria-label="type" onChange={handleChange} value={props.value}>
+                                <FormControlLabel value="person" control={<Radio />} label="Şahıs" />
+                                <FormControlLabel value="company" control={<Radio />} label="Şirket" />
+                            </RadioGroup>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={12}>
                         <TextField
@@ -152,9 +127,9 @@ function CustomerEdit(props) {
                             id="customername"
                             name="customername"
                             label="Müşteri adı"
-                            defaultValue=""
+                            defaultValue=" "
                             onChange={nameChange}
-                            value={customer ? customer.name : ""}
+                            value={props.customer ? props.customer.name : ""}
                             InputProps={{
                                 readOnly: false,
                             }}
@@ -162,40 +137,21 @@ function CustomerEdit(props) {
 
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
 
-
-                            required
-                            onChange={gsmChange}
-                            id="phone_number"
-                            // onChange={sellPriceChange}
-                            name="phone_number"
-                            defaultValue="0"
-                            label="GSM No"
-                            // InputProps={{ 
-                            //     step: "0.1",
-                            //     startAdornment: <InputAdornment position="start">₺</InputAdornment>, }}
-                            value={0}
-                            fullWidth
-                        //   autoComplete="shipping address-line1"
-                        />
-
-                    </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
 
                             onChange={telChange}
-                            required
                             id="home_number"
                             // onChange={sellPriceChange}
                             name="home_number"
                             defaultValue="0"
+                            type="number"
                             label="Telefon numarası"
                             // InputProps={{ 
                             //     step: "0.1",
                             //     startAdornment: <InputAdornment position="start">₺</InputAdornment>, }}
-                            value={0}
+                            value={props.customer ? props.customer.phone : ""}
                             fullWidth
                         //   autoComplete="shipping address-line1"
                         />
@@ -203,6 +159,52 @@ function CustomerEdit(props) {
 
 
                     </Grid>
+                    { props.value === "person" ?
+                    <Grid item xs={12} sm={6}>
+                            <TextField
+
+
+                            required
+                            onChange={gsmChange}
+                            id="gsm"
+                            // onChange={sellPriceChange}
+                            name="gsm"
+                            defaultValue="0"
+                            type="number"
+                            label="Cep Telefonu"
+                            
+                            // InputProps={{ 
+                            //     step: "0.1",
+                            //     startAdornment: <InputAdornment position="start">₺</InputAdornment>, }}
+                            fullWidth
+
+                            value={props.customer ? props.customer.gsm : ""}
+                        //   autoComplete="shipping address-line1"
+                        />
+                    </Grid>
+                    :
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+
+
+                            required
+                            onChange={ownerChange}
+                            id="owner"
+                            // onChange={sellPriceChange}
+                            name="owner"
+                            label="Sahibi"
+                            defaultValue=" "
+                            // InputProps={{ 
+                            //     step: "0.1",
+                            //     startAdornment: <InputAdornment position="start">₺</InputAdornment>, }}
+                            fullWidth
+                            value={props.customer ? props.customer.owner : ""}
+                        //   autoComplete="shipping address-line1"
+                        />
+
+                </Grid> }
+
+                { props.value === "person" ? 
                     <Grid item xs={12} sm={6}>
                         <TextField
                             required
@@ -210,8 +212,36 @@ function CustomerEdit(props) {
                             id="tc_no"
                             name="tc_no"
                             label="TC numarası"
+                            defaultValue="0"
+                            type="number"
                             fullWidth
-
+                            value={props.customer ? props.customer.identity_number : ""}
+                        />
+                    </Grid>
+                     : 
+                     <Grid item xs={12} sm={6}>
+                     <TextField
+                         required
+                         onChange={faxChange}
+                         id="fax"
+                         name="fax"
+                         label="Fax"
+                         defaultValue="0"
+                         type="number"
+                         fullWidth
+                         value={props.customer? props.customer.fax : null}
+                     />
+                 </Grid>}
+                 <Grid item xs={12} sm={6}>
+                        <TextField
+                            onChange={debtChange}
+                            id="debt"
+                            name="debt"
+                            label="Borç Limiti"
+                            defaultValue="0"
+                            type="number"
+                            fullWidth
+                            value={props.customer ? props.customer.debtlimit : ""}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -230,20 +260,22 @@ function CustomerEdit(props) {
                             onChange={addressChange}
                             id="address1"
                             name="address1"
+                            defaultValue=" "
                             label="Adres"
                             fullWidth
                             multiline
                             rows={2}
-
+                            value={props.customer ? props.customer.address : ""}
 
                         />
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
                             onChange={cityChange}
-                            id="city"
-                            name="city"
+                            id="town"
+                            name="town"
                             label="İlçe"
+                            defaultValue=" "
                             fullWidth
 
                         />
@@ -254,6 +286,7 @@ function CustomerEdit(props) {
                             onChange={stateChange}
                             id="state" 
                             name="state" 
+                            defaultValue=" "
                             label="İl" 
                             fullWidth />
                     </Grid>
@@ -262,49 +295,73 @@ function CustomerEdit(props) {
                             onChange={countryChange}
                             id="country"
                             name="country"
+                            defaultValue=" "
                             label="Ülke"
                             fullWidth
                             autoComplete="country-name"
                         />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+
+                            onChange={taxNoChange}
+                            id="tax_no"
+                            // onChange={sellPriceChange}
+                            name="tax_no"
+                            defaultValue="0"
+                            type="number"
+                            label="Vergi No"
+                            // InputProps={{ 
+                            //     step: "0.1",
+                            //     startAdornment: <InputAdornment position="start">₺</InputAdornment>, }}
+                            fullWidth
+                        //   autoComplete="shipping address-line1"
+                            value={props.customer ? props.customer.tax_no : ""}
+                        />
+
+
+
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            onChange={taxPlaceChange}
+                            id="tax_place"
+                            // onChange={sellPriceChange}
+                            name="tax_place"
+                            label="Vergi Dairesi"
+                            // InputProps={{ 
+                            //     step: "0.1",
+                            //     startAdornment: <InputAdornment position="start">₺</InputAdornment>, }}
+                            fullWidth
+                        //   autoComplete="shipping address-line1"
+                            value={props.customer ? props.customer.tax_place : ""}
+                        />
+
                     </Grid>
                     <Grid item xs={12} sm={12}>
                         <TextField
                             onChange={noteChange}
                             id="note"
                             name="note"
+                            defaultValue=" "
                             label="Not"
                             fullWidth
                             multiline
                             rows={2}
-
+                            value={props.customer ? props.customer.owner : ""}
 
                         />
                     </Grid>
+
+                    
                     <Grid item xs={12} sm={6} >
-
-
-                        <TextField
-                            id="datetime-local"
-                            fullWidth
-                            label="Oluşturulma tarihi"
-
-                            defaultValue="g.a.y s.d"
-                            value={customer ? (new Date(customer.created_date)).toLocaleDateString('tr-TR', date_optinus) : "None"}
-                            className={classes.textField}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            InputProps={{ readOnly: true }}
-                            disabled={true}
-                        />
-
 
                     </Grid>
 
                     <Grid item xs={12} sm={6}></Grid>
                     <Grid item xs={12} sm={4}></Grid>
                     <Grid item xs>
-                        <Button variant="contained" color="primary" onClick={props.save} startIcon={!props.newCustomer ? <FaSave></FaSave> : <GrAdd></GrAdd>}>{isEditing ? "Müşteriyi Kaydet" : "Müşteriyi Ekle"}</Button>
+                        <Button variant="contained" color="primary" onClick={props.save} startIcon={!props.newCustomer ? <FaSave></FaSave> : <GrAdd></GrAdd>}>{!props.newCustomer ? "Müşteriyi Kaydet" : "Müşteriyi Ekle"}</Button>
                     </Grid>
                     <Grid item xs>
 
@@ -321,11 +378,3 @@ function CustomerEdit(props) {
 
 export default CustomerEdit
 
-
-const countries = [
-    { code: 'TR', name: 'Türkiye' },
-    { code: 'NAN', name: 'Diğer' }
-]
-
-
-const date_optinus = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: "numeric", minute: "numeric" }

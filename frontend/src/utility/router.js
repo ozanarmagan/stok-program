@@ -3,7 +3,7 @@ import Editcategory from "../components/editCategory";
 import HomePage from "../components/homePage";
 import ProductPage from "../components/productPage";
 import CustomerPage from "../components/customerPage";
-
+import Stock  from "../components/Stock";
 
 import ListCategories from "../components/listCategories";
 import NewCategory from "../components/newCategory";
@@ -18,6 +18,8 @@ export default function PageRouter(props) {
             <Route exact path="/product/" component={ProductPage}/>
             <Route exact path="/product/:product_id" component={ProductPage}/>
             <Route exact path="/viewproduct/:product_id" component={ViewPorduct}/>
+            <Route exact key="0" path="/stocks" component={Stock}/>
+            <Route exact key="1" path="/criticalstocks" component={Stock}/>
             <Route exact path="/" component={HomePage} />
             <Route exact path="/listproducts/" component={ListProducts}/>
             <Route exact path="/" component={HomePage} />

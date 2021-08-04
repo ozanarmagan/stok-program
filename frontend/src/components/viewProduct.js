@@ -37,12 +37,24 @@ export default function ViewPorduct(props) {
                 value:res.data.data.category.name
             },
             {
+                property:'Barkod',
+                value:res.data.data.barcode
+            },
+            {
                 property:'Satış Fiyatı',
                 value:res.data.data.price_to_sell
             },
             {
                 property:'Alış Fiyatı',
                 value:res.data.data.price_to_buy
+            },
+            {
+                property:'Stok',
+                value:res.data.data.stock
+            },
+            {
+                property:'Kritik Stok',
+                value:res.data.data.critical_stock
             },
             {
                 property:'Kar Oranı (%)',
@@ -88,11 +100,11 @@ export default function ViewPorduct(props) {
 
             <div className="row justify-content-center">
                 {product.image ?
-                <div className="col-lg-2 my-auto d-flex justify-content-center">
-                    <img src={product.image} alt="ürün" style={{height:"300px",width:"300px"}}/>
+                <div className="col-lg-4 my-auto d-flex justify-content-center">
+                    <img src={product.image} alt="ürün" style={{height:"531px",width:"531px"}}/>
                 </div>
                 : null }
-                <div className="col-lg-4" style={{marginLeft:"30px"}}>
+                <div className="col-lg-4 productdetails" >
                     <div className="shadow p-3 mt-5 bg-white rounded">
                         <div className="row justify-content-between">
                         <div className="col-3" style={{marginLeft:"10px"}}><h4>{product.name}</h4></div>
@@ -115,7 +127,7 @@ export default function ViewPorduct(props) {
                     </div>
                 </div>
             </div>
-            <div className="col-lg-6 mx-auto mt-4">
+            <div className="col-lg-8 mx-auto mt-4">
             <TableContainer component={Paper}>
                         <Table  aria-label="simple table">
                             <TableHead>

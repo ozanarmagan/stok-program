@@ -28,7 +28,7 @@ const customstyles = {
         {
             cell:(row) => {
                 if(row.image)
-                    return(<img src={row.image} alt="row" style={{height:"80px",width:"80px"}} />)
+                    return(<img src={row.image} alt="row" style={{height:"90px",width:"90px"}} />)
                 else
                     return null;
             },

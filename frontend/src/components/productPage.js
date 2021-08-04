@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { TextField, makeStyles, Container, Grid, Box, Paper, CircularProgress, Typography, ButtonBase, InputAdornment } from '@material-ui/core';
+import { TextField, makeStyles, Container, Grid, Box,InputAdornment } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { API_URL } from '../constants';
-import { FormControl, InputLabel, Input, ButtonGroup, Button, MenuItem } from '@material-ui/core';
+import {Button} from '@material-ui/core';
 import axios from 'axios';
 import { useSelector } from "react-redux";
-import Select from '@material-ui/core/Select';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import IconButton from '@material-ui/core/IconButton';
 import {NotificationManager} from 'react-notifications';
@@ -50,18 +49,13 @@ function ProductPage(props) {
     const token = useSelector(state => state.userReducer.user.access_token);
     const [barcode, setBarcode] = useState(0);
     const classes = useStyles();
-    const [placeHolder, setPlaceHolder] = useState();
     const [categories, setCategories] = useState([]);
     const [product, setProduct] = useState({});
     const [products, setProducts] = useState([]);
-    const [open, setOpen] = useState(false);
     const [fcount,setF] = useState(0);
-    const [defaultVal,setDefault] = useState(null);
     const [options, setOptions] = useState([]);
     const [isEditing,setEdit] = useState(false);
     const [profit,setProfit] = useState(0);
-    const [profitController, setProfitController] = useState(false)
-    const loading = open && options.length === 0;
     const barcodeInputRef = React.createRef();
 
     const [imglink,setImg] = useState(null);
@@ -299,7 +293,7 @@ function ProductPage(props) {
             setUp(false);
     }
 
-    const findFreeBarcode =  () => {
+    const findFreeBarcode =  async () => {
         var array = [];
 
         products.map((product) => {
@@ -314,11 +308,14 @@ function ProductPage(props) {
         e = parseInt(e);
         console.log(`/products/${e}`);
         // const getProduct = async () => {
-        axios.get(`${API_URL}products/${e}`, { params: { token: token } }).then((result) => {
-            console.log("ress",result);
-           
-        })
-        
+        var res = await axios.get(`${API_URL}products/?barcode=${e}`, { params: { token: token } })
+        if(res.data.data.length === 0)
+        {
+            setProduct({...product,barcode:e});
+            return null;
+        }
+        else
+            findFreeBarcode();
 
         // await getProduct();
 
@@ -345,8 +342,7 @@ function ProductPage(props) {
                                 groupBy={(option) => option.firstLetter}
                                 getOptionLabel={(option) => option?option.barcode.toString():"0"}
                                 getOptionSelected={(option, value) => option.barcode === value.barcode}
-                                
-                                
+                                value={isEditing ? product : null}
                                 onChange={async (e, newValue) => { 
                                     setBarcode(e.target.value); 
                                     newValue === null ? setEdit(false) : setEdit(true); 
