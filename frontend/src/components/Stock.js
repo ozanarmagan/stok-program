@@ -75,7 +75,7 @@ import AddStock from '../partial/addStockModal';
         const [items,setItems] = useState([]);
         const [rows,setRows] = useState([]);
         var fetch = async function () {
-            if(getLastItem(window.location.pathname) == 'criticalstocks')
+            if(getLastItem(window.location.pathname) === 'criticalstocks')
                 var res = await axios.get(API_URL + "critical_stocks?token=" + token);
             else
                 res = await axios.get(API_URL + "products?token=" + token);
@@ -102,13 +102,14 @@ import AddStock from '../partial/addStockModal';
 
         useEffect(() => {
             fetch();
+            // eslint-disable-next-line
         },[]);
 
 
         return (
             <div className="container">
                 <div className="row justify-content-between">
-                    <h4 className="mb-4 mt-4 col-6">{getLastItem(window.location.pathname) == 'criticalstocks' ? "Kritik Stoktakiler" : "Stoklar"}</h4>
+                    <h4 className="mb-4 mt-4 col-6">{getLastItem(window.location.pathname) === 'criticalstocks' ? "Kritik Stoktakiler" : "Stoklar"}</h4>
                     <div className="col-lg-2 mb-4 mt-4"><Input className="form-control" onChange={filterChange} placeholder="Filtrele"/></div>
                     
                 </div>

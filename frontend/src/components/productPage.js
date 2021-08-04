@@ -68,6 +68,7 @@ function ProductPage(props) {
             })
         }
         getProducts();
+        // eslint-disable-next-line
     }, [])
     useMemo(() => {
         const getCategories = async () => {
@@ -78,6 +79,7 @@ function ProductPage(props) {
         }
 
         getCategories();
+        // eslint-disable-next-line
     }, [])
 
 
@@ -94,6 +96,7 @@ function ProductPage(props) {
                         }
                     }
                 )
+                // eslint-disable-next-line
     },[]);
 
     useEffect(() => {
@@ -116,7 +119,7 @@ function ProductPage(props) {
         }
 
         getProducts();
-
+    // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
@@ -140,7 +143,7 @@ function ProductPage(props) {
         else if (!product.price_to_buy && profit){
             NotificationManager.error("Alış fiyatı giriniz.","Hata");
         }
-        
+        // eslint-disable-next-line
     }, [profit])
 
     useEffect(() => {
@@ -152,6 +155,7 @@ function ProductPage(props) {
         // console.log(p_buy,p_sell);
 
         setProduct({...product,profit_rate:p_rate.toFixed(2)});
+        // eslint-disable-next-line
     },[fcount]);
 
     useEffect(() => {
@@ -163,6 +167,7 @@ function ProductPage(props) {
         }
 
         getCategories();
+        // eslint-disable-next-line
     }, [])
 
     const readBarcode = (event) => {
@@ -194,9 +199,7 @@ function ProductPage(props) {
     const criticalStockChange = (event, newValue) => {
         setProduct({ ...product, critical_stock: event.target.value });
     }
-    const originChange = (event, newValue) => {
-        setProduct({ ...product, origin: event.target.value });
-    }
+
     const unitChange = (event, newValue) => {
         
         setProduct({ ...product, unit: newValue });
@@ -210,17 +213,6 @@ function ProductPage(props) {
     }
 
 
-    const deleteProduct = async function() {
-        var res = await axios.delete(API_URL + "products/" + product._id,{data:{token:token}})
-
-        if(res.status === 200)
-        {
-            NotificationManager.success("Ürün Başarıyla Silindi","Başarılı");
-            history.push("/listproducts");
-        }
-        else
-            NotificationManager.error("Bir hata oluştu","Hata");
-    }
 
 
     const save = async (event, newValue) => {
@@ -298,6 +290,7 @@ function ProductPage(props) {
 
         products.map((product) => {
             array.push(parseInt(product.barcode))
+            return null;
         })
         
         var e;

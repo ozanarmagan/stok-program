@@ -2,7 +2,7 @@ import IconButton from '@material-ui/core/IconButton';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import EditIcon from '@material-ui/icons/Edit';
 import Tooltip from '@material-ui/core/Tooltip';
-import {Link, useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../constants';
@@ -72,8 +72,6 @@ const customstyles = {
       ];
 
 
-    const history = useHistory();
-
     const deleteProduct = async function(id,toggle) {
         var res = await axios.delete(API_URL + "products/" + id,{data:{token:token}})
 
@@ -101,6 +99,7 @@ const customstyles = {
                     var r = [];
                     res.data.data.map(element => {
                         r.push({category:element.category.name,name:element.name,id:element._id,image:element.image})
+                        return null;
                     })
                     setRows(r);
                     setItems(r);
@@ -117,6 +116,7 @@ const customstyles = {
 
         useEffect(() => {
             fetch();
+            // eslint-disable-next-line
         },[]);
 
 

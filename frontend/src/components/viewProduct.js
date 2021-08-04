@@ -92,7 +92,9 @@ export default function ViewPorduct(props) {
         }
     ]
 
-    useEffect( () => {console.log("fetching..."); fetch()},[]);
+    useEffect( () => {console.log("fetching..."); fetch()},
+    // eslint-disable-next-line
+    []);
 
 
     return(

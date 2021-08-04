@@ -5,10 +5,9 @@ import { API_URL } from "../constants"
 import DataTable from 'react-data-table-component';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import RemoveIcon from '@material-ui/icons/Remove';
-import AddIcon from '@material-ui/icons/Add';
-import { IconButton, Tooltip } from "@material-ui/core";
-import { Button, Input, Label } from "reactstrap";
+import { Button, Input} from "reactstrap";
+import { NotificationManager } from "react-notifications";
+import { useHistory } from "react-router-dom";
 
 export default function NewOrder(props) {
 
@@ -69,7 +68,8 @@ export default function NewOrder(props) {
 
 
 
-
+    
+    const history = useHistory();
 
     const [products,setProducts] = useState([]);
     const [current,setCurrent] = useState(null);
@@ -95,7 +95,9 @@ export default function NewOrder(props) {
         setCustomers([...r2,...r3]);
     }
 
-    useEffect(() => fetch_products(),[]);
+    useEffect(() => fetch_products(),
+    // eslint-disable-next-line
+    []);
 
     const changeAmount = (event) => {
         setAmount(parseInt(event.target.value === "" ? 0 : event.target.value));
@@ -105,6 +107,26 @@ export default function NewOrder(props) {
         setSelected([...selected,{...current,amount:amount}]);
         setAmount(1);
         setCurrent(null);
+    }
+
+
+    const addOrder = async () => {
+        if(current_customer === null  || selected.length === 0)
+            NotificationManager.error("Lütfen ürün ve müşteri ekleyin","Hata");
+
+        var pr = [];
+        selected.forEach(element => {
+            pr.push({id:element._id,amount:element.amount})
+        });
+
+        var res = await axios.post(API_URL + "orders", {token:token,products:pr,customer_id:current_customer._id});
+
+        if(res.data.status === 200)
+        {
+            NotificationManager.success("Sipariş Başarıyla Eklendi");
+            history.push("/listorders")
+        }
+
     }
 
 
@@ -128,7 +150,7 @@ export default function NewOrder(props) {
                     />
                 </div>
                <div className="col-lg-1">
-                   <Button color="success">Siparişi Ekle</Button>
+                   <Button color="success" onClick={addOrder} >Siparişi Ekle</Button>
                </div>
             </div>
                 <h4 style={{marginLeft:"30px"}}>Ürünler</h4>

@@ -1,26 +1,20 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { TextField, makeStyles, Container, Grid, Box, Paper, CircularProgress, Typography, ButtonBase } from '@material-ui/core';
+import React, { useState, useEffect} from 'react'
+import { TextField, makeStyles, Container, Grid, Box, Paper,Typography} from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { API_URL } from '../constants';
-import { FormControl, InputLabel, Input, ButtonGroup, Button, MenuItem } from '@material-ui/core';
+import {Button} from '@material-ui/core';
 import axios from 'axios';
 import { useSelector } from "react-redux";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import PhoneIcon from '@material-ui/icons/Phone';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import PersonPinIcon from '@material-ui/icons/PersonPin';
-import HelpIcon from '@material-ui/icons/Help';
-import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
-import ThumbDown from '@material-ui/icons/ThumbDown';
-import ThumbUp from '@material-ui/icons/ThumbUp';
+
 import PropTypes from 'prop-types';
 import CustomerEdit from './customer/customerEdit';
 import { FaUserEdit, FaShoppingCart, FaFileInvoiceDollar } from 'react-icons/fa';
 import { AiFillShopping } from 'react-icons/ai';
 import { RiBillFill, RiFileUserFill, RiMoneyDollarCircleFill, RiSettings3Fill } from 'react-icons/ri';
-import { FiDollarSign } from "react-icons/fi";
+
 // import {  IoAddCircleSharp} from "react-icons/io";
 import { IoAddCircleSharp } from 'react-icons/io5';
 import CustomerInformation from './customer/customerInformation';
@@ -35,7 +29,6 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import { NotificationManager } from 'react-notifications';
-import { v4 as uuidv4 } from 'uuid';
 import { useHistory } from 'react-router-dom';
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -174,6 +167,7 @@ function CustomerPage(props) {
                 
                 result.data.data.map(element => {
                     customers.push({...element,type:'person'});
+                    return null;
                 })
                 setCustomers(customers);
                 result.data.data.map((option) => {
@@ -196,6 +190,7 @@ function CustomerPage(props) {
                 var customers_ = [];
                 result.data.data.map(element => {
                     customers_.push({...element,type:'company'});
+                    return null;
                 })
                 setCustomers([...customers,...customers_]);
                 result.data.data.map((option) => {
@@ -214,7 +209,7 @@ function CustomerPage(props) {
         }
 
         getCustomers();
-
+        // eslint-disable-next-line
     }, [])
 
 
