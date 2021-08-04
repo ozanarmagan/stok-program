@@ -11,6 +11,10 @@ var orderSchema = mongoose.Schema({
     advance_pay_type:{
         type:String
     },
+    customer_id: {
+        type:String,
+        required:true
+    },
     card_id:{
         type:String
     },
