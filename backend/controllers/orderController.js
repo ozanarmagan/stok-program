@@ -56,6 +56,7 @@ exports.edit = function (req,res) {
                 ordertoedit.advance_pay_type = req.body.advance_pay_type || ordertoedit.advance_pay_type;
                 ordertoedit.card_id = req.body.card_id || ordertoedit.card_id;
                 ordertoedit.card_installment = req.body.card_installment || ordertoedit.card_installment;
+                ordertoedit.customer_id = req.body.customer_id || ordertoedit.customer_id;
                 ordertoedit.products = req.body.products || ordertoedit.products;
                 ordertoedit.is_sold = req.body.is_sold || ordertoedit.is_sold;
 
@@ -96,6 +97,7 @@ exports.new = async function (req,res) {
         neworder.advance_pay_type = req.body.advance_pay_type;
         neworder.card_id = req.body.card_id;
         neworder.card_installment = req.body.card_installment;
+        neworder.customer_id = req.body.customer_id;
         neworder.products = req.body.products;
         neworder.is_sold = req.body.is_sold;
         neworder.performer_id = user.user;
