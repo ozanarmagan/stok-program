@@ -2,6 +2,7 @@ var User = require('../models/userModel');
 var Product = require('../models/productModel');
 var token = require('../utility/token');
 var Category = require('../models/categoryModel');
+var fs = require('fs');
 var aqp = require('api-query-params');
 var StockHistory = require('../models/stockHistory');
 
@@ -195,6 +196,9 @@ exports.edit = async function (req,res) {
 exports.delete = async function (req,res) {
     try {
         var user = token.verifyToken(req.body.token,'access');
+        Product.findOne({_id:req.params.product_id}).exec((err,doc) => {
+            fs.unlinkSync('./images/' + doc.image.substring(doc.image.lastIndexOf('/') + 1));
+        });
         Product.deleteOne({_id:req.params.product_id},(err) => { 
             if(err) {
                 res.json({status:400,message:"An error occured"})
