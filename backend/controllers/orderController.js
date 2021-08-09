@@ -51,6 +51,11 @@ exports.edit = function (req,res) {
         try
         {
             Order.findById(req.params.order_id,function (error,ordertoedit) {
+
+                if(!ordertoedit.is_sold && req.body.is_sold)
+                    ordertoedit.sell_date = new Date();
+
+
                 ordertoedit.installment = req.body.installment || ordertoedit.installment ;
                 ordertoedit.advance_pay = req.body.advance_pay || ordertoedit.advance_pay;
                 ordertoedit.advance_pay_type = req.body.advance_pay_type || ordertoedit.advance_pay_type;
@@ -58,7 +63,10 @@ exports.edit = function (req,res) {
                 ordertoedit.card_installment = req.body.card_installment || ordertoedit.card_installment;
                 ordertoedit.customer_id = req.body.customer_id || ordertoedit.customer_id;
                 ordertoedit.products = req.body.products || ordertoedit.products;
+                ordertoedit.last_change_date = new Date();
+                ordertoedit.products = req.body.products || ordertoedit.products;
                 ordertoedit.is_sold = req.body.is_sold || ordertoedit.is_sold;
+
 
                 ordertoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
             })
@@ -100,6 +108,8 @@ exports.new = async function (req,res) {
         neworder.customer_id = req.body.customer_id;
         neworder.products = req.body.products;
         neworder.is_sold = req.body.is_sold;
+        neworder.created_date = new Date();
+        neworder.last_change_date = new Date();
         neworder.performer_id = user.user;
 
         neworder.save((err) => {

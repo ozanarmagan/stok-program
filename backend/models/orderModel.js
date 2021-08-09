@@ -25,6 +25,15 @@ var orderSchema = mongoose.Schema({
         id:String,
         amount:Number
     }],
+    created_date: {
+        type:Date
+    },
+    last_change_date: {
+        type:Date
+    },
+    sell_date: {
+        type:Date
+    },
     is_sold:{
         type:Boolean,  /* fatura kesilip satıldı mı */ 
         default:false
