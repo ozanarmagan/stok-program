@@ -119,14 +119,13 @@ export default function NewOrder(props) {
             pr.push({id:element._id,amount:element.amount})
         });
 
-        var res = await axios.post(API_URL + "orders", {token:token,products:pr,customer_id:current_customer._id});
+        var res = await axios.post(API_URL + "orders", {token:token,products:pr,customer_type:current_customer.type === 'person' ?  0 : 1,customer_id:current_customer._id});
 
         if(res.data.status === 200)
         {
             NotificationManager.success("Sipariş Başarıyla Eklendi");
             history.push("/listorders")
         }
-
     }
 
 

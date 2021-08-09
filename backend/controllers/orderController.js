@@ -21,7 +21,7 @@ exports.index = function (req,res) {
             Promise.all(docs.map(async element => {
                 var json = element.toObject();
                 var performer = await User.findOne({_id:element.performer_id}).exec();
-                var customer = await element.customer_type === 0 ? Customer.findOne({_id:element.customer_id}).exec() : CompanyCustomer.findOne({_id:element.customer_id});
+                var customer = element.customer_type === 0 ? await Customer.findOne({_id:element.customer_id}).exec() : await CompanyCustomer.findOne({_id:element.customer_id});
                 json.customer = customer;
                 json.performer = performer.name + " " + performer.surname;
                 objects.push(json);
