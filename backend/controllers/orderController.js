@@ -76,7 +76,7 @@ exports.edit = function (req,res) {
 
                 var total = 0;
 
-                req.body.products.forEach(element => {
+                req.body.products.forEach(async element => {
                     var item = await Product.findOne({_id:element.id}).exec();
                     total += item.price_to_sell;
                 });
@@ -131,7 +131,7 @@ exports.new = async function (req,res) {
 
         var total = 0;
 
-        req.body.products.forEach(element => {
+        req.body.products.forEach(async element => {
             var item = await Product.findOne({_id:element.id}).exec();
             total += item.price_to_sell;
         });
