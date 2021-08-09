@@ -76,14 +76,16 @@ exports.edit = function (req,res) {
 
                 var total = 0;
 
-                req.body.products.forEach(async element => {
+                Promise.all(ordertoedit.products.map(async element => {
                     var item = await Product.findOne({_id:element.id}).exec();
-                    total += item.price_to_sell;
-                });
+                    total += parseInt(item.price_to_sell) * parseInt(element.amount);
+                }))
+                .then(_ => {
+                    ordertoedit.total_amount = total;
 
-                ordertoedit.total_amount = total;
+                    ordertoedit.save((err) => { if(err) {res.json({status:400,message:err})} res.json({status:200,message:"Order has edited"})});
+                })
 
-                ordertoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
             })
         }
         catch
@@ -102,7 +104,7 @@ exports.delete = async function(req,res) {
     try
     {
         var user = token.verifyToken(req.body.token,'access');
-        Order.deleteOne({_id:req.params.order_id},(err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Order has been deleted"})});
+        Order.deleteOne({_id:req.params.order_id},(err) => { if(err) {res.json({status:400,message:err})} res.json({status:200,message:"Order has been deleted"})});
     }
     catch
     {
@@ -131,22 +133,23 @@ exports.new = async function (req,res) {
 
         var total = 0;
 
-        req.body.products.forEach(async element => {
+        Promise.all(neworder.products.map(async element => {
             var item = await Product.findOne({_id:element.id}).exec();
-            total += item.price_to_sell;
-        });
+            total += parseInt(item.price_to_sell) * parseInt(element.amount);
+        }))
+        .then(_ => {
+            neworder.total_amount = total;
 
-        ordertoedit.total_amount = total;
-
-        neworder.save((err) => {
-            if(err)
-                res.json({status:400,message:err});
-            res.json({status:200,message:"Order created"});
+            neworder.save((err) => {
+                if(err)
+                    res.json({status:400,message:err});
+                res.json({status:200,message:"Order created"});
+            })
         })
     }
     catch(err)
     {
-        res.json({status:400,message:"Invalid token"});
+        res.json({status:400,message:err});
     }
 };
 
