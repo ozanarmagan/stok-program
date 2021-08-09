@@ -4,6 +4,7 @@ var aqp = require('api-query-params');
 var User = require("../models/userModel");
 var CompanyCustomer = require("../models/companyCustomer")
 var Customer = require("../models/customerModel")
+var Product = require("../models/productModel");
 
 exports.index = function (req,res) {
     try
@@ -71,7 +72,16 @@ exports.edit = function (req,res) {
                 ordertoedit.last_change_date = new Date();
                 ordertoedit.products = req.body.products || ordertoedit.products;
                 ordertoedit.is_sold = req.body.is_sold || ordertoedit.is_sold;
+                
 
+                var total = 0;
+
+                req.body.products.forEach(element => {
+                    var item = await Product.findOne({_id:element.id}).exec();
+                    total += item.price_to_sell;
+                });
+
+                ordertoedit.total_amount = total;
 
                 ordertoedit.save((err) => { if(err) {res.json({status:400,message:"An error occured"})} res.json({status:200,message:"Bill has edited"})});
             })
@@ -117,6 +127,16 @@ exports.new = async function (req,res) {
         neworder.created_date = new Date();
         neworder.last_change_date = new Date();
         neworder.performer_id = user.user;
+
+
+        var total = 0;
+
+        req.body.products.forEach(element => {
+            var item = await Product.findOne({_id:element.id}).exec();
+            total += item.price_to_sell;
+        });
+
+        ordertoedit.total_amount = total;
 
         neworder.save((err) => {
             if(err)

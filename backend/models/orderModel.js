@@ -19,6 +19,9 @@ var orderSchema = mongoose.Schema({
         type:Number,  /* 0 -> bireysel 1 -> şirket */
         required:true
     },
+    total_amount: {
+        type:Number
+    },
     card_id:{
         type:String
     },
