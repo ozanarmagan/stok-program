@@ -2,6 +2,8 @@ var Order = require("../models/orderModel");
 var token = require("../utility/token");
 var aqp = require('api-query-params');
 var User = require("../models/userModel");
+var CompanyCustomer = require("../models/companyCustomer")
+var Customer = require("../models/customerModel")
 
 exports.index = function (req,res) {
     try
@@ -19,6 +21,8 @@ exports.index = function (req,res) {
             Promise.all(docs.map(async element => {
                 var json = element.toObject();
                 var performer = await User.findOne({_id:element.performer_id}).exec();
+                var customer = await element.customer_type === 0 ? Customer.findOne({_id:element.customer_id}).exec() : CompanyCustomer.findOne({_id:element.customer_id});
+                json.customer = customer;
                 json.performer = performer.name + " " + performer.surname;
                 objects.push(json);
             })).then(res_ => {
@@ -62,6 +66,7 @@ exports.edit = function (req,res) {
                 ordertoedit.card_id = req.body.card_id || ordertoedit.card_id;
                 ordertoedit.card_installment = req.body.card_installment || ordertoedit.card_installment;
                 ordertoedit.customer_id = req.body.customer_id || ordertoedit.customer_id;
+                ordertoedit.customer_type = req.body.customer_type || ordertoedit.customer_type;
                 ordertoedit.products = req.body.products || ordertoedit.products;
                 ordertoedit.last_change_date = new Date();
                 ordertoedit.products = req.body.products || ordertoedit.products;
@@ -106,6 +111,7 @@ exports.new = async function (req,res) {
         neworder.card_id = req.body.card_id;
         neworder.card_installment = req.body.card_installment;
         neworder.customer_id = req.body.customer_id;
+        neworder.customer_type = req.body.customer_type;
         neworder.products = req.body.products;
         neworder.is_sold = req.body.is_sold;
         neworder.created_date = new Date();

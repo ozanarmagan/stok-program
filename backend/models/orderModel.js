@@ -15,6 +15,10 @@ var orderSchema = mongoose.Schema({
         type:String,
         required:true
     },
+    customer_type: {
+        type:Number,  /* 0 -> bireysel 1 -> şirket */
+        required:true
+    },
     card_id:{
         type:String
     },
