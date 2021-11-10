@@ -128,12 +128,16 @@ exports.view = async function (req,res) {
         var user = token.verifyToken(req.query.token,'access');
         try
         {
-            var customer = Customer.findById(req.params.customer_id);
-            res.json({status:200,data:customer});
+            Customer.findById(req.params.customer_id,async function(err,customers) {
+                if(err)
+                    res.json({status:400,error:err});
+                res.json({status:200,data:customers});
+            });
+            
         }
-        catch
+        catch(err)
         {
-            res.json({status:400,message:"Customer could not found"});
+            res.json({status:400,message:err});
         }
     }
     catch
