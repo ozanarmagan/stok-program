@@ -159,12 +159,16 @@ exports.view = async function (req,res) {
         var user = token.verifyToken(req.query.token,'access');
         try
         {
-            var order = Order.findById(req.params.order_id);
-            res.json({status:200,data:order});
+            Order.findById(req.params.order_id,async function(err,orders) {
+                if(err)
+                    res.json({status:400,error:err});
+                res.json({status:200,data:orders});
+            });
+            
         }
-        catch
+        catch(err)
         {
-            res.json({status:400,message:"Order could not found"});
+            res.json({status:400,message:err});
         }
     }
     catch

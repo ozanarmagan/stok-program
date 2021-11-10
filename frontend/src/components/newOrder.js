@@ -77,6 +77,7 @@ export default function NewOrder(props) {
     const [customers,setCustomers] = useState([]);
     const [amount,setAmount] = useState(1);
     const [selected,setSelected] = useState([]);
+    const [setEdit,edit] = useState(false);
     const token = useSelector(state => state.userReducer.user.access_token);
     const fetch_products = async () => {
         var res = await axios.get(API_URL + "/products?token=" + token);
@@ -95,9 +96,40 @@ export default function NewOrder(props) {
         setCustomers([...r2,...r3]);
     }
 
-    useEffect(() => fetch_products(),
+    useEffect( () => {
+        fetch_products();
+        if(props.match.params.order_id)
+        {
+            axios.get(API_URL + "orders/" + props.match.params.order_id + "?token=" + token)
+                .then(
+                    res => {
+                        if(res.data.status === 200)
+                        {
+                            console.log(res.data.data);
+                        }
+                    }
+                )
+        }
     // eslint-disable-next-line
-    []);
+    },[]);
+
+
+    useEffect( () => {
+        if(props.match.params.order_id)
+        {
+            axios.get(API_URL + "orders/" + props.match.params.order_id + "?token=" + token)
+                .then(
+                    res => {
+                        if(res.data.status === 200)
+                        {
+                            console.log(res.data.data);
+                        }
+                    }
+                )
+        }
+    // eslint-disable-next-line
+    },[]);
+
 
     const changeAmount = (event) => {
         setAmount(parseInt(event.target.value === "" ? 0 : event.target.value));

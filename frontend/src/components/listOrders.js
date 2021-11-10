@@ -36,7 +36,11 @@ const customstyles = {
         },
         {
             name:'Sipariş Tarihi',
-            selector: row => moment(row.created_date).format('Do MMM YYYY HH:mm:ss')
+            selector: row => moment(row.date).format('Do MMM YYYY HH:mm:ss')
+        },
+        {
+            name:'Toplam Tutar',
+            selector: row => {return row.total_amount + "  ₺"}
         },
         {
             cell: (row) => {
@@ -99,7 +103,7 @@ const customstyles = {
                 {
                     var r = [];
                     res.data.data.map(element => {
-                        r.push({date:element.created_date,is_sold:element.is_sold,customer:element.customer,name:element.name,id:element._id})
+                        r.push({date:element.created_date,total_amount:element.total_amount,is_sold:element.is_sold,customer:element.customer,name:element.name,id:element._id})
                         return null;
                     })
                     setRows(r);
