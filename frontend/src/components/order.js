@@ -9,7 +9,7 @@ import { Button, Input} from "reactstrap";
 import { NotificationManager } from "react-notifications";
 import { useHistory } from "react-router-dom";
 
-export default function NewOrder(props) {
+export default function Order(props) {
 
     const columns = [
         {
@@ -77,7 +77,7 @@ export default function NewOrder(props) {
     const [customers,setCustomers] = useState([]);
     const [amount,setAmount] = useState(1);
     const [selected,setSelected] = useState([]);
-    const [setEdit,edit] = useState(false);
+    const [edit,setEdit] = useState(false);
     const token = useSelector(state => state.userReducer.user.access_token);
     const fetch_products = async () => {
         var res = await axios.get(API_URL + "/products?token=" + token);
@@ -98,18 +98,6 @@ export default function NewOrder(props) {
 
     useEffect( () => {
         fetch_products();
-        if(props.match.params.order_id)
-        {
-            axios.get(API_URL + "orders/" + props.match.params.order_id + "?token=" + token)
-                .then(
-                    res => {
-                        if(res.data.status === 200)
-                        {
-                            console.log(res.data.data);
-                        }
-                    }
-                )
-        }
     // eslint-disable-next-line
     },[]);
 
@@ -122,7 +110,31 @@ export default function NewOrder(props) {
                     res => {
                         if(res.data.status === 200)
                         {
-                            console.log(res.data.data);
+                            setEdit(true);
+                            res.data.data.products.map(element => {
+                                axios.get(API_URL + "products/" + element.id + "?token=" + token)
+                                    .then(
+                                        res2 => {
+                                            setSelected([...selected,{_id:res2.data.data._id,price_to_sell:res2.data.data.price_to_sell,image:res2.data.data.image,name:res2.data.data.name,category:res2.data.data.category.name,tax_rate:res2.data.data.category.tax_rate,amount:element.amount}]);
+                                        }
+                                    )
+                            });
+                            console.log("customertype",res.data.data.customer_type);
+                            if(res.data.data.customer_type === 0)
+                                axios.get(API_URL + "customer/" + res.data.data.customer_id + "?token=" + token)
+                                    .then(
+                                        res2 => {
+                                            setCurrentC({...res2.data.data,type:'person'});
+                                        }
+                                    )
+                            if(res.data.data.customer_type === 1)
+                                    axios.get(API_URL + "company/" + res.data.data.customer_id + "?token=" + token)
+                                        .then(
+                                            res2 => {
+                                                setCurrentC({...res2.data.data,type:'company'});
+                                            }
+                                        )
+
                         }
                     }
                 )
@@ -136,6 +148,7 @@ export default function NewOrder(props) {
     }
 
     const add = () => {
+        console.log(current);
         setSelected([...selected,{...current,amount:amount}]);
         setAmount(1);
         setCurrent(null);
@@ -151,19 +164,33 @@ export default function NewOrder(props) {
             pr.push({id:element._id,amount:element.amount})
         });
 
-        var res = await axios.post(API_URL + "orders", {token:token,products:pr,customer_type:current_customer.type === 'person' ?  0 : 1,customer_id:current_customer._id});
 
-        if(res.data.status === 200)
+        if(!edit)
         {
-            NotificationManager.success("Sipariş Başarıyla Eklendi");
-            history.push("/listorders")
+            var res = await axios.post(API_URL + "orders", {token:token,products:pr,customer_type:current_customer.type === 'person' ?  0 : 1,customer_id:current_customer._id});
+
+            if(res.data.status === 200)
+            {
+                NotificationManager.success("Sipariş Başarıyla Eklendi");
+                history.push("/listorders")
+            }
+        }
+        else
+        {
+            var res2 = await axios.post(API_URL + "orders/" + props.match.params.order_id, {token:token,products:pr,customer_type:current_customer.type === 'person' ?  0 : 1,customer_id:current_customer._id});
+
+            if(res2.data.status === 200)
+            {
+                NotificationManager.success("Sipariş Başarıyla Düzenlendi");
+                history.push("/listorders")
+            }
         }
     }
 
 
     return(
         <div className="container mt-4">
-            <h3>Yeni Sipariş</h3>
+            <h3>{edit ? "Sipariş Düzenle" : "Yeni Sipariş"}</h3>
 
             <div className="row mt-4 mb-4 justify-content-between" style={{paddingBottom:"30px"}}>
                 <div className="col-lg-6">
@@ -181,7 +208,7 @@ export default function NewOrder(props) {
                     />
                 </div>
                <div className="col-lg-1">
-                   <Button color="success" onClick={addOrder} >Siparişi Ekle</Button>
+                   <Button color="success" onClick={addOrder} >{edit ? "Siparişi Düzenle" : "Sipariş Ekle"}</Button>
                </div>
             </div>
                 <h4 style={{marginLeft:"30px"}}>Ürünler</h4>

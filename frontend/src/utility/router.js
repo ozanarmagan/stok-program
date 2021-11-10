@@ -1,7 +1,7 @@
 import { Route,Switch } from "react-router-dom";
 import Editcategory from "../components/editCategory";
 import HomePage from "../components/homePage";
-import ProductPage from "../components/productPage";
+import Product from "../components/product";
 import CustomerPage from "../components/customerPage";
 import Stock  from "../components/Stock";
 
@@ -10,18 +10,18 @@ import NewCategory from "../components/newCategory";
 import ViewCategory from "../components/viewCategory";
 import ListProducts from "../components/listProducts";
 import ViewPorduct from "../components/viewProduct";
-import NewOrder from "../components/newOrder";
+import Order from "../components/order";
 import ListOrders from "../components/listOrders";
 
 export default function PageRouter(props) {
     return (
         <Switch>
             <Route exact path="/customer/" component={CustomerPage}/>
-            <Route exact path="/product/" component={ProductPage}/>
-            <Route exact path="/order/" component={NewOrder}/>
-            <Route exact path="/vieworder/:order_id" component={NewOrder}/>
+            <Route exact path="/product/" component={Product}/>
+            <Route exact path="/order/" component={Order}/>
+            <Route exact path="/order/:order_id" component={Order}/>
             <Route exact path="/listorders/" component={ListOrders}/>
-            <Route exact path="/product/:product_id" component={ProductPage}/>
+            <Route exact path="/product/:product_id" component={Product}/>
             <Route exact path="/viewproduct/:product_id" component={ViewPorduct}/>
             <Route exact key="0" path="/stocks" component={Stock}/>
             <Route exact key="1" path="/criticalstocks" component={Stock}/>
