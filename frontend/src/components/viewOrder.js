@@ -26,7 +26,7 @@ export default function ViewOrder(props)
         },
         {
             name:'value',
-            selector:'value',
+            selector: 'value',
         }
     ]
 
@@ -102,20 +102,9 @@ export default function ViewOrder(props)
         () => {
             axios.get(API_URL + "orders/" + props.match.params.order_id + "?token=" + token)
                 .then(
-                    async res => {
-                        await res.data.data.products.map(
-                            element => {
-                                axios.get(API_URL + "products/" + element.id + "?token=" + token)
-                                    .then(
-                                        res2 => {
-                                            
-                                            setProducts([...products,{...res2.data.data,amount:element.amount}]);
-                                            var tax = res2.data.data.price_to_sell - (100*res2.data.data.price_to_sell /(100 + res2.data.data.category.tax_rate))
-                                            setPrices([{property:'Toplam KDV',value: (prices[0].value + tax).toFixed(2)},{property:'Toplam Fiyat',value: (prices[1].value +  res2.data.data.price_to_sell).toFixed(2)}]);
-                                        }
-                                    )
-                            }
-                        )
+                    res => {
+                        setProducts(res.data.data.product_details)
+                        setPrices([{property:'Toplam KDV',value: res.data.data.total_tax.toFixed(2)},{property:'Toplam Fiyat',value: res.data.data.total_price.toFixed(2)}])
                         if(res.data.data.customer_type === 0)
                             axios.get(API_URL + "customer/" + res.data.data.customer_id + "?token=" + token)
                                 .then(
@@ -143,7 +132,7 @@ export default function ViewOrder(props)
                                             {property:'Telefon Numarası',value:res2.data.data.phone},
                                             {property:'Fax',value:res2.data.data.fax},
                                             {property:'GSM Numarası',value:res2.data.data.gsm},
-                                            {property:'Adres',value:res2.data.data.address},
+                                            {property:'Adres',value:res2.data.data.address.replace(/^[^\/]+\/\*!?/, '').replace(/\*\/[^\/]+$/, '')},
                                             {property:'Vergi No',value:res2.data.data.tax_no},
                                             {property:'Vergi Dairesi',value:res2.data.data.tax_place}
                                         ])

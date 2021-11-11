@@ -5,7 +5,7 @@ var User = require("../models/userModel");
 var CompanyCustomer = require("../models/companyCustomer")
 var Customer = require("../models/customerModel")
 var Product = require("../models/productModel");
-
+var Category = require("../models/categoryModel")
 exports.index = function (req,res) {
     try
     {
@@ -163,12 +163,18 @@ exports.view = async function (req,res) {
                 if(err)
                     res.json({status:400,error:err});
                 var products_= [];
+                var total_price = 0;
+                var total_tax = 0;
                 Promise.all(orders.products.map(async element => {
-                    var item = await Product.findById(element.id).exec();
-                    products_.push(item);
-                }))
-                orders.products = products_;
-                res.json({status:200,data:orders});
+                    var item = await Product.findOne({_id:element.id}).exec();
+                    var cat = await Category.findOne({_id:item.category_id}).exec();
+                    total_price += item.price_to_sell;
+                    total_tax += item.price_to_sell - ((item.price_to_sell - (item.price_to_sell / (1 + (cat.tax_rate/100)) * (cat.tax_rate/100))));
+                    products_.push({...item._doc,amount:element.amount,category:cat._doc});
+                })).then( _ => {
+                    res.json({status:200,data:{...orders._doc,product_details:products_,total_price:total_price,total_tax:total_tax}});
+                });
+
             });
             
         }
