@@ -17,12 +17,26 @@ import DeleteCategory from '../partial/deleteCategoryModal';
 import NotificationManager from "react-notifications/lib/NotificationManager";
 import { useHistory } from "react-router";
 import EditIcon from '@material-ui/icons/Edit';
+import DataTable from "react-data-table-component";
 const usestyle = makeStyles( (theme => ({
     root: {
         fontFamily:"Poppins",
         fontWeight:"600"
     }
 })));
+
+const category_columns = [
+    {
+        name:'property',
+        selector:'property',
+    },
+    {
+        name:'value',
+        selector: 'value',
+        style: {
+            fontSize:'17px'
+        }
+    }];
 
 
 export default function ViewCategory(props) {
@@ -34,6 +48,8 @@ export default function ViewCategory(props) {
     const [name,setName] = useState("");
 
     const [tax_rate,setTax] = useState(0);
+
+    const [category,setCatgetory] = useState([]);
 
     const [interests,setInts] = useState([]);
 
@@ -51,7 +67,7 @@ export default function ViewCategory(props) {
 
         setInts(res.data.data.interests);
 
-
+        setCatgetory([{property:"Kategori Adı",value:res.data.data.name},{property:"Vergi Oranı",value:res.data.data.tax_rate}]);
 
         var res2 = await axios.get(API_URL + "products?category_id=" + props.match.params.category_id +  "&token=" + token)
 
@@ -99,17 +115,11 @@ export default function ViewCategory(props) {
                     </Tooltip>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-4 mt-4">
-                        Kategori İsmi:        <strong>{name}</strong>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-4 mt-4">
-                        Vergi Oranı:        <strong>%{tax_rate}</strong>
-                    </div>
-                </div>
+                <DataTable
+                        columns={category_columns}
+                        data={category}
+                        noTableHead={true}
+                        />
 
                 <h5 className="mt-4">Vade Farkları</h5>
 

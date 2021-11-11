@@ -162,6 +162,12 @@ exports.view = async function (req,res) {
             Order.findById(req.params.order_id,async function(err,orders) {
                 if(err)
                     res.json({status:400,error:err});
+                var products_= [];
+                Promise.all(orders.products.map(async element => {
+                    var item = await Product.findById(element.id).exec();
+                    products_.push(item);
+                }))
+                orders.products = products_;
                 res.json({status:200,data:orders});
             });
             

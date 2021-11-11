@@ -148,7 +148,6 @@ export default function Order(props) {
     }
 
     const add = () => {
-        console.log(current);
         setSelected([...selected,{...current,amount:amount}]);
         setAmount(1);
         setCurrent(null);
