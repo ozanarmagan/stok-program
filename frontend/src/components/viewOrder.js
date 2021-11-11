@@ -10,7 +10,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import DataTable from "react-data-table-component";
 import PageviewIcon from '@material-ui/icons/Pageview';
-
+import 'moment/locale/tr';
+import moment from 'moment';
 export default function ViewOrder(props)
 {
     const [products,setProducts] = useState([]);
@@ -103,12 +104,14 @@ export default function ViewOrder(props)
             axios.get(API_URL + "orders/" + props.match.params.order_id + "?token=" + token)
                 .then(
                     res => {
+                        console.log(res.data.data.last_change_date);
                         setProducts(res.data.data.product_details)
                         setPrices([{property:'Toplam KDV',value: res.data.data.total_tax.toFixed(2)},{property:'Toplam Fiyat',value: res.data.data.total_price.toFixed(2)}])
                         if(res.data.data.customer_type === 0)
                             axios.get(API_URL + "customer/" + res.data.data.customer_id + "?token=" + token)
                                 .then(
                                     res2 => {
+                                        moment.locale('tr');
                                         setCustomer([
                                             {property:'Müşteri Türü',value:'Şahıs'},
                                             {property:"Müşteri Adı",value:res2.data.data.name},
@@ -118,6 +121,8 @@ export default function ViewOrder(props)
                                             {property:'Adres',value:res2.data.data.address},
                                             {property:'Vergi No',value:res2.data.data.tax_no},
                                             {property:'Vergi Dairesi',value:res2.data.data.tax_place},
+                                            {property:'Sipariş Oluşturulma Tarihi',value:moment(res.data.data.created_date).format('Do MMMM YYYY HH:mm:ss')},
+                                            {property:'Sipariş Son Değiştirilme Tarihi',value:moment(res.data.data.last_change_date).format('Do MMMM YYYY HH:mm:ss')}
                                         ])
                                     }
                                 ) 
@@ -134,7 +139,9 @@ export default function ViewOrder(props)
                                             {property:'GSM Numarası',value:res2.data.data.gsm},
                                             {property:'Adres',value:res2.data.data.address.replace(/^[^\/]+\/\*!?/, '').replace(/\*\/[^\/]+$/, '')},
                                             {property:'Vergi No',value:res2.data.data.tax_no},
-                                            {property:'Vergi Dairesi',value:res2.data.data.tax_place}
+                                            {property:'Vergi Dairesi',value:res2.data.data.tax_place},
+                                            {property:'Sipariş Oluşturulma Tarihi',value:moment(res.data.data.created_date).format('Do MMMM YYYY HH:mm:ss')},
+                                            {property:'Sipariş Son Değiştirilme Tarihi',value:moment(res.data.data.last_change_date).format('Do MMMM YYYY HH:mm:ss')}
                                         ])
                                     }
                                 ) 
@@ -178,14 +185,14 @@ export default function ViewOrder(props)
                     <div className="col-lg-6 mt-3">
                             <DataTable
                                 columns={customer_columns}
-                                data={customerRow.slice(0,5)}
+                                data={customerRow.slice(0,6)}
                                 noTableHead={true}
                             />
                     </div>
                     <div className="col-lg-6 mt-3">
                             <DataTable
                                 columns={customer_columns}
-                                data={customerRow.slice(5,10)}
+                                data={customerRow.slice(6,12)}
                                 noTableHead={true}
                             />
                     </div>
